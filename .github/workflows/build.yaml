@@ -26,8 +26,12 @@ jobs:
 
       - run: flutter build macos --release
 
+      - name: Clean up build directory
+        run: |
+          find build/macos/Build/Products/Release/ -mindepth 1 ! -name 'x_video_ai.app' -delete
+
       - name: Upload macOS executable
         uses: actions/upload-artifact@v3
         with:
           name: macOS-app
-          path: build/macos/Build/Products/Release/x_video_ai.app 
+          path: build/macos/Build/Products/Release/ 
