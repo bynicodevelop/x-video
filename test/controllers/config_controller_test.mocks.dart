@@ -22,7 +22,7 @@ import 'package:x_video_ai/services/config_service.dart' as _i3;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeConfigService_0<T1 extends _i1.JsonDeserializable<T1>>
+class _FakeConfigService_0<T1 extends _i1.JsonDeserializable>
     extends _i2.SmartFake implements _i3.ConfigService<T1> {
   _FakeConfigService_0(
     Object parent,
@@ -36,7 +36,7 @@ class _FakeConfigService_0<T1 extends _i1.JsonDeserializable<T1>>
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService<T extends _i1.JsonDeserializable<T>> extends _i2.Mock
+class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
     implements _i3.ConfigService<T> {
   MockConfigService() {
     _i2.throwOnMissingStub(this);
