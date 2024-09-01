@@ -3,31 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/feed_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
+import 'package:x_video_ai/controllers/page_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/elements/feeds/content_reader_element.dart';
-import 'package:x_video_ai/services/parse_service.dart';
 
-class FeedViewScreen extends ConsumerWidget {
-  FeedViewScreen({super.key});
+class FeedViewScreen extends ConsumerStatefulWidget {
+  const FeedViewScreen({super.key});
 
-  final ParseService parseService = ParseService();
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _FeedViewScreenState();
+}
+
+class _FeedViewScreenState extends ConsumerState<FeedViewScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(feedControllerProvider.notifier).fetch());
+  }
 
   @override
   Widget build(
     BuildContext context,
-    WidgetRef ref,
   ) {
     final feeds = ref.watch(feedControllerProvider);
     final loading = ref.watch(loadingControllerProvider);
-
-    ref.listen(configControllerProvider, (previous, next) {
-      if (previous?.model != next?.model) {
-        ref.read(feedControllerProvider.notifier).fetch();
-      }
-    });
 
     return LayoutBuilder(builder: (context, constraints) {
       return HorizontalSplitPane(
@@ -47,33 +48,55 @@ class FeedViewScreen extends ConsumerWidget {
                       size: 50.0,
                     ),
                   )
-                : ListView.builder(
-                    itemCount: feeds.length,
-                    itemBuilder: (context, index) {
-                      final feed = feeds[index];
-                      return ListTile(
-                        title: Text(feed.title),
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(timeago.format(feed.date)),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                left: 3,
-                                right: 3,
-                              ),
-                              child: Text('•'),
+                : feeds.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: feeds.length,
+                        itemBuilder: (context, index) {
+                          final feed = feeds[index];
+                          return ListTile(
+                            title: Text(feed.title),
+                            subtitle: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(timeago.format(feed.date)),
+                                const Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 3,
+                                    right: 3,
+                                  ),
+                                  child: Text('•'),
+                                ),
+                                Text(feed.domain),
+                              ],
                             ),
-                            Text(feed.domain),
-                          ],
+                            onTap: () => ref
+                                .read(readerContentControllerProvider.notifier)
+                                .loadContent(feed),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: TextButton(
+                          onPressed: () => ref
+                              .read(pageControllerProvider.notifier)
+                              .jumpToPage(2),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Ajouter un flux RSS'),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Icon(
+                                Icons.rss_feed,
+                                size: 20,
+                              ),
+                            ],
+                          ),
                         ),
-                        onTap: () => ref
-                            .read(readerContentControllerProvider.notifier)
-                            .loadContent(feed),
-                      );
-                    },
-                  ),
+                      ),
           ),
           const ContentReaderElement(),
         ],

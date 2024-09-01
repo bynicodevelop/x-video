@@ -5,14 +5,17 @@ import 'package:x_video_ai/components/buttons/popover_button_component.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_component.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
+import 'package:x_video_ai/controllers/page_controller.dart';
 import 'package:x_video_ai/controllers/project_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
 import 'package:x_video_ai/elements/forms/create_project_form_element.dart';
 import 'package:x_video_ai/gateway/file_picker_gateway.dart';
 import 'package:x_video_ai/models/project_model.dart';
+import 'package:x_video_ai/screens/views/editor_view_screen.dart';
 import 'package:x_video_ai/screens/views/feed_view_screen.dart';
 import 'package:x_video_ai/screens/views/settings_view_screen.dart';
 import 'package:x_video_ai/services/config_service.dart';
+import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/translate.dart';
 
 class ScafflodScreen extends ConsumerStatefulWidget {
@@ -25,10 +28,6 @@ class ScafflodScreen extends ConsumerStatefulWidget {
 }
 
 class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
-  final PageController _pageController = PageController(
-    initialPage: 0,
-  );
-
   @override
   void initState() {
     super.initState();
@@ -62,30 +61,40 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
     });
   }
 
-  int _getCurrentPage() {
-    if (_pageController.hasClients) {
-      return _pageController.page?.round() ?? 0;
-    } else {
-      return 0;
-    }
-  }
-
   List<NavbarItemComponent> _buildNavBarItems(
     BuildContext context, {
     bool isActive = false,
   }) {
     return [
       NavbarItemComponent(
-        selected: _getCurrentPage() == 0,
-        icon: Icons.rss_feed_outlined,
-        label: $(context).nav_bar_item_rss_feed,
-        onTap: isActive ? () => _pageController.jumpToPage(0) : null,
+        selected: ref.watch(pageControllerProvider) == kEditorPage,
+        icon: Icons.auto_fix_high,
+        label: $(context).nav_bar_item_editor,
+        onTap: isActive
+            ? () => ref
+                .read(pageControllerProvider.notifier)
+                .jumpToPage(kEditorPage)
+            : null,
       ),
       NavbarItemComponent(
-        selected: _getCurrentPage() == 1,
+        selected: ref.watch(pageControllerProvider) == kRssFeedPage,
+        icon: Icons.rss_feed_outlined,
+        label: $(context).nav_bar_item_rss_feed,
+        onTap: isActive
+            ? () => ref
+                .read(pageControllerProvider.notifier)
+                .jumpToPage(kRssFeedPage)
+            : null,
+      ),
+      NavbarItemComponent(
+        selected: ref.watch(pageControllerProvider) == kSettingPage,
         icon: Icons.settings_outlined,
         label: $(context).nav_bar_item_settings,
-        onTap: isActive ? () => _pageController.jumpToPage(1) : null,
+        onTap: isActive
+            ? () => ref
+                .read(pageControllerProvider.notifier)
+                .jumpToPage(kSettingPage)
+            : null,
       ),
     ];
   }
@@ -138,7 +147,7 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    ref.read(pageControllerProvider.notifier).dispose();
     super.dispose();
   }
 
@@ -192,11 +201,12 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
               padding: const EdgeInsets.all(20),
               child: PageView(
                 physics: const NeverScrollableScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: (value) => setState(() {}),
-                children: [
+                controller:
+                    ref.watch(pageControllerProvider.notifier).pageController,
+                children: const [
+                  EditorViewScreen(),
                   FeedViewScreen(),
-                  const SettingViewScreen(),
+                  SettingViewScreen(),
                 ],
               ),
             ),
