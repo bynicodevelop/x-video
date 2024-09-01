@@ -1,25 +1,52 @@
+import 'dart:convert';
 import 'dart:io';
 
 class ContentExtractorService {
+  final String fileName = 'rss_content.json';
+
   Future<void> extractContent(
     Map<String, String> content,
     String path,
   ) async {
-    // Name miliseconds
-    final String directoryName =
-        DateTime.now().millisecondsSinceEpoch.toString();
+    final File file = _getFile(path);
+    final List<Map<String, String>> rssContent = getContent(path);
+    final int index = rssContent.indexWhere(
+      (element) => element['link'] == content['link'],
+    );
 
-    // Create directory
-    final Directory directory = Directory('$path/$directoryName');
+    if (index == -1) {
+      rssContent.add(content);
+      file.writeAsStringSync(jsonEncode(rssContent));
+    }
+  }
 
-    if (!await directory.exists()) {
-      await directory.create();
+  List<Map<String, String>> getContent(String path) {
+    final File file = _getFile(path);
+
+    if (!file.existsSync()) {
+      file.createSync(recursive: true);
+      file.writeAsStringSync('[]');
+
+      return [];
     }
 
-    // Create file
-    final File file = File('${directory.path}/content.txt');
+    final String fileContent = file.readAsStringSync();
+    final List<dynamic> decodedJson = jsonDecode(fileContent);
+    final List<Map<String, String>> rssContent = decodedJson.map((item) {
+      return {
+        'title': item['title'].toString(),
+        'content': item['content'].toString(),
+        'link': item['link'].toString(),
+      };
+    }).toList();
 
-    // Write content
-    await file.writeAsString("${content['title']}\n\n${content['content']}");
+    return rssContent;
+  }
+
+  File _getFile(String path) {
+    final Directory directory = Directory(path);
+    final File file = File('${directory.path}/$fileName');
+
+    return file;
   }
 }
