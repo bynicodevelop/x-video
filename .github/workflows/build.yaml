@@ -32,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: macOS-app
-          path: build/macos/Build/Products/Release/*.app
+          path: build/macos/Build/Products/Release/
