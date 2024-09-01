@@ -4,7 +4,7 @@ import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/controllers/url_extractor_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
-import 'package:x_video_ai/models/feed_model.dart';
+import 'package:x_video_ai/models/link_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/rss_selector_view_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/url_extract_view_editor_screen.dart';
 import 'package:x_video_ai/utils/translate.dart';
@@ -64,19 +64,13 @@ class _ChronicalViewEditorScreenState
                             .read(urlExtractorControllerProvider.notifier)
                             .url;
 
-                        final FeedModel feed = FeedModel(
-                          title: '',
-                          link: url,
-                          description: '',
-                          domain: '',
-                          date: DateTime.now(),
-                        );
-
-                        print(feed.toJson());
-
                         ref
                             .read(readerContentControllerProvider.notifier)
-                            .loadContent(feed);
+                            .loadContent(
+                              LinkModel(
+                                link: url,
+                              ),
+                            );
 
                         Navigator.of(context).pop();
                       }
@@ -100,6 +94,12 @@ class _ChronicalViewEditorScreenState
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(readerContentControllerProvider, (previous, next) {
+      if (next != null) {
+        setState(() => showEditor = true);
+      }
+    });
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.20,
@@ -136,8 +136,6 @@ class _ChronicalViewEditorScreenState
                           context,
                           RssSelectorViewEditor(
                             onFeedSelected: (feed) {
-                              print(feed.toJson());
-
                               ref
                                   .read(
                                       readerContentControllerProvider.notifier)
