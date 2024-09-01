@@ -26,6 +26,7 @@ class ExportContentController extends StateNotifier {
       {
         'title': content['title'],
         'content': content['content'],
+        'link': content['model'].link,
       },
       "${_configController.configService!.model!.path}/${_configController.configService!.model!.name}",
     );
