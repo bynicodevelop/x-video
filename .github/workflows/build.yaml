@@ -34,10 +34,10 @@ jobs:
       - name: Create ZIP of Release directory
         run: |
           cd build/macos/Build/Products/
-          zip -r macOS-app.zip Release/
+          zip -r x_video_ai.zip x_video_ai
 
       - name: Upload macOS app ZIP
         uses: actions/upload-artifact@v3
         with:
           name: macOS-app
-          path: build/macos/Build/Products/macOS-app.zip
+          path: build/macos/Build/Products/x_video_ai.zip
