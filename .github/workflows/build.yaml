@@ -26,18 +26,8 @@ jobs:
 
       - run: flutter build macos --release
 
-      - name: Clean up build directory
-        run: |
-          cd build/macos/Build/Products/Release/
-          find . -mindepth 1 ! -name 'x_video_ai.app' -exec rm -rf {} +
-
-      - name: Create ZIP of Release directory
-        run: |
-          cd build/macos/Build/Products/
-          zip -r macOS-app.zip Release/
-
-      - name: Upload macOS app ZIP
+      - name: Upload macOS build artifact
         uses: actions/upload-artifact@v3
         with:
           name: macOS-app
-          path: build/macos/Build/Products/macOS-app.zip
+          path: build/macos/Build/Products/Release/

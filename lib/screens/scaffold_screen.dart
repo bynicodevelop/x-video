@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/components/buttons/popover_button_component.dart';
@@ -32,13 +33,15 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // TODO: Ne pas commiter
-      ref.read(configControllerProvider.notifier).loadConfiguration(
-            path:
-                '/Volumes/Macintosh HD/Users/nicolasmoricet/Documents/XVideoIA/Nouveau project',
-          );
-    });
+    if (kDebugMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // TODO: Ne pas commiter
+        ref.read(configControllerProvider.notifier).loadConfiguration(
+              path:
+                  '/Volumes/Macintosh HD/Users/nicolasmoricet/Documents/XVideoIA/Nouveau project',
+            );
+      });
+    }
   }
 
   void _openFolderAndCreateProject(BuildContext context) {
