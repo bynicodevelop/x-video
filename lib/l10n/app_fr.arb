@@ -1,0 +1,16 @@
+{
+  "projects_button_label": "Projets",
+  "open_projects_button_label": "Ouvrir un projet",
+  "create_projects_button_label": "Créer un projet",
+  "create_project_dialog_title": "Créer un projet",
+  "cancel_button_label": "Annuler",
+  "confirm_button_label": "Confirmer",
+  "form_project_name_label": "Nom du projet",
+  "untitled_project_name": "Projet sans titre",
+  "nav_bar_item_settings": "Paramètres",
+  "nav_bar_item_rss_feed": "Flux RSS",
+  "setting_section_open_ai": "OpenAI",
+  "setting_field_api_key_open_ai": "Clé API",
+  "setting_field_model_open_ai": "Modèle",
+  "setting_field_voice_open_ai": "Voix"
+}

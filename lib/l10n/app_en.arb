@@ -1,0 +1,72 @@
+{
+  "projects_button_label": "Projects",
+  "@projects_button_label": {
+    "description": "The label for the projects button",
+    "type": "text"
+  },
+  "open_projects_button_label": "Open Project",
+  "@open_projects_button_label": {
+    "description": "The label for the open projects button",
+    "type": "text"
+  },
+  "create_projects_button_label": "Create Project",
+  "@create_projects_button_label": {
+    "description": "The label for the create projects button",
+    "type": "text"
+  },
+  "create_project_dialog_title": "Create Project",
+  "@create_project_dialog_title": {
+    "description": "The title for the create project dialog",
+    "type": "text"
+  },
+  "cancel_button_label": "Cancel",
+  "@cancel_button_label": {
+    "description": "The label for the cancel button",
+    "type": "text"
+  },
+  "confirm_button_label": "Confirm",
+  "@confirm_button_label": {
+    "description": "The label for the confirm button",
+    "type": "text"
+  },
+  "form_project_name_label": "Project Name",
+  "@form_project_name_label": {
+    "description": "The label for the project name form field",
+    "type": "text"
+  },
+  "untitled_project_name": "Untitled Project",
+  "@untitled_project_name": {
+    "description": "The default name for a new project",
+    "type": "text"
+  },
+  "nav_bar_item_settings": "Settings",
+  "@nav_bar_item_settings": {
+    "description": "The label for the settings nav bar item",
+    "type": "text"
+  },
+  "nav_bar_item_rss_feed": "RSS Feed",
+  "@nav_bar_item_rss_feed": {
+    "description": "The label for the RSS feed nav bar item",
+    "type": "text"
+  },
+  "setting_section_open_ai": "OpenAI",
+  "@setting_section_open_ai": {
+    "description": "The label for the OpenAI settings section",
+    "type": "text"
+  },
+  "setting_field_api_key_open_ai": "API Key",
+  "@setting_field_api_key_open_ai": {
+    "description": "The label for the OpenAI API key setting field",
+    "type": "text"
+  },
+  "setting_field_model_open_ai": "Model",
+  "@setting_field_model_open_ai": {
+    "description": "The label for the OpenAI model setting field",
+    "type": "text"
+  },
+  "setting_field_voice_open_ai": "Voice",
+  "@setting_field_voice_open_ai": {
+    "description": "The label for the OpenAI voice setting field",
+    "type": "text"
+  }
+}
