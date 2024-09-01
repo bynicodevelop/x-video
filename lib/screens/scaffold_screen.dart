@@ -191,6 +191,7 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: PageView(
+                physics: const NeverScrollableScrollPhysics(),
                 controller: _pageController,
                 onPageChanged: (value) => setState(() {}),
                 children: [

@@ -16,6 +16,7 @@ jobs:
         with:
           channel: stable
           flutter-version: 3.19.5
+
       - run: flutter --version
 
       - name: Get dependencies
@@ -25,8 +26,6 @@ jobs:
         run: flutter test
 
       - run: flutter build macos --release
-
-      - run: chmod -R +x build/macos/Build/Products/Release/*.app
 
       - name: Upload macOS build artifact
         uses: actions/upload-artifact@v3
