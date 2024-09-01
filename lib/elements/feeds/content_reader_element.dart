@@ -70,9 +70,11 @@ class ContentReaderElement extends ConsumerWidget {
             children: [
               IconButtonComponent(
                 icon: Icons.file_download,
-                onPressed: () => ref
-                    .read(exportContentControllerProvider.notifier)
-                    .exportContent(content!),
+                onPressed: content != null
+                    ? () => ref
+                        .read(exportContentControllerProvider.notifier)
+                        .exportContent(content)
+                    : null,
               ),
               IconButtonComponent(
                 icon: Icons.launch_outlined,
