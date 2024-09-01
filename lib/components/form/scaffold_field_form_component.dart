@@ -5,11 +5,13 @@ class ScaffoldFieldFormComponent extends ConsumerWidget {
   final String label;
   final Widget field;
   final Widget? suffix;
+  final bool labelCenter;
 
   const ScaffoldFieldFormComponent({
     required this.label,
     required this.field,
     this.suffix,
+    this.labelCenter = true,
     super.key,
   });
 
@@ -24,7 +26,8 @@ class ScaffoldFieldFormComponent extends ConsumerWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment:
+            labelCenter ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
           SizedBox(
             width: 200,

@@ -9,8 +9,22 @@
   "untitled_project_name": "Projet sans titre",
   "nav_bar_item_settings": "Paramètres",
   "nav_bar_item_rss_feed": "Flux RSS",
+  "nav_bar_item_editor": "Éditeur",
+  "button_add_rss_feed": "Ajouter un flux RSS",
   "setting_section_open_ai": "OpenAI",
   "setting_field_api_key_open_ai": "Clé API",
   "setting_field_model_open_ai": "Modèle",
-  "setting_field_voice_open_ai": "Voix"
+  "setting_field_voice_open_ai": "Voix",
+  "form_extract_title_label": "Extraire à partir de l'URL",
+  "form_extract_url_label": "URL",
+  "confirm_extract_button_label": "Extraire",
+  "form_extract_rss_title_label": "Créer à partir du flux RSS",
+  "tooltip_button_extract_rss": "Créer une chronique à partir\nde votre flux RSS",
+  "chronicle_button_extract_rss_label": "Flux RSS",
+  "tooltip_button_extract_url": "Créer une chronique\nà partir d'une url",
+  "chronicle_button_extract_url_label": "Url",
+  "tooltip_button_write": "Ecrire votre chronique",
+  "chronicle_button_extract_write_label": "Écrire",
+  "chronicle_view_title_answer": "Que voulez vous faire ?",
+  "chronicle_view_subtitle_answer": "A partir de quel support voulez vous créer votre chronique ?"
 }

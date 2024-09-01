@@ -49,6 +49,16 @@
     "description": "The label for the RSS feed nav bar item",
     "type": "text"
   },
+  "nav_bar_item_editor": "Editor",
+  "@nav_bar_item_editor": {
+    "description": "The label for the editor nav bar item",
+    "type": "text"
+  },
+  "button_add_rss_feed": "Add RSS Feed",
+  "@button_add_rss_feed": {
+    "description": "The label for the RSS feed nav bar item",
+    "type": "text"
+  },
   "setting_section_open_ai": "OpenAI",
   "@setting_section_open_ai": {
     "description": "The label for the OpenAI settings section",
@@ -67,6 +77,66 @@
   "setting_field_voice_open_ai": "Voice",
   "@setting_field_voice_open_ai": {
     "description": "The label for the OpenAI voice setting field",
+    "type": "text"
+  },
+  "form_extract_title_label": "Extract from URL",
+  "@form_extract_title_label": {
+    "description": "The label for the extract title form field",
+    "type": "text"
+  },
+  "form_extract_url_label": "URL",
+  "@form_extract_url_label": {
+    "description": "The label for the extract URL form field",
+    "type": "text"
+  },
+  "confirm_extract_button_label": "Extract",
+  "@confirm_extract_button_label": {
+    "description": "The label for the extract button",
+    "type": "text"
+  },
+  "form_extract_rss_title_label": "Extract from RSS Feed",
+  "@form_extract_rss_title_label": {
+    "description": "The label for the extract RSS title form field",
+    "type": "text"
+  },
+  "tooltip_button_extract_rss": "Create chronicle\nfrom RSS feed",
+  "@tooltip_button_extract_rss": {
+    "description": "The tooltip for the extract RSS button",
+    "type": "text"
+  },
+  "chronicle_button_extract_rss_label": "RSS Feed",
+  "@chronicle_button_extract_rss_label": {
+    "description": "The label for the extract RSS button",
+    "type": "text"
+  },
+  "tooltip_button_extract_url": "Create chronicle from URL",
+  "@tooltip_button_extract_url": {
+    "description": "The tooltip for the extract URL button",
+    "type": "text"
+  },
+  "chronicle_button_extract_url_label": "Url",
+  "@chronicle_button_extract_url_label": {
+    "description": "The label for the extract URL button",
+    "type": "text"
+  },
+  "tooltip_button_write": "Write chronicle",
+  "@tooltip_button_write": {
+    "description": "The tooltip for the write button",
+    "type": "text"
+  },
+  "chronicle_button_extract_write_label": "Write",
+  "@chronicle_button_extract_write_label": {
+    "description": "The label for the write button",
+    "type": "text"
+  },
+  "chronicle_view_title_answer": "What do you want to do?",
+  "@chronicle_view_title_answer": {
+    "description": "The title for the answer view",
+    "type": "text"
+  },
+  "chronicle_view_subtitle_answer": "From which source do you want to create your chronicle?",
+  "@chronicle_view_subtitle_answer": {
+    "description": "The subtitle for the answer view",
     "type": "text"
   }
 }

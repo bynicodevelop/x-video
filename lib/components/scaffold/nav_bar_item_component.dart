@@ -43,6 +43,7 @@ class _NavbarItemComponentState extends ConsumerState<NavbarItemComponent> {
                       : Theme.of(context).colorScheme.secondary
                   : Colors.grey,
             ),
+            const SizedBox(height: 4),
             Text(
               widget.label,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(

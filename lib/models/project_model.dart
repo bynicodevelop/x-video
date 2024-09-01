@@ -1,11 +1,12 @@
 import 'package:x_video_ai/services/abstracts/json_deserializable.dart';
 
-class ProjectModel extends JsonDeserializable<ProjectModel> {
+class ProjectModel implements JsonDeserializable {
   final String name;
   final String path;
   final String? apiKeyOpenAi;
   final String? modelOpenAi;
   final String? voiceOpenAi;
+  final String? chronicalPrompt;
   final List<String> feeds;
 
   ProjectModel({
@@ -14,6 +15,7 @@ class ProjectModel extends JsonDeserializable<ProjectModel> {
     this.apiKeyOpenAi,
     this.modelOpenAi,
     this.voiceOpenAi,
+    this.chronicalPrompt,
     this.feeds = const [],
   });
 
@@ -24,6 +26,7 @@ class ProjectModel extends JsonDeserializable<ProjectModel> {
         apiKeyOpenAi: json['apiKeyOpenAi'],
         modelOpenAi: json['modelOpenAi'],
         voiceOpenAi: json['voiceOpenAi'],
+        chronicalPrompt: json['chronicalPrompt'],
         feeds: List<String>.from(json['feeds'] ?? []),
       );
 
@@ -34,6 +37,7 @@ class ProjectModel extends JsonDeserializable<ProjectModel> {
         'apiKeyOpenAi': apiKeyOpenAi,
         'modelOpenAi': modelOpenAi,
         'voiceOpenAi': voiceOpenAi,
+        'chronicalPrompt': chronicalPrompt,
         'feeds': feeds,
       };
 
@@ -44,6 +48,7 @@ class ProjectModel extends JsonDeserializable<ProjectModel> {
         apiKeyOpenAi: json['apiKeyOpenAi'] ?? apiKeyOpenAi,
         modelOpenAi: json['modelOpenAi'] ?? modelOpenAi,
         voiceOpenAi: json['voiceOpenAi'] ?? voiceOpenAi,
+        chronicalPrompt: json['chronicalPrompt'] ?? chronicalPrompt,
         feeds: List<String>.from(json['feeds'] ?? feeds),
       );
 }

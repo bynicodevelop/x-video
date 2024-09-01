@@ -1,15 +1,15 @@
+import 'package:x_video_ai/models/link_model.dart';
 import 'package:x_video_ai/services/abstracts/json_deserializable.dart';
 
-class FeedModel extends JsonDeserializable<FeedModel> {
+class FeedModel extends LinkModel implements JsonDeserializable {
   final String title;
-  final String link;
   final String domain;
   final String description;
   final DateTime date;
 
   FeedModel({
+    required super.link,
     required this.title,
-    required this.link,
     required this.domain,
     required this.description,
     required this.date,

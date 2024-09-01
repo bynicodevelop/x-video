@@ -4,16 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class MainDialogElement extends ConsumerWidget {
   final Widget child;
   final String? title;
-  final ButtonStyleButton confirm;
+  final ButtonStyleButton? confirm;
   final ButtonStyleButton? cancel;
   final double width;
+  final double? height;
 
   const MainDialogElement({
     required this.child,
-    required this.confirm,
+    this.confirm,
     this.cancel,
     this.title,
     this.width = 300,
+    this.height,
     super.key,
   });
 
@@ -22,7 +24,7 @@ class MainDialogElement extends ConsumerWidget {
     return AlertDialog(
       title: title != null ? Text(title!) : null,
       content: SizedBox(
-        height: 100,
+        height: height ?? 100,
         width: width,
         child: SingleChildScrollView(
           child: child,
@@ -30,7 +32,7 @@ class MainDialogElement extends ConsumerWidget {
       ),
       actions: [
         if (cancel != null) cancel!,
-        confirm,
+        if (confirm != null) confirm!,
       ],
     );
   }

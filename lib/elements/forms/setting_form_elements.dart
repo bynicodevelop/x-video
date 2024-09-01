@@ -4,6 +4,7 @@ import 'package:x_video_ai/components/form/heading_form_component.dart';
 import 'package:x_video_ai/components/form/scaffold_field_form_component.dart';
 import 'package:x_video_ai/components/form/text_form_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
+import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/debounce.dart';
 import 'package:x_video_ai/utils/translate.dart';
 
@@ -17,6 +18,23 @@ class SettingFormElement extends ConsumerWidget {
     return Form(
       child: Column(
         children: [
+          HeadingFormComponent(
+            label: $(context).setting_section_open_ai,
+          ),
+          ScaffoldFieldFormComponent(
+            labelCenter: false,
+            label: $(context).setting_field_api_key_open_ai,
+            field: TextFormComponent(
+              isTextArea: true,
+              initialValue: config?.model?.chronicalPrompt,
+              onChanged: (value) => debounce(
+                () => ref.read(configControllerProvider)?.updateConfiguration(
+                      'chronicalPrompt',
+                      value,
+                    ),
+              ),
+            ),
+          ),
           HeadingFormComponent(
             label: $(context).setting_section_open_ai,
           ),
@@ -80,7 +98,7 @@ class SettingFormElement extends ConsumerWidget {
                               ..removeAt(index);
                         ref
                             .read(configControllerProvider.notifier)
-                            .update('feeds', updatedFeeds);
+                            .update(kLoadingFeeds, updatedFeeds);
                       },
                       icon: const Icon(Icons.delete_outline),
                     ),
@@ -136,7 +154,7 @@ class __AddFieldFormComponentState
                       ..add(_apiKeyOpenAiController.text);
                 ref
                     .read(configControllerProvider.notifier)
-                    .update('feeds', updatedFeeds);
+                    .update(kLoadingFeeds, updatedFeeds);
 
                 _apiKeyOpenAiController.clear();
               }

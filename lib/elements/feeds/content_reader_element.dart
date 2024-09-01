@@ -6,6 +6,7 @@ import 'package:x_video_ai/controllers/export_content_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:x_video_ai/utils/constants.dart';
 
 class ContentReaderElement extends ConsumerWidget {
   const ContentReaderElement({
@@ -23,7 +24,7 @@ class ContentReaderElement extends ConsumerWidget {
           padding: const EdgeInsets.only(
             left: 10,
           ),
-          child: isLoading['reader'] == true
+          child: isLoading[kLoadingReader] == true
               ? Center(
                   child: SpinKitThreeBounce(
                     color: Theme.of(context).primaryColor.withOpacity(.3),

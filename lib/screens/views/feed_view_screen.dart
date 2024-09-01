@@ -8,6 +8,8 @@ import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/page_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/elements/feeds/content_reader_element.dart';
+import 'package:x_video_ai/utils/constants.dart';
+import 'package:x_video_ai/utils/translate.dart';
 
 class FeedViewScreen extends ConsumerStatefulWidget {
   const FeedViewScreen({super.key});
@@ -41,11 +43,11 @@ class _FeedViewScreenState extends ConsumerState<FeedViewScreen> {
             padding: const EdgeInsets.only(
               right: 10,
             ),
-            child: loading['feeds'] == true
+            child: loading[kLoadingFeeds] == true
                 ? Center(
                     child: SpinKitThreeBounce(
                       color: Theme.of(context).primaryColor.withOpacity(.3),
-                      size: 50.0,
+                      size: 40.0,
                     ),
                   )
                 : feeds.isNotEmpty
@@ -81,15 +83,15 @@ class _FeedViewScreenState extends ConsumerState<FeedViewScreen> {
                           onPressed: () => ref
                               .read(pageControllerProvider.notifier)
                               .jumpToPage(2),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('Ajouter un flux RSS'),
-                              SizedBox(
+                              Text($(context).button_add_rss_feed),
+                              const SizedBox(
                                 width: 5,
                               ),
-                              Icon(
+                              const Icon(
                                 Icons.rss_feed,
                                 size: 20,
                               ),

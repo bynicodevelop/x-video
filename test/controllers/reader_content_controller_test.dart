@@ -5,6 +5,7 @@ import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/models/feed_model.dart';
 import 'package:x_video_ai/services/parse_service.dart';
+import 'package:x_video_ai/utils/constants.dart';
 
 import 'reader_content_controller_test.mocks.dart';
 
@@ -47,8 +48,8 @@ void main() {
       'model': feedModel,
     });
 
-    verify(mockLoadingController.startLoading('reader')).called(1);
-    verify(mockLoadingController.stopLoading('reader')).called(1);
+    verify(mockLoadingController.startLoading(kLoadingReader)).called(1);
+    verify(mockLoadingController.stopLoading(kLoadingReader)).called(1);
   });
 
   test('should call startLoading and stopLoading correctly', () async {
@@ -69,8 +70,8 @@ void main() {
     await readerContentController.loadContent(feedModel);
 
     // Assert
-    verify(mockLoadingController.startLoading('reader')).called(1);
-    verify(mockLoadingController.stopLoading('reader')).called(1);
+    verify(mockLoadingController.startLoading(kLoadingReader)).called(1);
+    verify(mockLoadingController.stopLoading(kLoadingReader)).called(1);
   });
 
   test('should handle parse service failure', () async {
@@ -97,7 +98,7 @@ void main() {
     expect(readerContentController.content, isNull);
 
     // Verify that startLoading and stopLoading were both called
-    verify(mockLoadingController.startLoading('reader')).called(1);
-    verify(mockLoadingController.stopLoading('reader')).called(1);
+    verify(mockLoadingController.startLoading(kLoadingReader)).called(1);
+    verify(mockLoadingController.stopLoading(kLoadingReader)).called(1);
   });
 }

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:x_video_ai/services/abstracts/json_deserializable.dart';
 
-class ConfigService<T extends JsonDeserializable<T>> {
+class ConfigService<T extends JsonDeserializable> {
   String? _path;
   String? _name;
   T? _model;
