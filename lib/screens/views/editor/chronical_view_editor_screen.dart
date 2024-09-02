@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
+import 'package:x_video_ai/controllers/content_controller.dart';
+import 'package:x_video_ai/controllers/content_list_controller.dart';
+import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/controllers/url_extractor_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
 import 'package:x_video_ai/models/link_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/rss_selector_view_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/url_extract_view_editor_screen.dart';
+import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/translate.dart';
 
 class ChronicalViewEditorScreen extends ConsumerStatefulWidget {
@@ -92,10 +97,60 @@ class _ChronicalViewEditorScreenState
     );
   }
 
+  void _createOpenContenttDialog(
+    BuildContext context,
+  ) {
+    final isLoading = ref.watch(loadingControllerProvider);
+    ref.read(contentListControllerProvider.notifier).loadContents();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final contentModels =
+                ref.read(contentListControllerProvider.notifier).contentList;
+
+            return MainDialogElement(
+              title: 'Ouvrir un contenu existant',
+              child: isLoading[kLoadingContent] == true
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: contentModels.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text('Content ${contentModels[index].id}'),
+                          onTap: () {
+                            ref
+                                .read(contentControllerProvider.notifier)
+                                .initContent(contentModels[index]);
+
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                    ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(readerContentControllerProvider, (previous, next) {
       if (next != null) {
+        ref.read(contentControllerProvider.notifier).setContent(
+              next['title'],
+              next['content'],
+            );
+
+        ref.read(contentControllerProvider.notifier).save();
+
         setState(() => showEditor = true);
       }
     });
@@ -179,7 +234,14 @@ class _ChronicalViewEditorScreenState
                       ),
                     ),
                   ],
-                )
+                ),
+                const SizedBox(
+                  height: 32,
+                ),
+                TextButton(
+                  onPressed: () => _createOpenContenttDialog(context),
+                  child: const Text('Ouvrir un contenu existant'),
+                ),
               ],
             )
           : Column(

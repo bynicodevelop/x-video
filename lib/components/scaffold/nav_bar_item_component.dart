@@ -34,16 +34,26 @@ class _NavbarItemComponentState extends ConsumerState<NavbarItemComponent> {
         onTap: widget.onTap,
         child: Column(
           children: [
-            Icon(
-              widget.icon,
-              size: 24,
-              color: widget.onTap != null
-                  ? isHovered || widget.selected
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.secondary
-                  : Colors.grey,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: widget.onTap != null
+                    ? isHovered || widget.selected
+                        ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                        : Colors.transparent
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                widget.icon,
+                size: 24,
+                color: widget.onTap != null
+                    ? isHovered || widget.selected
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.secondary
+                    : Colors.grey,
+              ),
             ),
-            const SizedBox(height: 4),
             Text(
               widget.label,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(

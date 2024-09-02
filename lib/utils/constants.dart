@@ -6,3 +6,4 @@ const int kSettingPage = 2;
 // Loading states
 const String kLoadingFeeds = "feeds";
 const String kLoadingReader = "reader";
+const String kLoadingContent = "content";
