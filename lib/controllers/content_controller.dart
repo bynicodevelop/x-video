@@ -20,7 +20,9 @@ class ContentController extends StateNotifier<ContentModel> {
         ));
 
   bool get isInitialized => state.id.isNotEmpty;
-  bool get hasChronical => state.chronical != null && state.chronical!['content'] != null;
+  bool get isReadyVideo => false;
+  bool get hasChronical =>
+      state.chronical != null && state.chronical!['content'] != null;
 
   ContentModel get content => state;
 

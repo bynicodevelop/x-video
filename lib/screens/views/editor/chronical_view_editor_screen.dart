@@ -12,7 +12,6 @@ import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
 import 'package:x_video_ai/elements/forms/chronical_editor/chronical_editor_form_element.dart';
 import 'package:x_video_ai/elements/forms/create_content/create_content_form_element.dart';
 import 'package:x_video_ai/elements/forms/create_content/create_content_form_element_controller.dart';
-import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/models/link_model.dart';
 import 'package:x_video_ai/models/project_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/rss_selector_view_editor_screen.dart';
@@ -176,23 +175,6 @@ class _ChronicalViewEditorScreenState
         );
       },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final configService = ref.read(configControllerProvider);
-
-      if (configService?.model != null &&
-          configService!.model!.path.isNotEmpty &&
-          configService.model!.name.isNotEmpty) {
-        ref.read(contentControllerProvider.notifier).initContent(ContentModel(
-              path: "${configService.model!.path}/${configService.model!.name}",
-            ));
-      }
-    });
   }
 
   void _initListener() {

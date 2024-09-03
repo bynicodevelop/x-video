@@ -229,11 +229,25 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
             color: Theme.of(context).scaffoldBackgroundColor.withOpacity(
                   0.7,
                 ),
-            child: Center(
-              child: SpinKitSpinningLines(
-                color: Theme.of(context).primaryColor,
-                size: 50.0,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SpinKitSpinningLines(
+                  color: Theme.of(context).primaryColor,
+                  size: 50.0,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  ref
+                          .read(loadingControllerProvider.notifier)
+                          .progressState
+                          ?.message ??
+                      '',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ],
             ),
           ),
         )
