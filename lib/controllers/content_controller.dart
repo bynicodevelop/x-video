@@ -12,13 +12,22 @@ class ContentController extends StateNotifier<ContentModel> {
   ContentController(
     ContentService contentService,
     LoadingController loadingController,
+    String path,
   )   : _contentService = contentService,
         _loadingController = loadingController,
-        super(ContentModel());
+        super(ContentModel(
+          path: path,
+        ));
 
   bool get isInitialized => state.id.isNotEmpty;
 
-  void initContent(ContentModel contentModel) {
+  void initContent(
+    ContentModel contentModel,
+  ) {
+    if (contentModel.path.isEmpty) {
+      throw Exception("Path is required");
+    }
+
     state = contentModel;
   }
 
@@ -36,12 +45,7 @@ class ContentController extends StateNotifier<ContentModel> {
 
   void save() {
     _loadingController.startLoading(kLoadingContent);
-
-    _contentService.saveContent(
-      state,
-      contentName: "1725218992775",
-    );
-
+    _contentService.saveContent(state);
     _loadingController.startLoading(kLoadingContent);
   }
 }
@@ -50,11 +54,13 @@ final contentControllerProvider =
     StateNotifierProvider<ContentController, ContentModel>((ref) {
   final ConfigController configController =
       ref.read(configControllerProvider.notifier);
+
   final String path =
       "${configController.configService?.model?.path}/${configController.configService?.model?.name}";
 
   return ContentController(
-    ContentService(path),
+    const ContentService(),
     ref.read(loadingControllerProvider.notifier),
+    path,
   );
 });

@@ -138,5 +138,20 @@
   "@chronicle_view_subtitle_answer": {
     "description": "The subtitle for the answer view",
     "type": "text"
+  },
+  "create_content_title_modal": "Create Content",
+  "@create_content_title_modal": {
+    "description": "The title for the create content modal",
+    "type": "text"
+  },
+  "create_content_label_form_element": "Content Name",
+  "@create_content_label_form_element": {
+    "description": "The label for the content name form element",
+    "type": "text"
+  },
+  "nex_button_modal": "Next",
+  "@nex_button_modal": {
+    "description": "The label for the next button in the modal",
+    "type": "text"
   }
 }

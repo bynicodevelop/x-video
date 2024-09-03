@@ -4,19 +4,20 @@ import 'dart:io';
 import 'package:x_video_ai/models/content_model.dart';
 
 class ContentService {
-  final String projectPath;
+  const ContentService();
 
-  const ContentService(
-    this.projectPath,
-  );
+  void saveContent(ContentModel contentModel) {
+    if (contentModel.path.isEmpty) {
+      throw Exception("Path is required");
+    }
 
-  void saveContent(
-    ContentModel contentModel, {
-    String? contentName,
-  }) {
-    final String fileName =
-        contentName ?? DateTime.now().millisecondsSinceEpoch.toString();
-    final File file = _getFile("$projectPath/contents/$fileName.json");
+    final String fileName = contentModel.id.isNotEmpty
+        ? contentModel.id
+        : DateTime.now().millisecondsSinceEpoch.toString();
+
+    final String path = contentModel.path;
+
+    final File file = _getFile("$path/contents/$fileName.json");
     final Map<String, dynamic> jsonContent = getContent(file.path);
     final Map<String, dynamic> mergedContent = contentModel.toJson();
 
@@ -25,8 +26,12 @@ class ContentService {
     file.writeAsStringSync(jsonEncode(jsonContent));
   }
 
-  List<ContentModel> loadContents() {
-    final Directory directory = Directory("$projectPath/contents");
+  List<ContentModel> loadContents(final String path) {
+    if (path.isEmpty) {
+      throw Exception("Path is required");
+    }
+
+    final Directory directory = Directory("$path/contents");
     final List<FileSystemEntity> files = directory
         .listSync()
         .where((element) => element.path.endsWith('.json'))
@@ -39,7 +44,9 @@ class ContentService {
 
       if (json is Map<String, dynamic>) {
         // Si le JSON est un objet (Map)
-        final ContentModel contentModel = ContentModel();
+        final ContentModel contentModel = ContentModel(
+          path: directory.path,
+        );
 
         contentList.add(contentModel.mergeWith({
           'id': _getFileNameWithoutExtension(file.path),
@@ -47,7 +54,7 @@ class ContentService {
         }));
       } else {
         // Gérer le cas où le JSON n'est ni un Map ni une List (si applicable)
-        print('Unexpected JSON format in file: ${file.path}');
+        throw Exception('Unexpected JSON format in file: ${file.path}');
       }
     }
 

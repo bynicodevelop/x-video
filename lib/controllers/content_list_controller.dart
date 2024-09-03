@@ -8,12 +8,15 @@ import 'package:x_video_ai/utils/constants.dart';
 class ContentListController extends StateNotifier<List<ContentModel>> {
   final ContentService _contentService;
   final LoadingController _loadingController;
+  final String _path;
 
   ContentListController(
     ContentService contentService,
     LoadingController loadingController,
+    String path,
   )   : _contentService = contentService,
         _loadingController = loadingController,
+        _path = path,
         super([]);
 
   List<ContentModel> get contentList => state;
@@ -21,7 +24,9 @@ class ContentListController extends StateNotifier<List<ContentModel>> {
   void loadContents() {
     _loadingController.startLoading(kLoadingContent);
 
-    state = _contentService.loadContents();
+    state = _contentService.loadContents(
+      _path,
+    );
 
     _loadingController.stopLoading(kLoadingContent);
   }
@@ -35,7 +40,8 @@ final contentListControllerProvider =
       "${configController.configService?.model?.path}/${configController.configService?.model?.name}";
 
   return ContentListController(
-    ContentService(path),
+    const ContentService(),
     ref.read(loadingControllerProvider.notifier),
+    path,
   );
 });

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
+import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/controllers/content_list_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/controllers/url_extractor_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
+import 'package:x_video_ai/elements/forms/create_content/create_content_form_element.dart';
+import 'package:x_video_ai/elements/forms/create_content/create_content_form_element_controller.dart';
+import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/models/link_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/rss_selector_view_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/url_extract_view_editor_screen.dart';
@@ -140,8 +143,73 @@ class _ChronicalViewEditorScreenState
     );
   }
 
+  void _createNewContenttDialog(
+    BuildContext context,
+    Function onContentCreated,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final formController =
+                ref.read(createContentFormControllerProvider.notifier);
+            final formState = ref.watch(createContentFormControllerProvider);
+
+            return MainDialogElement(
+              height: 80,
+              title: $(context).create_content_title_modal,
+              confirm: TextButton(
+                onPressed: formState.isValidForm
+                    ? () {
+                        formController.submit();
+                        Navigator.of(context).pop();
+                        onContentCreated();
+                      }
+                    : null,
+                child: Text(
+                  $(context).nex_button_modal,
+                ),
+              ),
+              child: const CreateContentFormElement(),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final configService = ref.read(configControllerProvider);
+
+      if (configService?.model != null &&
+          configService!.model!.path.isNotEmpty &&
+          configService.model!.name.isNotEmpty) {
+        ref.read(contentControllerProvider.notifier).initContent(ContentModel(
+              path: "${configService.model!.path}/${configService.model!.name}",
+            ));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    //     ref.listen<ConfigService<ProjectModel>?>(configControllerProvider,
+    //     (previous, next) {
+    //   if (next != null &&
+    //       next.model != null &&
+    //       next.model!.path.isNotEmpty &&
+    //       next.model!.name.isNotEmpty) {
+    //     ref.read(contentControllerProvider.notifier).initContent(ContentModel(
+    //           path: "${next.model!.path}/${next.model!.name}",
+    //         ));
+    //   }
+    // });
+
     ref.listen(readerContentControllerProvider, (previous, next) {
       if (next != null) {
         ref.read(contentControllerProvider.notifier).setContent(
@@ -187,19 +255,23 @@ class _ChronicalViewEditorScreenState
                       child: NavbarItemComponent(
                         icon: Icons.rss_feed_outlined,
                         label: $(context).chronicle_button_extract_rss_label,
-                        onTap: () => _createRsstDialog(
+                        onTap: () => _createNewContenttDialog(
                           context,
-                          RssSelectorViewEditor(
-                            onFeedSelected: (feed) {
-                              ref
-                                  .read(
-                                      readerContentControllerProvider.notifier)
-                                  .loadContent(feed);
-                              Navigator.of(context).pop();
-                              setState(() => showEditor = true);
-                            },
+                          () => _createRsstDialog(
+                            context,
+                            RssSelectorViewEditor(
+                              onFeedSelected: (feed) {
+                                ref
+                                    .read(readerContentControllerProvider
+                                        .notifier)
+                                    .loadContent(feed);
+
+                                Navigator.of(context).pop();
+                                setState(() => showEditor = true);
+                              },
+                            ),
+                            $(context).form_extract_rss_title_label,
                           ),
-                          $(context).form_extract_rss_title_label,
                         ),
                       ),
                     ),
@@ -213,10 +285,13 @@ class _ChronicalViewEditorScreenState
                       child: NavbarItemComponent(
                         icon: Icons.link_outlined,
                         label: $(context).chronicle_button_extract_url_label,
-                        onTap: () => _createLinktDialog(
+                        onTap: () => _createNewContenttDialog(
                           context,
-                          const UrlExtractViewEditor(),
-                          $(context).form_extract_title_label,
+                          () => _createLinktDialog(
+                            context,
+                            const UrlExtractViewEditor(),
+                            $(context).form_extract_title_label,
+                          ),
                         ),
                       ),
                     ),
@@ -230,7 +305,10 @@ class _ChronicalViewEditorScreenState
                       child: NavbarItemComponent(
                         icon: Icons.edit_note_outlined,
                         label: $(context).chronicle_button_extract_write_label,
-                        onTap: () => setState(() => showEditor = true),
+                        onTap: () => _createNewContenttDialog(
+                          context,
+                          () => setState(() => showEditor = true),
+                        ),
                       ),
                     ),
                   ],

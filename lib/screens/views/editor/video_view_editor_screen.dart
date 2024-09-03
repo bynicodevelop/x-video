@@ -1,6 +1,5 @@
 import 'package:desktop_split_pane/desktop_split_pane.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class VideoViewEditorScreen extends ConsumerWidget {
