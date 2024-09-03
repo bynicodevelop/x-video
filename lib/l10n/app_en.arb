@@ -59,6 +59,16 @@
     "description": "The label for the RSS feed nav bar item",
     "type": "text"
   },
+  "setting_section_chronical_prompt": "Prompts",
+  "@setting_section_chronical_prompt": {
+    "description": "The label for the prompts settings section",
+    "type": "text"
+  },
+  "setting_section_chronical_prompt_label": "Prompts writer",
+  "@setting_section_chronical_prompt_label": {
+    "description": "The label for the prompts settings section",
+    "type": "text"
+  },
   "setting_section_open_ai": "OpenAI",
   "@setting_section_open_ai": {
     "description": "The label for the OpenAI settings section",

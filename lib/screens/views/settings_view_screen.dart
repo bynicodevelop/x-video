@@ -10,6 +10,8 @@ class SettingViewScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) {
-    return const SettingFormElement();
+    return const SingleChildScrollView(
+      child: SettingFormElement(),
+    );
   }
 }

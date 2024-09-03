@@ -19,11 +19,11 @@ class SettingFormElement extends ConsumerWidget {
       child: Column(
         children: [
           HeadingFormComponent(
-            label: $(context).setting_section_open_ai,
+            label: $(context).setting_section_chronical_prompt,
           ),
           ScaffoldFieldFormComponent(
             labelCenter: false,
-            label: $(context).setting_field_api_key_open_ai,
+            label: $(context).setting_section_chronical_prompt_label,
             field: TextFormComponent(
               isTextArea: true,
               initialValue: config?.model?.chronicalPrompt,

@@ -11,6 +11,8 @@
   "nav_bar_item_rss_feed": "Flux RSS",
   "nav_bar_item_editor": "Éditeur",
   "button_add_rss_feed": "Ajouter un flux RSS",
+  "setting_section_chronical_prompt": "Prompts",
+  "setting_section_chronical_prompt_label": "Prompts de chronique",
   "setting_section_open_ai": "OpenAI",
   "setting_field_api_key_open_ai": "Clé API",
   "setting_field_model_open_ai": "Modèle",
