@@ -44,9 +44,7 @@ class CreateContentFormController extends StateNotifier<CreateContentState> {
 
     if (state.name.isEmpty) {
       errors['name'] = 'Name is required';
-    }
-
-    if (state.name.length < 3) {
+    } else if (state.name.length < 3) {
       errors['name'] = 'Name must be at least 3 characters';
     }
 
