@@ -7,3 +7,4 @@ const int kSettingPage = 2;
 const String kLoadingFeeds = "feeds";
 const String kLoadingReader = "reader";
 const String kLoadingContent = "content";
+const String kLoadingMain = "main";

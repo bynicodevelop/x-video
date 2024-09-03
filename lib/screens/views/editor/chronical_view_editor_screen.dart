@@ -4,6 +4,7 @@ import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/controllers/content_list_controller.dart';
+import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/controllers/url_extractor_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
@@ -13,6 +14,7 @@ import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/models/link_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/rss_selector_view_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/url_extract_view_editor_screen.dart';
+import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/translate.dart';
 
 class ChronicalViewEditorScreen extends ConsumerStatefulWidget {
@@ -66,6 +68,12 @@ class _ChronicalViewEditorScreenState
                         .read(urlExtractorControllerProvider.notifier)
                         .isValideUrl()
                     ? () {
+                        Navigator.of(context).pop();
+
+                        ref
+                            .read(loadingControllerProvider.notifier)
+                            .startLoading(kLoadingMain);
+
                         final String url = ref
                             .read(urlExtractorControllerProvider.notifier)
                             .url;
@@ -77,8 +85,6 @@ class _ChronicalViewEditorScreenState
                                 link: url,
                               ),
                             );
-
-                        Navigator.of(context).pop();
                       }
                     : null,
                 child: Text($(context).confirm_extract_button_label),
@@ -197,6 +203,8 @@ class _ChronicalViewEditorScreenState
         ref.read(contentControllerProvider.notifier).save();
 
         setState(() => showEditor = true);
+
+        ref.read(loadingControllerProvider.notifier).stopLoading(kLoadingMain);
       }
     });
 
@@ -248,12 +256,15 @@ class _ChronicalViewEditorScreenState
                             RssSelectorViewEditor(
                               onFeedSelected: (feed) {
                                 ref
+                                    .read(loadingControllerProvider.notifier)
+                                    .startLoading(kLoadingMain);
+
+                                Navigator.of(context).pop();
+
+                                ref
                                     .read(readerContentControllerProvider
                                         .notifier)
                                     .loadContent(feed);
-
-                                Navigator.of(context).pop();
-                                setState(() => showEditor = true);
                               },
                             ),
                             $(context).form_extract_rss_title_label,

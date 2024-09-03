@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:x_video_ai/components/buttons/popover_button_component.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_component.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
+import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/page_controller.dart';
 import 'package:x_video_ai/controllers/project_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
@@ -158,61 +160,84 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
     final ConfigService<ProjectModel>? configService =
         ref.watch(configControllerProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          configService != null && configService.model != null
-              ? configService.model!.name
-              : $(context).untitled_project_name,
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        actions: [
-          PopoverButtonComponent(
-            label: $(context).projects_button_label,
-            icon: Icons.source_outlined,
-            items: [
-              ItemPopoverButtonComponent(
-                label: $(context).create_projects_button_label,
-                icon: Icons.create_new_folder_outlined,
-                onPressed: () => _openFolderAndCreateProject(context),
+    ref.watch(loadingControllerProvider);
+
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: Text(
+              configService != null && configService.model != null
+                  ? configService.model!.name
+                  : $(context).untitled_project_name,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            actions: [
+              PopoverButtonComponent(
+                label: $(context).projects_button_label,
+                icon: Icons.source_outlined,
+                items: [
+                  ItemPopoverButtonComponent(
+                    label: $(context).create_projects_button_label,
+                    icon: Icons.create_new_folder_outlined,
+                    onPressed: () => _openFolderAndCreateProject(context),
+                  ),
+                  ItemPopoverButtonComponent(
+                    label: $(context).open_projects_button_label,
+                    icon: Icons.folder_open_outlined,
+                    onPressed: () => _openFolderAndLoadConfiguration(),
+                  ),
+                ],
               ),
-              ItemPopoverButtonComponent(
-                label: $(context).open_projects_button_label,
-                icon: Icons.folder_open_outlined,
-                onPressed: () => _openFolderAndLoadConfiguration(),
+              const SizedBox(
+                width: 20,
               ),
             ],
           ),
-          const SizedBox(
-            width: 20,
+          body: Row(
+            children: [
+              NavBarComponent(
+                items: _buildNavBarItems(
+                  context,
+                  isActive: configService != null,
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: PageView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: ref
+                        .watch(pageControllerProvider.notifier)
+                        .pageController,
+                    children: const [
+                      EditorViewScreen(),
+                      FeedViewScreen(),
+                      SettingViewScreen(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Row(
-        children: [
-          NavBarComponent(
-            items: _buildNavBarItems(
-              context,
-              isActive: configService != null,
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller:
-                    ref.watch(pageControllerProvider.notifier).pageController,
-                children: const [
-                  EditorViewScreen(),
-                  FeedViewScreen(),
-                  SettingViewScreen(),
-                ],
+        ),
+        Visibility(
+          visible: ref
+              .read(loadingControllerProvider.notifier)
+              .isLoading(kLoadingMain),
+          child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor.withOpacity(
+                  0.7,
+                ),
+            child: Center(
+              child: SpinKitSpinningLines(
+                color: Theme.of(context).primaryColor,
+                size: 50.0,
               ),
             ),
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }
