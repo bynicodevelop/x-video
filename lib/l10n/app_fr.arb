@@ -25,6 +25,7 @@
   "chronicle_button_extract_url_label": "Url",
   "tooltip_button_write": "Ecrire votre chronique",
   "chronicle_button_extract_write_label": "Écrire",
+  "chronicle_button_open_contents": "Ouvrir un contenu existant",
   "chronicle_view_title_answer": "Que voulez vous faire ?",
   "chronicle_view_subtitle_answer": "A partir de quel support voulez vous créer votre chronique ?",
   "create_content_title_modal": "Créer nouveau contenu",

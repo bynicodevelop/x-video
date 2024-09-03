@@ -4,7 +4,6 @@ import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/controllers/content_list_controller.dart';
-import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/controllers/url_extractor_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
@@ -14,7 +13,6 @@ import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/models/link_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/rss_selector_view_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/url_extract_view_editor_screen.dart';
-import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/translate.dart';
 
 class ChronicalViewEditorScreen extends ConsumerStatefulWidget {
@@ -100,12 +98,7 @@ class _ChronicalViewEditorScreenState
     );
   }
 
-  void _createOpenContenttDialog(
-    BuildContext context,
-  ) {
-    final isLoading = ref.watch(loadingControllerProvider);
-    ref.read(contentListControllerProvider.notifier).loadContents();
-
+  void _createOpenContenttDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
@@ -116,26 +109,22 @@ class _ChronicalViewEditorScreenState
 
             return MainDialogElement(
               title: 'Ouvrir un contenu existant',
-              child: isLoading[kLoadingContent] == true
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: contentModels.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text('Content ${contentModels[index].id}'),
-                          onTap: () {
-                            ref
-                                .read(contentControllerProvider.notifier)
-                                .initContent(contentModels[index]);
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: contentModels.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text('Content ${contentModels[index].id}'),
+                    onTap: () {
+                      ref
+                          .read(contentControllerProvider.notifier)
+                          .initContent(contentModels[index]);
 
-                            Navigator.of(context).pop();
-                          },
-                        );
-                      },
-                    ),
+                      Navigator.of(context).pop();
+                    },
+                  );
+                },
+              ),
             );
           },
         );
@@ -198,18 +187,6 @@ class _ChronicalViewEditorScreenState
 
   @override
   Widget build(BuildContext context) {
-    //     ref.listen<ConfigService<ProjectModel>?>(configControllerProvider,
-    //     (previous, next) {
-    //   if (next != null &&
-    //       next.model != null &&
-    //       next.model!.path.isNotEmpty &&
-    //       next.model!.name.isNotEmpty) {
-    //     ref.read(contentControllerProvider.notifier).initContent(ContentModel(
-    //           path: "${next.model!.path}/${next.model!.name}",
-    //         ));
-    //   }
-    // });
-
     ref.listen(readerContentControllerProvider, (previous, next) {
       if (next != null) {
         ref.read(contentControllerProvider.notifier).setContent(
@@ -220,6 +197,15 @@ class _ChronicalViewEditorScreenState
         ref.read(contentControllerProvider.notifier).save();
 
         setState(() => showEditor = true);
+      }
+    });
+
+    ref.listen(configControllerProvider, (previous, next) {
+      if (next != null && next.model != null) {
+        final String path = "${next.model!.path}/${next.model!.name}";
+
+        // Maintenant, mettez à jour le ContentListController
+        ref.read(contentListControllerProvider.notifier).loadContents(path);
       }
     });
 
@@ -317,8 +303,15 @@ class _ChronicalViewEditorScreenState
                   height: 32,
                 ),
                 TextButton(
-                  onPressed: () => _createOpenContenttDialog(context),
-                  child: const Text('Ouvrir un contenu existant'),
+                  onPressed: ref
+                          .read(contentListControllerProvider.notifier)
+                          .contentList
+                          .isNotEmpty
+                      ? () => _createOpenContenttDialog(context)
+                      : null,
+                  child: Text(
+                    $(context).chronicle_button_open_contents,
+                  ),
                 ),
               ],
             )

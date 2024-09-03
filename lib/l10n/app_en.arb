@@ -129,6 +129,11 @@
     "description": "The label for the write button",
     "type": "text"
   },
+  "chronicle_button_open_contents": "Open existing contents",
+  "@chronicle_button_open_contents": {
+    "description": "The label for the open contents button",
+    "type": "text"
+  },
   "chronicle_view_title_answer": "What do you want to do?",
   "@chronicle_view_title_answer": {
     "description": "The title for the answer view",
