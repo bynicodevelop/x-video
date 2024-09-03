@@ -6,7 +6,6 @@ class ChronicalService {
   Future<String> createChronical(
     ChronicalPromptModel chronicalPromptModel,
   ) async {
-    await Future.delayed(const Duration(seconds: 2));
     OpenAIGateway openAIGateway = OpenAIGateway<String>(
       chronicalPromptModel.apiKey,
     );
