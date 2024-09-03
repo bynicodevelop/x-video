@@ -32,5 +32,6 @@
   "chronicle_view_subtitle_answer": "A partir de quel support voulez vous créer votre chronique ?",
   "create_content_title_modal": "Créer nouveau contenu",
   "create_content_label_form_element": "Nom du contenu",
-  "nex_button_modal": "Suivant"
+  "nex_button_modal": "Suivant",
+  "chronical_editor_form_element_label": "Ecrivez votre chronique ici"
 }

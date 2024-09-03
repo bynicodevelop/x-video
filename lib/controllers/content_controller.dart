@@ -20,6 +20,9 @@ class ContentController extends StateNotifier<ContentModel> {
         ));
 
   bool get isInitialized => state.id.isNotEmpty;
+  bool get hasChronical => state.chronical != null && state.chronical!['content'] != null;
+
+  ContentModel get content => state;
 
   void initContent(
     ContentModel contentModel,
@@ -38,6 +41,16 @@ class ContentController extends StateNotifier<ContentModel> {
     state = state.mergeWith({
       "content": {
         "title": title,
+        "content": content,
+      },
+    });
+  }
+
+  void setChronical(
+    String content,
+  ) {
+    state = state.mergeWith({
+      "chronical": {
         "content": content,
       },
     });

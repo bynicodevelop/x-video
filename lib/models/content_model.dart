@@ -5,12 +5,14 @@ class ContentModel implements JsonDeserializable {
   final String id;
   final String name;
   final Map<String, dynamic>? content;
+  final Map<String, dynamic>? chronical;
 
   ContentModel({
     required this.path,
     this.id = '',
     this.name = '',
     this.content,
+    this.chronical,
   });
 
   @override
@@ -19,6 +21,7 @@ class ContentModel implements JsonDeserializable {
         id: json['id'] ?? id,
         name: json['name'] ?? name,
         content: json['content'] ?? content,
+        chronical: json['chronical'] ?? chronical,
       );
 
   @override
@@ -27,6 +30,7 @@ class ContentModel implements JsonDeserializable {
         'id': id,
         'name': name,
         'content': content,
+        'chronical': chronical,
       };
 
   @override
@@ -36,6 +40,7 @@ class ContentModel implements JsonDeserializable {
       id: json['id'] ?? id,
       name: json['name'] ?? name,
       content: json['content'] ?? content,
+      chronical: json['chronical'] ?? chronical,
     );
   }
 

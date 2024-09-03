@@ -168,5 +168,10 @@
   "@nex_button_modal": {
     "description": "The label for the next button in the modal",
     "type": "text"
+  },
+  "chronical_editor_form_element_label": "Write your chronicle here",
+  "@chronical_editor_form_element_label": {
+    "description": "The label for the chronicle form element",
+    "type": "text"
   }
 }

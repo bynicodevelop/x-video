@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
+import 'package:x_video_ai/controllers/chronical_controller.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/controllers/content_list_controller.dart';
@@ -8,12 +9,15 @@ import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/reader_content_controller.dart';
 import 'package:x_video_ai/controllers/url_extractor_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
+import 'package:x_video_ai/elements/forms/chronical_editor/chronical_editor_form_element.dart';
 import 'package:x_video_ai/elements/forms/create_content/create_content_form_element.dart';
 import 'package:x_video_ai/elements/forms/create_content/create_content_form_element_controller.dart';
 import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/models/link_model.dart';
+import 'package:x_video_ai/models/project_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/rss_selector_view_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/chronical/url_extract_view_editor_screen.dart';
+import 'package:x_video_ai/services/config_service.dart';
 import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/translate.dart';
 
@@ -104,7 +108,7 @@ class _ChronicalViewEditorScreenState
     );
   }
 
-  void _createOpenContenttDialog(BuildContext context) {
+  void _createOpenContentDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
@@ -191,37 +195,80 @@ class _ChronicalViewEditorScreenState
     });
   }
 
+  void _initListener() {
+    ref.listen<ConfigService<ProjectModel>?>(
+      configControllerProvider,
+      _onConfigChanged,
+    );
+    ref.listen<Map<String, dynamic>?>(
+      readerContentControllerProvider,
+      _onReaderContentChanged,
+    );
+    ref.listen<Map<String, dynamic>?>(
+      chronicalControllerProvider,
+      _onChronicalChanged,
+    );
+  }
+
+  void _onConfigChanged(
+    ConfigService<ProjectModel>? previous,
+    ConfigService<ProjectModel>? next,
+  ) {
+    if (next != null && next.model != null) {
+      final String path = "${next.model!.path}/${next.model!.name}";
+      ref.read(contentListControllerProvider.notifier).loadContents(path);
+    }
+  }
+
+  void _onReaderContentChanged(
+    Map<String, dynamic>? previous,
+    Map<String, dynamic>? next,
+  ) {
+    if (next != null) {
+      ref.read(contentControllerProvider.notifier).setContent(
+            next['title'],
+            next['content'],
+          );
+
+      ref.read(contentControllerProvider.notifier).save();
+
+      ref.read(chronicalControllerProvider.notifier).createChronical();
+
+      setState(() => showEditor = true);
+    }
+  }
+
+  void _onChronicalChanged(
+    Map<String, dynamic>? previous,
+    Map<String, dynamic>? next,
+  ) {
+    if (next != null && next['chronical'] != null) {
+      ref
+          .read(contentControllerProvider.notifier)
+          .setChronical(next['chronical']);
+
+      ref.read(contentControllerProvider.notifier).save();
+
+      setState(() => showEditor = true);
+
+      ref.read(loadingControllerProvider.notifier).stopLoading(kLoadingMain);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    ref.listen(readerContentControllerProvider, (previous, next) {
-      if (next != null) {
-        ref.read(contentControllerProvider.notifier).setContent(
-              next['title'],
-              next['content'],
-            );
+    ref.watch(contentListControllerProvider);
+    ref.watch(contentControllerProvider);
 
-        ref.read(contentControllerProvider.notifier).save();
+    _initListener();
 
-        setState(() => showEditor = true);
-
-        ref.read(loadingControllerProvider.notifier).stopLoading(kLoadingMain);
-      }
-    });
-
-    ref.listen(configControllerProvider, (previous, next) {
-      if (next != null && next.model != null) {
-        final String path = "${next.model!.path}/${next.model!.name}";
-
-        // Maintenant, mettez à jour le ContentListController
-        ref.read(contentListControllerProvider.notifier).loadContents(path);
-      }
-    });
+    final contentController = ref.read(contentControllerProvider.notifier);
 
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.20,
       ),
-      child: !showEditor
+      child: !contentController.isInitialized || !contentController.hasChronical
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -318,7 +365,7 @@ class _ChronicalViewEditorScreenState
                           .read(contentListControllerProvider.notifier)
                           .contentList
                           .isNotEmpty
-                      ? () => _createOpenContenttDialog(context)
+                      ? () => _createOpenContentDialog(context)
                       : null,
                   child: Text(
                     $(context).chronicle_button_open_contents,
@@ -326,26 +373,8 @@ class _ChronicalViewEditorScreenState
                 ),
               ],
             )
-          : Column(
-              children: [
-                TextField(
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    hintText: 'Titre',
-                    hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.7),
-                        ),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          : const SingleChildScrollView(
+              child: ChronicalEditorFormElement(),
             ),
     );
   }

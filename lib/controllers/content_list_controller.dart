@@ -19,11 +19,9 @@ class ContentListController extends StateNotifier<List<ContentModel>> {
 
   void loadContents(String path) {
     _loadingController.startLoading(kLoadingContent);
-    print(path);
     state = _contentService.loadContents(
       path,
     );
-
     _loadingController.stopLoading(kLoadingContent);
   }
 }

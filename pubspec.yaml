@@ -48,6 +48,7 @@ dependencies:
   desktop_split_pane: ^1.0.3
   html: ^0.15.4
   flutter_spinkit: ^5.2.1
+  dart_openai: ^5.1.0
 
 
 dev_dependencies:
