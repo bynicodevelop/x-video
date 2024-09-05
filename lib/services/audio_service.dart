@@ -5,6 +5,7 @@ import 'package:x_video_ai/models/open_ai_config_model.dart';
 import 'package:x_video_ai/models/srt_sentence_model.dart';
 import 'package:x_video_ai/models/srt_word_model.dart';
 import 'package:x_video_ai/utils/sentence.dart';
+import 'package:x_video_ai/utils/srt_subtitle.dart';
 
 class AudioService {
   final OpenAIGateway openAIGateway;
@@ -56,5 +57,19 @@ class AudioService {
             ))
         .whereType<SrtSentenceModel>()
         .toList();
+  }
+
+  String createSubtitles(
+    List<SrtSentenceModel> srtWithGroup, {
+    int wordPerLine = 3,
+  }) {
+    final SrtSubtitle srtSubtitle = SrtSubtitle();
+
+    List<List<SrtWordModel>> subtitles = srtSubtitle.createSubtitles(
+      srtWithGroup,
+      wordPerLine: wordPerLine,
+    );
+
+    return srtSubtitle.generateAssFile(subtitles);
   }
 }

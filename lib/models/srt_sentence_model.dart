@@ -28,4 +28,19 @@ class SrtSentenceModel {
         'end': end,
         'duration': duration,
       };
+
+  factory SrtSentenceModel.fromJson(Map<String, dynamic> json) =>
+      SrtSentenceModel(
+        sentence: json['sentence'],
+        normalized: json['normalized'],
+        words: List.from(json['words'])
+            .map((e) => SrtWordModel.fromJson(e))
+            .toList(),
+        group: List.from(json['group'])
+            .map((e) => SrtWordModel.fromJson(e))
+            .toList(),
+        start: json['start'],
+        end: json['end'],
+        duration: json['duration'],
+      );
 }

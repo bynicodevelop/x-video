@@ -39,7 +39,8 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
 
     // await _convertTextToAudio();
     // await _extractSRT();
-    await _generateSRT();
+    // await _generateSRT();
+    await _createSubtitles();
 
     _loadingController.stopLoading(kLoadingMain);
   }
@@ -99,6 +100,26 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
 
     _contentController.setSrtWithGroup(
       srtWithGroup.map((e) => e.toJson()).toList(),
+    );
+
+    _contentController.save();
+  }
+
+  Future<void> _createSubtitles() async {
+    _updateProgress(
+      4,
+      "Création des sous-titres...",
+    );
+
+    String assContent = _audioService.createSubtitles(
+      _contentController.content.srtWithGroup?['content']
+          .map((e) => SrtSentenceModel.fromJson(e))
+          .whereType<SrtSentenceModel>()
+          .toList(),
+    );
+
+    _contentController.setAss(
+      assContent,
     );
 
     _contentController.save();

@@ -88,6 +88,16 @@ class ContentController extends StateNotifier<ContentModel> {
     });
   }
 
+  void setAss(
+    String assContent,
+  ) {
+    state = state.mergeWith({
+      "assContent": {
+        "content": assContent,
+      },
+    });
+  }
+
   void save() {
     _loadingController.startLoading(kLoadingContent);
     _contentService.saveContent(state);
