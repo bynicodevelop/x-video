@@ -6,21 +6,27 @@ import 'package:x_video_ai/gateway/open_ai_gateway.dart';
 import 'package:x_video_ai/models/open_ai_config_model.dart';
 import 'package:x_video_ai/models/progress_state_model.dart';
 import 'package:x_video_ai/models/srt_sentence_model.dart';
+import 'package:x_video_ai/models/srt_word_model.dart';
+import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/audio_service.dart';
+import 'package:x_video_ai/services/section_service.dart';
 import 'package:x_video_ai/utils/constants.dart';
 
 class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   final AudioService _audioService;
+  final SectionService _sectionService;
   final ContentController _contentController;
   final ConfigController _configController;
   final LoadingController _loadingController;
 
   VideoDataGeneratorController(
     AudioService audioService,
+    SectionService sectionService,
     ContentController contentController,
     ConfigController configController,
     LoadingController loadingController,
   )   : _audioService = audioService,
+        _sectionService = sectionService,
         _configController = configController,
         _contentController = contentController,
         _loadingController = loadingController,
@@ -40,7 +46,8 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     // await _convertTextToAudio();
     // await _extractSRT();
     // await _generateSRT();
-    await _createSubtitles();
+    // await _createSubtitles();
+    await _generateSections();
 
     _loadingController.stopLoading(kLoadingMain);
   }
@@ -125,6 +132,30 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     _contentController.save();
   }
 
+  Future<void> _generateSections() async {
+    _updateProgress(
+      5,
+      "Génération des sections...",
+    );
+
+    List<SrtWordModel> words = _contentController
+        .content.srt?['content']['words']
+        .map((e) => SrtWordModel.fromJson(e))
+        .whereType<SrtWordModel>()
+        .toList();
+
+    final List<VideoSectionModel> sections = _sectionService.createSections(
+      words,
+      maxDuration: 3,
+    );
+
+    _contentController.setSections(
+      sections.map((e) => e.toJson()).toList(),
+    );
+
+    _contentController.save();
+  }
+
   void _updateProgress(
     int step,
     String message,
@@ -154,6 +185,7 @@ final videoDataGeneratorControllerProvider =
 
     return VideoDataGeneratorController(
       AudioService(openAIGateway),
+      SectionService(),
       ref.read(contentControllerProvider.notifier),
       ref.read(configControllerProvider.notifier),
       ref.read(loadingControllerProvider.notifier),

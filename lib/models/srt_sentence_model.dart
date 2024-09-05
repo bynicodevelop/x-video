@@ -1,22 +1,26 @@
+import 'package:x_video_ai/models/abstracts/timming_model.dart';
 import 'package:x_video_ai/models/srt_word_model.dart';
 
-class SrtSentenceModel {
+class SrtSentenceModel implements TimmingModel {
   final String sentence;
   final String normalized;
   final List<SrtWordModel>? words;
   final List<SrtWordModel>? group;
-  final double? start;
-  final double? end;
-  final double? duration;
+  @override
+  final double start;
+  @override
+  final double end;
+  @override
+  final double duration;
 
   SrtSentenceModel({
     required this.sentence,
     required this.normalized,
     this.words,
     this.group,
-    this.start,
-    this.end,
-    this.duration,
+    this.start = 0,
+    this.end = 0,
+    this.duration = 0,
   });
 
   Map<String, dynamic> toJson() => {

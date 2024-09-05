@@ -266,7 +266,7 @@ class Sentence {
 
       if (foundSentence != null) {
         result.add(foundSentence);
-        lastTime = foundSentence.end!;
+        lastTime = foundSentence.end;
       }
     }
 

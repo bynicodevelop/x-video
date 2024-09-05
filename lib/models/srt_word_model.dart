@@ -1,7 +1,12 @@
-class SrtWordModel {
+import 'package:x_video_ai/models/abstracts/timming_model.dart';
+
+class SrtWordModel implements TimmingModel {
   final String word;
+  @override
   final double start;
+  @override
   final double end;
+  @override
   final double duration;
 
   SrtWordModel({

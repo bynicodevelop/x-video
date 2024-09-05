@@ -98,6 +98,16 @@ class ContentController extends StateNotifier<ContentModel> {
     });
   }
 
+  void setSections(
+    List<Map<String, dynamic>> sections,
+  ) {
+    state = state.mergeWith({
+      "sections": {
+        "content": sections,
+      },
+    });
+  }
+
   void save() {
     _loadingController.startLoading(kLoadingContent);
     _contentService.saveContent(state);

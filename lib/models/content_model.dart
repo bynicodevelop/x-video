@@ -10,6 +10,7 @@ class ContentModel implements JsonDeserializable {
   final Map<String, dynamic>? srt;
   final Map<String, dynamic>? srtWithGroup;
   final Map<String, dynamic>? assContent;
+  final Map<String, dynamic>? sections;
 
   ContentModel({
     required this.path,
@@ -21,6 +22,7 @@ class ContentModel implements JsonDeserializable {
     this.srt,
     this.srtWithGroup,
     this.assContent,
+    this.sections,
   });
 
   @override
@@ -34,6 +36,7 @@ class ContentModel implements JsonDeserializable {
         srt: json['srt'] ?? srt,
         srtWithGroup: json['srtWithGroup'] ?? srtWithGroup,
         assContent: json['assContent'] ?? assContent,
+        sections: json['sections'] ?? sections,
       );
 
   @override
@@ -47,6 +50,7 @@ class ContentModel implements JsonDeserializable {
         'srt': srt,
         'srtWithGroup': srtWithGroup,
         'assContent': assContent,
+        'sections': sections,
       };
 
   @override
@@ -61,6 +65,7 @@ class ContentModel implements JsonDeserializable {
       srt: json['srt'] ?? srt,
       srtWithGroup: json['srtWithGroup'] ?? srtWithGroup,
       assContent: json['assContent'] ?? assContent,
+      sections: json['sections'] ?? sections,
     );
   }
 
