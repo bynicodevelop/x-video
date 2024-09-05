@@ -8,8 +8,9 @@ import 'dart:async' as _i4;
 import 'package:flutter_riverpod/flutter_riverpod.dart' as _i6;
 import 'package:html/dom.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:state_notifier/state_notifier.dart' as _i7;
+import 'package:state_notifier/state_notifier.dart' as _i8;
 import 'package:x_video_ai/controllers/loading_controller.dart' as _i5;
+import 'package:x_video_ai/models/progress_state_model.dart' as _i7;
 import 'package:x_video_ai/services/parse_service.dart' as _i3;
 
 // ignore_for_file: type=lint
@@ -92,19 +93,19 @@ class MockLoadingController extends _i1.Mock implements _i5.LoadingController {
       ) as bool);
 
   @override
-  _i4.Stream<Map<String, bool>> get stream => (super.noSuchMethod(
+  _i4.Stream<Map<String, dynamic>> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _i4.Stream<Map<String, bool>>.empty(),
-      ) as _i4.Stream<Map<String, bool>>);
+        returnValue: _i4.Stream<Map<String, dynamic>>.empty(),
+      ) as _i4.Stream<Map<String, dynamic>>);
 
   @override
-  Map<String, bool> get state => (super.noSuchMethod(
+  Map<String, dynamic> get state => (super.noSuchMethod(
         Invocation.getter(#state),
-        returnValue: <String, bool>{},
-      ) as Map<String, bool>);
+        returnValue: <String, dynamic>{},
+      ) as Map<String, dynamic>);
 
   @override
-  set state(Map<String, bool>? value) => super.noSuchMethod(
+  set state(Map<String, dynamic>? value) => super.noSuchMethod(
         Invocation.setter(
           #state,
           value,
@@ -113,10 +114,10 @@ class MockLoadingController extends _i1.Mock implements _i5.LoadingController {
       );
 
   @override
-  Map<String, bool> get debugState => (super.noSuchMethod(
+  Map<String, dynamic> get debugState => (super.noSuchMethod(
         Invocation.getter(#debugState),
-        returnValue: <String, bool>{},
-      ) as Map<String, bool>);
+        returnValue: <String, dynamic>{},
+      ) as Map<String, dynamic>);
 
   @override
   bool get hasListeners => (super.noSuchMethod(
@@ -134,10 +135,15 @@ class MockLoadingController extends _i1.Mock implements _i5.LoadingController {
       ) as bool);
 
   @override
-  void startLoading(String? key) => super.noSuchMethod(
+  void startLoading(
+    String? key, {
+    _i7.ProgressStateModel? progressState,
+  }) =>
+      super.noSuchMethod(
         Invocation.method(
           #startLoading,
           [key],
+          {#progressState: progressState},
         ),
         returnValueForMissingStub: null,
       );
@@ -152,9 +158,23 @@ class MockLoadingController extends _i1.Mock implements _i5.LoadingController {
       );
 
   @override
+  void updateLoadingState(
+    String? key, {
+    _i7.ProgressStateModel? progressState,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #updateLoadingState,
+          [key],
+          {#progressState: progressState},
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   bool updateShouldNotify(
-    Map<String, bool>? old,
-    Map<String, bool>? current,
+    Map<String, dynamic>? old,
+    Map<String, dynamic>? current,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -169,7 +189,7 @@ class MockLoadingController extends _i1.Mock implements _i5.LoadingController {
 
   @override
   _i6.RemoveListener addListener(
-    _i7.Listener<Map<String, bool>>? listener, {
+    _i8.Listener<Map<String, dynamic>>? listener, {
     bool? fireImmediately = true,
   }) =>
       (super.noSuchMethod(

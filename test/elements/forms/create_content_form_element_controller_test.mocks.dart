@@ -86,6 +86,27 @@ class MockContentController extends _i1.Mock implements _i4.ContentController {
       ) as bool);
 
   @override
+  bool get isReadyVideo => (super.noSuchMethod(
+        Invocation.getter(#isReadyVideo),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool get hasChronical => (super.noSuchMethod(
+        Invocation.getter(#hasChronical),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  _i2.ContentModel get content => (super.noSuchMethod(
+        Invocation.getter(#content),
+        returnValue: _FakeContentModel_0(
+          this,
+          Invocation.getter(#content),
+        ),
+      ) as _i2.ContentModel);
+
+  @override
   set onError(_i5.ErrorListener? _onError) => super.noSuchMethod(
         Invocation.setter(
           #onError,
@@ -160,6 +181,24 @@ class MockContentController extends _i1.Mock implements _i4.ContentController {
             title,
             content,
           ],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setChronical(String? content) => super.noSuchMethod(
+        Invocation.method(
+          #setChronical,
+          [content],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setAudio(String? audio) => super.noSuchMethod(
+        Invocation.method(
+          #setAudio,
+          [audio],
         ),
         returnValueForMissingStub: null,
       );

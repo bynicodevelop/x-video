@@ -58,6 +58,36 @@ class ContentController extends StateNotifier<ContentModel> {
     });
   }
 
+  void setAudio(
+    String audio,
+  ) {
+    state = state.mergeWith({
+      "audio": {
+        "content": audio,
+      },
+    });
+  }
+
+  void setSrt(
+    Map<String, dynamic> srt,
+  ) {
+    state = state.mergeWith({
+      "srt": {
+        "content": srt,
+      },
+    });
+  }
+
+  void setSrtWithGroup(
+    List<Map<String, dynamic>> srtWithGroup,
+  ) {
+    state = state.mergeWith({
+      "srtWithGroup": {
+        "content": srtWithGroup,
+      },
+    });
+  }
+
   void save() {
     _loadingController.startLoading(kLoadingContent);
     _contentService.saveContent(state);

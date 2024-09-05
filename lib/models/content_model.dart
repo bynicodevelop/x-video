@@ -6,6 +6,9 @@ class ContentModel implements JsonDeserializable {
   final String name;
   final Map<String, dynamic>? content;
   final Map<String, dynamic>? chronical;
+  final Map<String, dynamic>? audio;
+  final Map<String, dynamic>? srt;
+  final Map<String, dynamic>? srtWithGroup;
 
   ContentModel({
     required this.path,
@@ -13,6 +16,9 @@ class ContentModel implements JsonDeserializable {
     this.name = '',
     this.content,
     this.chronical,
+    this.audio,
+    this.srt,
+    this.srtWithGroup,
   });
 
   @override
@@ -22,6 +28,9 @@ class ContentModel implements JsonDeserializable {
         name: json['name'] ?? name,
         content: json['content'] ?? content,
         chronical: json['chronical'] ?? chronical,
+        audio: json['audio'] ?? audio,
+        srt: json['srt'] ?? srt,
+        srtWithGroup: json['srtWithGroup'] ?? srtWithGroup,
       );
 
   @override
@@ -31,6 +40,9 @@ class ContentModel implements JsonDeserializable {
         'name': name,
         'content': content,
         'chronical': chronical,
+        'audio': audio,
+        'srt': srt,
+        'srtWithGroup': srtWithGroup,
       };
 
   @override
@@ -41,6 +53,9 @@ class ContentModel implements JsonDeserializable {
       name: json['name'] ?? name,
       content: json['content'] ?? content,
       chronical: json['chronical'] ?? chronical,
+      audio: json['audio'] ?? audio,
+      srt: json['srt'] ?? srt,
+      srtWithGroup: json['srtWithGroup'] ?? srtWithGroup,
     );
   }
 

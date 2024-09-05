@@ -4,11 +4,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
-import 'dart:ui' as _i7;
+import 'dart:ui' as _i8;
 
+import 'package:flutter/src/widgets/basic.dart' as _i5;
 import 'package:flutter/src/widgets/page_view.dart' as _i3;
-import 'package:flutter/src/widgets/scroll_context.dart' as _i6;
-import 'package:flutter/src/widgets/scroll_physics.dart' as _i5;
+import 'package:flutter/src/widgets/scroll_context.dart' as _i7;
+import 'package:flutter/src/widgets/scroll_physics.dart' as _i6;
 import 'package:flutter/src/widgets/scroll_position.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -111,7 +112,7 @@ class MockPageController extends _i1.Mock implements _i3.PageController {
   _i4.Future<void> animateToPage(
     int? page, {
     required Duration? duration,
-    required dynamic curve,
+    required _i5.Curve? curve,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -138,7 +139,7 @@ class MockPageController extends _i1.Mock implements _i3.PageController {
   @override
   _i4.Future<void> nextPage({
     required Duration? duration,
-    required dynamic curve,
+    required _i5.Curve? curve,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -156,7 +157,7 @@ class MockPageController extends _i1.Mock implements _i3.PageController {
   @override
   _i4.Future<void> previousPage({
     required Duration? duration,
-    required dynamic curve,
+    required _i5.Curve? curve,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -173,8 +174,8 @@ class MockPageController extends _i1.Mock implements _i3.PageController {
 
   @override
   _i2.ScrollPosition createScrollPosition(
-    _i5.ScrollPhysics? physics,
-    _i6.ScrollContext? context,
+    _i6.ScrollPhysics? physics,
+    _i7.ScrollContext? context,
     _i2.ScrollPosition? oldPosition,
   ) =>
       (super.noSuchMethod(
@@ -212,7 +213,7 @@ class MockPageController extends _i1.Mock implements _i3.PageController {
   _i4.Future<void> animateTo(
     double? offset, {
     required Duration? duration,
-    required dynamic curve,
+    required _i5.Curve? curve,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -264,7 +265,7 @@ class MockPageController extends _i1.Mock implements _i3.PageController {
       );
 
   @override
-  void addListener(_i7.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -273,7 +274,7 @@ class MockPageController extends _i1.Mock implements _i3.PageController {
       );
 
   @override
-  void removeListener(_i7.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
