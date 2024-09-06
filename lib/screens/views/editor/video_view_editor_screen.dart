@@ -1,9 +1,12 @@
 import 'package:desktop_split_pane/desktop_split_pane.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
-import 'package:x_video_ai/controllers/section_controller.dart';
+import 'package:x_video_ai/controllers/sections_controller.dart';
 import 'package:x_video_ai/controllers/video_data_generator_controller.dart';
+import 'package:x_video_ai/models/video_section_model.dart';
+import 'package:x_video_ai/screens/views/editor/video/vignette_reader.dart';
 
 class VideoViewEditorScreen extends ConsumerStatefulWidget {
   const VideoViewEditorScreen({super.key});
@@ -14,6 +17,8 @@ class VideoViewEditorScreen extends ConsumerStatefulWidget {
 }
 
 class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +32,7 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
   Widget build(BuildContext context) {
     ref.watch(contentControllerProvider);
     ref.watch(videoDataGeneratorControllerProvider);
-    ref.watch(sectionControllerProvider);
+    ref.watch(sectionsControllerProvider);
 
     return LayoutBuilder(
       builder: (
@@ -56,35 +61,28 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
                 ],
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(
-                top: 20,
-              ),
-              child: Row(
-                children: ref
-                    .read(sectionControllerProvider.notifier)
-                    .sections
-                    .map((e) => Container(
-                          width: 250,
-                          margin: const EdgeInsets.only(
-                            right: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.play_arrow_outlined,
-                                color: Colors.grey.shade400,
-                              ),
-                              onPressed: () {},
-                            ),
-                          ),
-                        ))
-                    .toList(),
+            Listener(
+              onPointerSignal: (event) {
+                if (event is PointerScrollEvent) {
+                  _scrollController.jumpTo(
+                    _scrollController.offset + event.scrollDelta.dy,
+                  );
+                }
+              },
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                controller: _scrollController,
+                padding: const EdgeInsets.only(top: 20),
+                child: Row(
+                  children: ref
+                      .read(sectionsControllerProvider.notifier)
+                      .sections
+                      .map(
+                        (VideoSectionModel e) =>
+                            const VignetteReaderVideoEditor(),
+                      )
+                      .toList(),
+                ),
               ),
             ),
           ]),
