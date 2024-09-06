@@ -16,7 +16,7 @@ class ChronicalService {
           chronicalPromptModel.prompt,
         ),
       ],
-      role: OpenAIChatMessageRole.assistant,
+      role: OpenAIChatMessageRole.system,
     );
 
     final userMessage = OpenAIChatCompletionChoiceMessageModel(

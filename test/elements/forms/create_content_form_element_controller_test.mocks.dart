@@ -204,6 +204,43 @@ class MockContentController extends _i1.Mock implements _i4.ContentController {
       );
 
   @override
+  void setSrt(Map<String, dynamic>? srt) => super.noSuchMethod(
+        Invocation.method(
+          #setSrt,
+          [srt],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setSrtWithGroup(List<Map<String, dynamic>>? srtWithGroup) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setSrtWithGroup,
+          [srtWithGroup],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setAss(String? assContent) => super.noSuchMethod(
+        Invocation.method(
+          #setAss,
+          [assContent],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setSections(List<Map<String, dynamic>>? sections) => super.noSuchMethod(
+        Invocation.method(
+          #setSections,
+          [sections],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   void save() => super.noSuchMethod(
         Invocation.method(
           #save,

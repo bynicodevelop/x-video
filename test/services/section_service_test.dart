@@ -1,7 +1,15 @@
+import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:x_video_ai/gateway/open_ai_gateway.dart';
 import 'package:x_video_ai/models/srt_word_model.dart';
+import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/section_service.dart';
 
+import 'section_service_test.mocks.dart';
+
+@GenerateMocks([OpenAIGateway])
 void main() {
   SectionService sectionService = SectionService();
 
@@ -107,6 +115,139 @@ void main() {
       expect(sections.length, equals(2));
       expect(sections[0].sentence, equals('Hello'));
       expect(sections[1].sentence, equals('world'));
+    });
+  });
+
+  group('generateKeywords', () {
+    test('should generate keyword for a single section', () async {
+      // Arrange
+      final mockOpenAIGateway = MockOpenAIGateway<String>();
+      final sections = [
+        VideoSectionModel(
+          sentence: 'Le CAC 40 trébuche.',
+          start: 0.0,
+          end: 4.0,
+          duration: 4.0,
+        ),
+      ];
+
+      // Simuler un retour de mot-clé
+      when(mockOpenAIGateway.callOpenAI(
+              messages: anyNamed('messages'), model: anyNamed('model')))
+          .thenAnswer((_) async => 'bourse');
+
+      // Act
+      final result = await sectionService.generateKeywords(
+        sections,
+        mockOpenAIGateway,
+        'gpt-3.5-turbo',
+      );
+
+      // Assert
+      expect(result.length, equals(1));
+      expect(result[0].keyword, equals('bourse'));
+    });
+
+    test('should generate keywords for multiple sections', () async {
+      // Arrange
+      final mockOpenAIGateway = MockOpenAIGateway<String>();
+      final sections = [
+        VideoSectionModel(
+          sentence: 'Le CAC 40 trébuche.',
+          start: 0.0,
+          end: 4.0,
+          duration: 4.0,
+        ),
+        VideoSectionModel(
+          sentence: 'Les investisseurs sont inquiets.',
+          start: 4.0,
+          end: 8.0,
+          duration: 4.0,
+        ),
+      ];
+
+      // Simuler un retour de mots-clés
+      when(mockOpenAIGateway.callOpenAI(
+              messages: anyNamed('messages'), model: anyNamed('model')))
+          .thenAnswer((invocation) async {
+        final messages = invocation.namedArguments[#messages]
+            as List<OpenAIChatCompletionChoiceMessageModel>;
+        if (messages.last.content![0].text == 'Le CAC 40 trébuche.') {
+          return 'bourse';
+        } else {
+          return 'investissements';
+        }
+      });
+
+      // Act
+      final result = await sectionService.generateKeywords(
+        sections,
+        mockOpenAIGateway,
+        'gpt-3.5-turbo',
+      );
+
+      // Assert
+      expect(result.length, equals(2));
+      expect(result[0].keyword, equals('bourse'));
+      expect(result[1].keyword, equals('investissements'));
+    });
+
+    test('should handle empty section sentence', () async {
+      // Arrange
+      final mockOpenAIGateway = MockOpenAIGateway<String>();
+      final sections = [
+        VideoSectionModel(
+          sentence: '',
+          start: 0.0,
+          end: 4.0,
+          duration: 4.0,
+        ),
+      ];
+
+      // Simuler un retour vide de mot-clé
+      when(mockOpenAIGateway.callOpenAI(
+              messages: anyNamed('messages'), model: anyNamed('model')))
+          .thenAnswer((_) async => '');
+
+      // Act
+      final result = await sectionService.generateKeywords(
+        sections,
+        mockOpenAIGateway,
+        'gpt-3.5-turbo',
+      );
+
+      // Assert
+      expect(result.length, equals(1));
+      expect(result[0].keyword, equals(''));
+    });
+
+    test('should handle null or empty OpenAI response', () async {
+      // Arrange
+      final mockOpenAIGateway = MockOpenAIGateway<String>();
+      final sections = [
+        VideoSectionModel(
+          sentence: 'Le CAC 40 trébuche.',
+          start: 0.0,
+          end: 4.0,
+          duration: 4.0,
+        ),
+      ];
+
+      // Simuler un retour null ou vide de l'API OpenAI
+      when(mockOpenAIGateway.callOpenAI(
+              messages: anyNamed('messages'), model: anyNamed('model')))
+          .thenAnswer((_) async => '');
+
+      // Act
+      final result = await sectionService.generateKeywords(
+        sections,
+        mockOpenAIGateway,
+        'gpt-3.5-turbo',
+      );
+
+      // Assert
+      expect(result.length, equals(1));
+      expect(result[0].keyword, equals(''));
     });
   });
 }

@@ -35,4 +35,19 @@ class VideoSectionModel implements TimmingModel {
         end: json['end'],
         duration: json['duration'],
       );
+
+  VideoSectionModel copyWith({
+    String? sentence,
+    String? keyword,
+    double? start,
+    double? end,
+    double? duration,
+  }) =>
+      VideoSectionModel(
+        sentence: sentence ?? this.sentence,
+        keyword: keyword ?? this.keyword,
+        start: start ?? this.start,
+        end: end ?? this.end,
+        duration: duration ?? this.duration,
+      );
 }

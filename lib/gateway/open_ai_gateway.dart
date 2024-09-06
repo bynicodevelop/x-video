@@ -7,9 +7,7 @@ const kTypeText = 'text';
 const kTypeJsonObject = 'json_object';
 
 class OpenAIGateway<T> {
-  OpenAIGateway(
-    String apiKey,
-  ) {
+  OpenAIGateway(String apiKey) {
     OpenAI.apiKey = apiKey;
   }
 

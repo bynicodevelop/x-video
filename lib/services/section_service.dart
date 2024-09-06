@@ -1,5 +1,8 @@
+import 'package:dart_openai/dart_openai.dart';
+import 'package:x_video_ai/gateway/open_ai_gateway.dart';
 import 'package:x_video_ai/models/srt_word_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
+import 'package:x_video_ai/utils/constants.dart';
 
 class SectionService {
   /// Permet de découper une liste de mots en sections de durée maximale
@@ -67,5 +70,60 @@ class SectionService {
     }
 
     return sections;
+  }
+
+  Future<List<VideoSectionModel>> generateKeywords(
+    List<VideoSectionModel> sections,
+    OpenAIGateway<String> openAIGateway,
+    String model,
+  ) async {
+    final messages = <OpenAIChatCompletionChoiceMessageModel>[];
+    final sectionsWithKeywords = <VideoSectionModel>[];
+
+    final systemMessage = OpenAIChatCompletionChoiceMessageModel(
+      content: [
+        OpenAIChatCompletionChoiceMessageContentItemModel.text(
+          kPromptGenerateKeywords,
+        ),
+      ],
+      role: OpenAIChatMessageRole.system,
+    );
+
+    messages.add(systemMessage);
+
+    for (VideoSectionModel section in sections) {
+      final userMessage = OpenAIChatCompletionChoiceMessageModel(
+        content: [
+          OpenAIChatCompletionChoiceMessageContentItemModel.text(
+            section.sentence,
+          ),
+        ],
+        role: OpenAIChatMessageRole.user,
+      );
+
+      messages.add(userMessage);
+
+      final String keyword = await openAIGateway.callOpenAI(
+        messages: messages,
+        model: model,
+      );
+
+      sectionsWithKeywords.add(section.copyWith(
+        keyword: keyword,
+      ));
+
+      final systemeResponse = OpenAIChatCompletionChoiceMessageModel(
+        content: [
+          OpenAIChatCompletionChoiceMessageContentItemModel.text(
+            keyword,
+          ),
+        ],
+        role: OpenAIChatMessageRole.assistant,
+      );
+
+      messages.add(systemeResponse);
+    }
+
+    return sectionsWithKeywords;
   }
 }

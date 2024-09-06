@@ -47,7 +47,8 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     // await _extractSRT();
     // await _generateSRT();
     // await _createSubtitles();
-    await _generateSections();
+    // await _generateSections();
+    await _generateKeywords();
 
     _loadingController.stopLoading(kLoadingMain);
   }
@@ -151,6 +152,36 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
 
     _contentController.setSections(
       sections.map((e) => e.toJson()).toList(),
+    );
+
+    _contentController.save();
+  }
+
+  Future<void> _generateKeywords() async {
+    _updateProgress(
+      6,
+      "Génération des mots-clés...",
+    );
+
+    OpenAIGateway<String> openAIGateway = OpenAIGateway<String>(
+      _configController.configService?.model?.apiKeyOpenAi ?? '',
+    );
+
+    List<VideoSectionModel> sections = _contentController
+        .content.sections?['content']
+        .map((e) => VideoSectionModel.fromJson(e))
+        .whereType<VideoSectionModel>()
+        .toList();
+
+    final List<VideoSectionModel> sectionsWithKeywords =
+        await _sectionService.generateKeywords(
+      sections,
+      openAIGateway,
+      _configController.configService?.model?.modelOpenAi ?? '',
+    );
+
+    _contentController.setSections(
+      sectionsWithKeywords.map((e) => e.toJson()).toList(),
     );
 
     _contentController.save();
