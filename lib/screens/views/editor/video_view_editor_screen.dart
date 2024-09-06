@@ -2,6 +2,7 @@ import 'package:desktop_split_pane/desktop_split_pane.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
+import 'package:x_video_ai/controllers/section_controller.dart';
 import 'package:x_video_ai/controllers/video_data_generator_controller.dart';
 
 class VideoViewEditorScreen extends ConsumerStatefulWidget {
@@ -26,6 +27,7 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
   Widget build(BuildContext context) {
     ref.watch(contentControllerProvider);
     ref.watch(videoDataGeneratorControllerProvider);
+    ref.watch(sectionControllerProvider);
 
     return LayoutBuilder(
       builder: (
@@ -60,27 +62,29 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
                 top: 20,
               ),
               child: Row(
-                children: List.generate(
-                  20,
-                  (index) {
-                    return Container(
-                      width: 250, // Largeur fixe pour chaque clip
-                      margin: const EdgeInsets.only(
-                        right: 10,
-                      ), // Marge entre les clips
-                      color: Colors.grey.shade300,
-                      child: Center(
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.play_arrow_outlined,
-                            color: Colors.grey.shade400,
+                children: ref
+                    .read(sectionControllerProvider.notifier)
+                    .sections
+                    .map((e) => Container(
+                          width: 250,
+                          margin: const EdgeInsets.only(
+                            right: 10,
                           ),
-                          onPressed: () {},
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.play_arrow_outlined,
+                                color: Colors.grey.shade400,
+                              ),
+                              onPressed: () {},
+                            ),
+                          ),
+                        ))
+                    .toList(),
               ),
             ),
           ]),

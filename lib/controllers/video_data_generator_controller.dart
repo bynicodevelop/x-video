@@ -48,7 +48,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     // await _generateSRT();
     // await _createSubtitles();
     // await _generateSections();
-    await _generateKeywords();
+    // await _generateKeywords();
 
     _loadingController.stopLoading(kLoadingMain);
   }
