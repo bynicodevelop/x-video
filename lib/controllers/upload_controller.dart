@@ -2,7 +2,9 @@
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
+import 'package:x_video_ai/gateway/ffmpeg.dart';
 import 'package:x_video_ai/models/upload_state_model.dart';
+import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/video_service.dart';
 
 class UploadControllerProvider extends StateNotifier<UploadStateState> {
@@ -16,7 +18,10 @@ class UploadControllerProvider extends StateNotifier<UploadStateState> {
         _contentController = contentController,
         super(UploadStateState(files: []));
 
-  Future<void> upload(XFile file) async {
+  Future<void> upload(
+    XFile file,
+    VideoSectionModel section,
+  ) async {
     // Ajouter le fichier à la liste avec l'état "uploading"
     final newFileState = FileUploadState(
       file: file,
@@ -28,14 +33,29 @@ class UploadControllerProvider extends StateNotifier<UploadStateState> {
     );
 
     try {
-      await _videoService.uploadToTmpFolder(
+      XFile tmpFile = await _videoService.uploadToTmpFolder(
         file,
         _contentController.state.path,
       );
 
+      Map<String, dynamic> standardizedFile =
+          await _videoService.standardizeVideo(
+        tmpFile,
+        _contentController.state.path,
+      );
+
+      final newSection = section.copyWith(
+        file: standardizedFile['name'],
+      );
+
+      _contentController.updateSections(newSection.toJson());
+
+      _contentController.save();
+
       // Mettre à jour l'état du fichier à "uploaded"
       _updateFileStatus(file, UploadStatus.uploaded);
     } catch (e) {
+      print(e);
       // En cas d'erreur, mettre à jour l'état du fichier à "uploadFailed"
       _updateFileStatus(file, UploadStatus.uploadFailed, e.toString());
     }
@@ -57,7 +77,9 @@ class UploadControllerProvider extends StateNotifier<UploadStateState> {
 final uploadControllerProvider =
     StateNotifierProvider<UploadControllerProvider, UploadStateState>(
   (ref) => UploadControllerProvider(
-    VideoService(),
+    VideoService(
+      FFMpeg(),
+    ),
     ref.read(contentControllerProvider.notifier),
   ),
 );

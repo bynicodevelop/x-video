@@ -78,8 +78,10 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
                       .read(sectionsControllerProvider.notifier)
                       .sections
                       .map(
-                        (VideoSectionModel e) =>
-                            const VignetteReaderVideoEditor(),
+                        (VideoSectionModel e) => VignetteReaderVideoEditor(
+                          section: e,
+                          key: ValueKey(e.file ?? UniqueKey()),
+                        ),
                       )
                       .toList(),
                 ),

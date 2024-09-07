@@ -108,6 +108,27 @@ class ContentController extends StateNotifier<ContentModel> {
     });
   }
 
+  void updateSections(
+    Map<String, dynamic> section,
+  ) {
+    // Conversion explicite de la liste dynamique en List<Map<String, dynamic>>
+    final List<Map<String, dynamic>> sections =
+        (state.sections?['content'] as List<dynamic>)
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+
+    final int index = sections
+        .indexWhere((element) => element['sentence'] == section['sentence']);
+
+    if (index != -1) {
+      sections[index] = section;
+    } else {
+      sections.add(section);
+    }
+
+    setSections(sections);
+  }
+
   void save() {
     _loadingController.startLoading(kLoadingContent);
     _contentService.saveContent(state);

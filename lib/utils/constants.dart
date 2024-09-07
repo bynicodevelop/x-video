@@ -9,6 +9,14 @@ const String kLoadingReader = "reader";
 const String kLoadingContent = "content";
 const String kLoadingMain = "main";
 
+// Video orientations
+const String kOrientation9_16 = "1080:1920";
+const String kOrientation16_9 = "1920:1080";
+
+// file extension
+const String kVideoExtension = "mp4";
+const String kImageExtension = "jpg";
+
 // Internal prompts
 const String kPromptGenerateKeywords = """
 Tu es un assistant spécialiste dans le choix de mots-clés pertinents en fonction d’une phrase qu’on te fournit.
