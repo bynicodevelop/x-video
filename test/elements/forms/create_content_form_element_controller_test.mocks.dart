@@ -241,6 +241,15 @@ class MockContentController extends _i1.Mock implements _i4.ContentController {
       );
 
   @override
+  void updateSections(Map<String, dynamic>? section) => super.noSuchMethod(
+        Invocation.method(
+          #updateSections,
+          [section],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   void save() => super.noSuchMethod(
         Invocation.method(
           #save,

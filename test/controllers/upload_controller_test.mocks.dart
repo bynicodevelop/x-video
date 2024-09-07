@@ -3,16 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
+import 'dart:typed_data' as _i6;
 
-import 'package:cross_file/cross_file.dart' as _i5;
-import 'package:flutter_riverpod/flutter_riverpod.dart' as _i7;
+import 'package:cross_file/cross_file.dart' as _i2;
+import 'package:flutter_riverpod/flutter_riverpod.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:state_notifier/state_notifier.dart' as _i8;
-import 'package:x_video_ai/controllers/content_controller.dart' as _i6;
-import 'package:x_video_ai/models/content_model.dart' as _i2;
-import 'package:x_video_ai/services/content_service.dart' as _i9;
-import 'package:x_video_ai/services/video_service.dart' as _i3;
+import 'package:state_notifier/state_notifier.dart' as _i9;
+import 'package:x_video_ai/controllers/content_controller.dart' as _i7;
+import 'package:x_video_ai/models/content_model.dart' as _i3;
+import 'package:x_video_ai/services/video_service.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -27,8 +27,18 @@ import 'package:x_video_ai/services/video_service.dart' as _i3;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeContentModel_0 extends _i1.SmartFake implements _i2.ContentModel {
-  _FakeContentModel_0(
+class _FakeXFile_0 extends _i1.SmartFake implements _i2.XFile {
+  _FakeXFile_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeContentModel_1 extends _i1.SmartFake implements _i3.ContentModel {
+  _FakeContentModel_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -40,14 +50,14 @@ class _FakeContentModel_0 extends _i1.SmartFake implements _i2.ContentModel {
 /// A class which mocks [VideoService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVideoService extends _i1.Mock implements _i3.VideoService {
+class MockVideoService extends _i1.Mock implements _i4.VideoService {
   MockVideoService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<void> uploadToTmpFolder(
-    _i5.XFile? file,
+  _i5.Future<_i2.XFile> uploadToTmpFolder(
+    _i2.XFile? file,
     String? projectPath,
   ) =>
       (super.noSuchMethod(
@@ -58,15 +68,59 @@ class MockVideoService extends _i1.Mock implements _i3.VideoService {
             projectPath,
           ],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<_i2.XFile>.value(_FakeXFile_0(
+          this,
+          Invocation.method(
+            #uploadToTmpFolder,
+            [
+              file,
+              projectPath,
+            ],
+          ),
+        )),
+      ) as _i5.Future<_i2.XFile>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> standardizeVideo(
+    _i2.XFile? file,
+    String? projectPath, {
+    String? format = r'1920:1080',
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #standardizeVideo,
+          [
+            file,
+            projectPath,
+          ],
+          {#format: format},
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<_i6.Uint8List?> generateThumbnail({
+    required _i2.XFile? file,
+    required String? outputPath,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateThumbnail,
+          [],
+          {
+            #file: file,
+            #outputPath: outputPath,
+          },
+        ),
+        returnValue: _i5.Future<_i6.Uint8List?>.value(),
+      ) as _i5.Future<_i6.Uint8List?>);
 }
 
 /// A class which mocks [ContentController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockContentController extends _i1.Mock implements _i6.ContentController {
+class MockContentController extends _i1.Mock implements _i7.ContentController {
   MockContentController() {
     _i1.throwOnMissingStub(this);
   }
@@ -90,16 +144,16 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       ) as bool);
 
   @override
-  _i2.ContentModel get content => (super.noSuchMethod(
+  _i3.ContentModel get content => (super.noSuchMethod(
         Invocation.getter(#content),
-        returnValue: _FakeContentModel_0(
+        returnValue: _FakeContentModel_1(
           this,
           Invocation.getter(#content),
         ),
-      ) as _i2.ContentModel);
+      ) as _i3.ContentModel);
 
   @override
-  set onError(_i7.ErrorListener? _onError) => super.noSuchMethod(
+  set onError(_i8.ErrorListener? _onError) => super.noSuchMethod(
         Invocation.setter(
           #onError,
           _onError,
@@ -114,22 +168,22 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       ) as bool);
 
   @override
-  _i4.Stream<_i2.ContentModel> get stream => (super.noSuchMethod(
+  _i5.Stream<_i3.ContentModel> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _i4.Stream<_i2.ContentModel>.empty(),
-      ) as _i4.Stream<_i2.ContentModel>);
+        returnValue: _i5.Stream<_i3.ContentModel>.empty(),
+      ) as _i5.Stream<_i3.ContentModel>);
 
   @override
-  _i2.ContentModel get state => (super.noSuchMethod(
+  _i3.ContentModel get state => (super.noSuchMethod(
         Invocation.getter(#state),
-        returnValue: _FakeContentModel_0(
+        returnValue: _FakeContentModel_1(
           this,
           Invocation.getter(#state),
         ),
-      ) as _i2.ContentModel);
+      ) as _i3.ContentModel);
 
   @override
-  set state(_i2.ContentModel? value) => super.noSuchMethod(
+  set state(_i3.ContentModel? value) => super.noSuchMethod(
         Invocation.setter(
           #state,
           value,
@@ -138,13 +192,13 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       );
 
   @override
-  _i2.ContentModel get debugState => (super.noSuchMethod(
+  _i3.ContentModel get debugState => (super.noSuchMethod(
         Invocation.getter(#debugState),
-        returnValue: _FakeContentModel_0(
+        returnValue: _FakeContentModel_1(
           this,
           Invocation.getter(#debugState),
         ),
-      ) as _i2.ContentModel);
+      ) as _i3.ContentModel);
 
   @override
   bool get hasListeners => (super.noSuchMethod(
@@ -153,7 +207,7 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       ) as bool);
 
   @override
-  void initContent(_i2.ContentModel? contentModel) => super.noSuchMethod(
+  void initContent(_i3.ContentModel? contentModel) => super.noSuchMethod(
         Invocation.method(
           #initContent,
           [contentModel],
@@ -233,6 +287,15 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       );
 
   @override
+  void updateSections(Map<String, dynamic>? section) => super.noSuchMethod(
+        Invocation.method(
+          #updateSections,
+          [section],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   void save() => super.noSuchMethod(
         Invocation.method(
           #save,
@@ -243,8 +306,8 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
 
   @override
   bool updateShouldNotify(
-    _i2.ContentModel? old,
-    _i2.ContentModel? current,
+    _i3.ContentModel? old,
+    _i3.ContentModel? current,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -258,8 +321,8 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       ) as bool);
 
   @override
-  _i7.RemoveListener addListener(
-    _i8.Listener<_i2.ContentModel>? listener, {
+  _i8.RemoveListener addListener(
+    _i9.Listener<_i3.ContentModel>? listener, {
     bool? fireImmediately = true,
   }) =>
       (super.noSuchMethod(
@@ -269,7 +332,7 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
           {#fireImmediately: fireImmediately},
         ),
         returnValue: () {},
-      ) as _i7.RemoveListener);
+      ) as _i8.RemoveListener);
 
   @override
   void dispose() => super.noSuchMethod(
@@ -279,40 +342,4 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
         ),
         returnValueForMissingStub: null,
       );
-}
-
-/// A class which mocks [ContentService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockContentService extends _i1.Mock implements _i9.ContentService {
-  MockContentService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  void saveContent(_i2.ContentModel? contentModel) => super.noSuchMethod(
-        Invocation.method(
-          #saveContent,
-          [contentModel],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  List<_i2.ContentModel> loadContents(String? path) => (super.noSuchMethod(
-        Invocation.method(
-          #loadContents,
-          [path],
-        ),
-        returnValue: <_i2.ContentModel>[],
-      ) as List<_i2.ContentModel>);
-
-  @override
-  Map<String, dynamic> getContent(String? path) => (super.noSuchMethod(
-        Invocation.method(
-          #getContent,
-          [path],
-        ),
-        returnValue: <String, dynamic>{},
-      ) as Map<String, dynamic>);
 }
