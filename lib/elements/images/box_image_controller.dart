@@ -7,18 +7,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/gateway/ffmpeg.dart';
 import 'package:x_video_ai/services/video_service.dart';
+import 'package:x_video_ai/utils/constants.dart';
 
-class BoxImageModel {
+class ThumbnailModel {
   final Key key;
   final Uint8List? thumbnail;
 
-  BoxImageModel({
+  ThumbnailModel({
     required this.key,
     required this.thumbnail,
   });
 }
 
-class BoxImageController extends StateNotifier<List<BoxImageModel>> {
+class BoxImageController extends StateNotifier<List<ThumbnailModel>> {
   final VideoService _videoService;
   final ContentController _contentController;
 
@@ -29,26 +30,33 @@ class BoxImageController extends StateNotifier<List<BoxImageModel>> {
         _contentController = contentController,
         super([]);
 
-  Uint8List? getThumbnail(Key key) {
-    final BoxImageModel boxImageModel = state.firstWhere(
-        (element) => element.key == key,
+  ThumbnailModel getThumbnailModel(Key key) {
+    return state.firstWhere((element) => element.key == key,
         orElse: () =>
-            BoxImageModel(key: const Key('default'), thumbnail: null));
+            ThumbnailModel(key: const Key('default'), thumbnail: null));
+  }
 
-    if (boxImageModel.thumbnail == null) {
+  Uint8List? getThumbnail(Key key) {
+    final ThumbnailModel thumbnailModel = getThumbnailModel(key);
+
+    if (thumbnailModel.thumbnail == null) {
       return null;
     }
 
-    return boxImageModel.thumbnail;
+    return thumbnailModel.thumbnail;
   }
 
-  Future<void> generateBoxImage(
+  Future<void> generateThumbnailFromFile(
     XFile file,
     Key key,
   ) async {
-    final String projectPath = _contentController.state.path;
-    print(projectPath);
+    final ThumbnailModel thumbnailModel = getThumbnailModel(key);
 
+    if (thumbnailModel.thumbnail != null) {
+      return;
+    }
+
+    final String projectPath = _contentController.state.path;
     final Uint8List? thumbnail = await _videoService.generateThumbnail(
       file: file,
       outputPath: projectPath,
@@ -56,7 +64,39 @@ class BoxImageController extends StateNotifier<List<BoxImageModel>> {
 
     state = [
       ...state,
-      BoxImageModel(
+      ThumbnailModel(
+        key: key,
+        thumbnail: thumbnail,
+      ),
+    ];
+  }
+
+  Future<void> generateThumbnailFromVideoId(
+    String? videoId,
+    Key key,
+  ) async {
+    if (videoId == null) {
+      return;
+    }
+
+    final ThumbnailModel thumbnailModel = getThumbnailModel(key);
+
+    if (thumbnailModel.thumbnail != null) {
+      return;
+    }
+
+    final String projectPath = _contentController.state.path;
+    final XFile file = XFile('$projectPath/videos/$videoId.$kVideoExtension');
+
+    final Uint8List? thumbnail = await _videoService.generateThumbnail(
+      file: file,
+      outputPath: projectPath,
+      fileName: videoId,
+    );
+
+    state = [
+      ...state,
+      ThumbnailModel(
         key: key,
         thumbnail: thumbnail,
       ),
@@ -65,7 +105,7 @@ class BoxImageController extends StateNotifier<List<BoxImageModel>> {
 }
 
 final boxImageControllerProvider =
-    StateNotifierProvider<BoxImageController, List<BoxImageModel>>(
+    StateNotifierProvider<BoxImageController, List<ThumbnailModel>>(
   (ref) => BoxImageController(
     VideoService(
       FFMpeg(),

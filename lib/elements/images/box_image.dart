@@ -1,13 +1,27 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/elements/images/box_image_controller.dart';
 
-class BoxImage extends ConsumerStatefulWidget {
-  final Widget child;
+class BoxImageParams {
+  final Key key;
   final bool dragging;
+  final Uint8List? thumbnail;
+
+  BoxImageParams({
+    required this.key,
+    required this.dragging,
+    this.thumbnail,
+  });
+}
+
+class BoxImage extends ConsumerStatefulWidget {
+  final bool dragging;
+  final Widget Function(BuildContext context, BoxImageParams params) builder;
 
   const BoxImage({
-    required this.child,
+    required this.builder,
     this.dragging = false,
     super.key,
   });
@@ -30,7 +44,7 @@ class _BoxImageState extends ConsumerState<BoxImage> {
       decoration: BoxDecoration(
         color: widget.dragging
             ? Colors.blue.shade100
-            : thumbnail == null
+            : thumbnail != null
                 ? Colors.grey.shade100
                 : Colors.grey.shade300,
         borderRadius: BorderRadius.circular(8),
@@ -42,7 +56,14 @@ class _BoxImageState extends ConsumerState<BoxImage> {
               )
             : null,
       ),
-      child: widget.child,
+      child: widget.builder(
+        context,
+        BoxImageParams(
+          key: widget.key!,
+          dragging: widget.dragging,
+          thumbnail: thumbnail,
+        ),
+      ),
     );
   }
 }
