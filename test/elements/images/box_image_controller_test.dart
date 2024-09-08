@@ -6,7 +6,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/elements/images/box_image_controller.dart';
-import 'package:x_video_ai/models/box_image_model.dart';
 import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/services/video_service.dart';
 // ignore: depend_on_referenced_packages
@@ -66,10 +65,10 @@ void main() {
     // Simuler un fichier vidéo
     final XFile videoFile = XFile('/path/to/video.mp4');
 
-    // Appeler la méthode generateBoxImage
+    // Appeler la méthode generateThumbnailFromFile
     await container
         .read(boxImageControllerProvider.notifier)
-        .generateBoxImage(videoFile, const Key('video1'));
+        .generateThumbnailFromFile(videoFile, const Key('video1'));
 
     // Vérifier que l'état contient la miniature générée
     final List<ThumbnailModel> thumbnails =
@@ -96,10 +95,10 @@ void main() {
     // Simuler un fichier vidéo
     final XFile videoFile = XFile('/path/to/video.mp4');
 
-    // Appeler la méthode generateBoxImage
+    // Appeler la méthode generateThumbnailFromFile
     await container
         .read(boxImageControllerProvider.notifier)
-        .generateBoxImage(videoFile, const Key('video1'));
+        .generateThumbnailFromFile(videoFile, const Key('video1'));
 
     // Récupérer la miniature avec la méthode getThumbnail
     final Uint8List? thumbnail = container

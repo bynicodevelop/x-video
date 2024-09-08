@@ -4,14 +4,15 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
-import 'dart:typed_data' as _i6;
+import 'dart:typed_data' as _i7;
 
-import 'package:cross_file/cross_file.dart' as _i2;
-import 'package:flutter_riverpod/flutter_riverpod.dart' as _i8;
+import 'package:cross_file/cross_file.dart' as _i6;
+import 'package:flutter_riverpod/flutter_riverpod.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:state_notifier/state_notifier.dart' as _i9;
-import 'package:x_video_ai/controllers/content_controller.dart' as _i7;
+import 'package:state_notifier/state_notifier.dart' as _i10;
+import 'package:x_video_ai/controllers/content_controller.dart' as _i8;
 import 'package:x_video_ai/models/content_model.dart' as _i3;
+import 'package:x_video_ai/models/video_model.dart' as _i2;
 import 'package:x_video_ai/services/video_service.dart' as _i4;
 
 // ignore_for_file: type=lint
@@ -27,8 +28,9 @@ import 'package:x_video_ai/services/video_service.dart' as _i4;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeXFile_0 extends _i1.SmartFake implements _i2.XFile {
-  _FakeXFile_0(
+class _FakeVideoDataModel_0 extends _i1.SmartFake
+    implements _i2.VideoDataModel {
+  _FakeVideoDataModel_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -56,8 +58,8 @@ class MockVideoService extends _i1.Mock implements _i4.VideoService {
   }
 
   @override
-  _i5.Future<_i2.XFile> uploadToTmpFolder(
-    _i2.XFile? file,
+  _i5.Future<_i2.VideoDataModel> uploadToTmpFolder(
+    _i6.XFile? file,
     String? projectPath,
   ) =>
       (super.noSuchMethod(
@@ -68,7 +70,7 @@ class MockVideoService extends _i1.Mock implements _i4.VideoService {
             projectPath,
           ],
         ),
-        returnValue: _i5.Future<_i2.XFile>.value(_FakeXFile_0(
+        returnValue: _i5.Future<_i2.VideoDataModel>.value(_FakeVideoDataModel_0(
           this,
           Invocation.method(
             #uploadToTmpFolder,
@@ -78,11 +80,36 @@ class MockVideoService extends _i1.Mock implements _i4.VideoService {
             ],
           ),
         )),
-      ) as _i5.Future<_i2.XFile>);
+      ) as _i5.Future<_i2.VideoDataModel>);
+
+  @override
+  _i5.Future<_i2.VideoDataModel> getInformation(
+    _i2.VideoDataModel? video,
+    String? projectPath,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getInformation,
+          [
+            video,
+            projectPath,
+          ],
+        ),
+        returnValue: _i5.Future<_i2.VideoDataModel>.value(_FakeVideoDataModel_0(
+          this,
+          Invocation.method(
+            #getInformation,
+            [
+              video,
+              projectPath,
+            ],
+          ),
+        )),
+      ) as _i5.Future<_i2.VideoDataModel>);
 
   @override
   _i5.Future<Map<String, dynamic>> standardizeVideo(
-    _i2.XFile? file,
+    _i6.XFile? file,
     String? projectPath, {
     String? format = r'1920:1080',
   }) =>
@@ -100,9 +127,10 @@ class MockVideoService extends _i1.Mock implements _i4.VideoService {
       ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i5.Future<_i6.Uint8List?> generateThumbnail({
-    required _i2.XFile? file,
+  _i5.Future<_i7.Uint8List?> generateThumbnail({
+    required _i6.XFile? file,
     required String? outputPath,
+    String? fileName,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -111,10 +139,11 @@ class MockVideoService extends _i1.Mock implements _i4.VideoService {
           {
             #file: file,
             #outputPath: outputPath,
+            #fileName: fileName,
           },
         ),
-        returnValue: _i5.Future<_i6.Uint8List?>.value(),
-      ) as _i5.Future<_i6.Uint8List?>);
+        returnValue: _i5.Future<_i7.Uint8List?>.value(),
+      ) as _i5.Future<_i7.Uint8List?>);
 
   @override
   _i5.Future<void> createDirectory(String? path) => (super.noSuchMethod(
@@ -130,7 +159,7 @@ class MockVideoService extends _i1.Mock implements _i4.VideoService {
 /// A class which mocks [ContentController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockContentController extends _i1.Mock implements _i7.ContentController {
+class MockContentController extends _i1.Mock implements _i8.ContentController {
   MockContentController() {
     _i1.throwOnMissingStub(this);
   }
@@ -163,7 +192,7 @@ class MockContentController extends _i1.Mock implements _i7.ContentController {
       ) as _i3.ContentModel);
 
   @override
-  set onError(_i8.ErrorListener? _onError) => super.noSuchMethod(
+  set onError(_i9.ErrorListener? _onError) => super.noSuchMethod(
         Invocation.setter(
           #onError,
           _onError,
@@ -331,8 +360,8 @@ class MockContentController extends _i1.Mock implements _i7.ContentController {
       ) as bool);
 
   @override
-  _i8.RemoveListener addListener(
-    _i9.Listener<_i3.ContentModel>? listener, {
+  _i9.RemoveListener addListener(
+    _i10.Listener<_i3.ContentModel>? listener, {
     bool? fireImmediately = true,
   }) =>
       (super.noSuchMethod(
@@ -342,7 +371,7 @@ class MockContentController extends _i1.Mock implements _i7.ContentController {
           {#fireImmediately: fireImmediately},
         ),
         returnValue: () {},
-      ) as _i8.RemoveListener);
+      ) as _i9.RemoveListener);
 
   @override
   void dispose() => super.noSuchMethod(
