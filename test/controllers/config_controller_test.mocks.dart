@@ -6,7 +6,7 @@
 import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i2;
-import 'package:x_video_ai/services/abstracts/json_deserializable.dart' as _i1;
+import 'package:x_video_ai/models/abstracts/json_deserializable.dart' as _i1;
 import 'package:x_video_ai/services/config_service.dart' as _i3;
 
 // ignore_for_file: type=lint
