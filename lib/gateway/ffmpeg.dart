@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -141,6 +142,79 @@ class FFMpeg {
     } catch (e) {
       print('Erreur: $e');
       return null;
+    }
+  }
+
+  /// Récupère les informations d'une vidéo à partir de son chemin d'entrée en utilisant la commande `ffprobe`.
+  ///
+  /// Cette fonction exécute un processus système pour exécuter `ffprobe`, un outil de la suite FFmpeg,
+  /// afin de récupérer les informations sur le flux vidéo, y compris la largeur, la hauteur et la durée.
+  /// Les informations sont extraites en JSON et renvoyées sous la forme d'une carte (`Map`).
+  ///
+  /// ### Paramètres:
+  ///
+  /// - `inputPath` (`String`): Le chemin du fichier vidéo à analyser.
+  ///
+  /// ### Retour:
+  ///
+  /// - `Future<Map<String, dynamic>>`: Une carte contenant les informations suivantes sur la vidéo :
+  ///   - `width` (`double`): La largeur de la vidéo.
+  ///   - `height` (`double`): La hauteur de la vidéo.
+  ///   - `duration` (`double`): La durée de la vidéo en secondes.
+  ///
+  /// Si la commande `ffprobe` échoue, la fonction renvoie une carte vide (`{}`).
+  ///
+  /// ### Exemple:
+  ///
+  /// ```dart
+  /// final videoInfo = await getVideoInformation('/chemin/vers/video.mp4');
+  /// print('Largeur: ${videoInfo['width']}');
+  /// print('Hauteur: ${videoInfo['height']}');
+  /// print('Durée: ${videoInfo['duration']}');
+  /// ```
+  ///
+  /// ### Erreurs possibles:
+  ///
+  /// Si la commande `ffprobe` retourne un code de sortie différent de 0, une erreur est affichée dans la console,
+  /// et une carte vide est renvoyée.
+  ///
+  /// ### Remarques:
+  /// - Assurez-vous que `ffprobe` est installé et accessible dans le chemin système de la machine exécutant cette fonction.
+  /// - Les informations sont récupérées uniquement à partir du premier flux vidéo (`v:0`).
+  ///
+  /// ### Dépendances:
+  /// - La commande `ffprobe` de FFmpeg.
+  /// - `dart:convert` pour la conversion du JSON.
+  Future<Map<String, dynamic>> getVideoInformation(
+    String inputPath,
+  ) async {
+    final result = await Process.run('ffprobe', [
+      '-v',
+      'error',
+      '-select_streams',
+      'v:0',
+      '-show_entries',
+      'stream=width,height,duration',
+      '-of',
+      'json',
+      inputPath,
+    ]);
+
+    if (result.exitCode == 0) {
+      final data = result.stdout as String;
+      final json = jsonDecode(data);
+
+      final videoData = json['streams'][0];
+
+      return {
+        'width': double.parse(videoData['width'].toString()),
+        'height': double.parse(videoData['height'].toString()),
+        'duration': double.parse(videoData['duration'].toString()),
+      };
+    } else {
+      print(
+          'Erreur lors de la récupération des informations de la vidéo: ${result.stderr}');
+      return {};
     }
   }
 }
