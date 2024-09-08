@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:x_video_ai/services/abstracts/json_deserializable.dart';
+import 'package:x_video_ai/models/abstracts/json_deserializable.dart';
 
 class ConfigService<T extends JsonDeserializable> {
   String? _path;
