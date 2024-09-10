@@ -67,7 +67,6 @@ class _DropzoneElementState extends ConsumerState<DropzoneElement> {
         },
         child: Container(
           width: 250,
-          margin: const EdgeInsets.only(right: 10),
           decoration: BoxDecoration(
             color: _dragging ? Colors.blue.shade100 : Colors.grey.shade300,
             borderRadius: BorderRadius.circular(8),
