@@ -119,6 +119,7 @@ class _ChronicalViewEditorScreenState
             return MainDialogElement(
               width: MediaQuery.of(context).size.width * 0.25,
               height: MediaQuery.of(context).size.height * 0.60,
+              // TODO: Translate
               title: 'Ouvrir un contenu existant',
               child: ListView.builder(
                 shrinkWrap: true,
@@ -127,6 +128,7 @@ class _ChronicalViewEditorScreenState
                   return ListTile(
                     title: Text('Content ${contentModels[index].id}'),
                     onTap: () {
+                      print(contentModels[index].toJson());
                       ref
                           .read(contentControllerProvider.notifier)
                           .initContent(contentModels[index]);
@@ -200,6 +202,7 @@ class _ChronicalViewEditorScreenState
   ) {
     if (next != null && next.model != null) {
       final String path = "${next.model!.path}/${next.model!.name}";
+      print(path);
       ref.read(contentListControllerProvider.notifier).loadContents(path);
     }
   }

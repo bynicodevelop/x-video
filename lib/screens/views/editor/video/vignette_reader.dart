@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/editor_section_controller.dart';
 import 'package:x_video_ai/controllers/upload_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
+import 'package:x_video_ai/elements/files/dropzone_element.dart';
 import 'package:x_video_ai/elements/images/box_image.dart';
 import 'package:x_video_ai/models/editor_section_model.dart';
 import 'package:x_video_ai/models/upload_state_model.dart';
@@ -28,7 +29,7 @@ class VignetteReaderVideoEditor extends ConsumerStatefulWidget {
 
 class _VignetteReaderVideoState
     extends ConsumerState<VignetteReaderVideoEditor> {
-  bool _dragging = false;
+  final bool _dragging = false;
   EditorSectionModel? _editorSectionModel;
 
   @override
@@ -141,58 +142,36 @@ class _VignetteReaderVideoState
     //   orElse: () => VideoDataModel.getDefault(),
     // );
 
-    return DropTarget(
-      onDragDone: (detail) {
-        if (detail.files.length > 1) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              // TODO: Add a translation
-              content: Text('Only one file can be uploaded at a time'),
-            ),
-          );
-
-          return;
-        }
-
-        XFile file = detail.files.first;
-
-        // ref.read(uploadControllerProvider.notifier).upload(
-        //       _file!,
-        //       widget.key!,
-        //     );
-        // ref.read(boxImageControllerProvider.notifier).generateThumbnailFromFile(
-        //       _file!,
-        //       widget.key!,
-        //     );
-      },
-      onDragEntered: (detail) {
-        setState(() => _dragging = true);
-      },
-      onDragExited: (detail) {
-        setState(() => _dragging = false);
-      },
-      child: BoxImage(
-        section: _editorSectionModel,
-        dragging: _dragging,
-        builder: (
-          BuildContext context,
-          BoxImageParams params,
-        ) {
-          return Center(
-            child: IconButton(
-              icon: Icon(
-                _getIconBasedOnState(null),
-                color: params.dragging
-                    ? Colors.blue.shade400
-                    : params.thumbnail != null
-                        ? Colors.white
-                        : Colors.grey.shade400,
+    return DropzoneElement(
+      onFile: (files) {},
+      builder: (context, dropzoneParams) {
+        return BoxImage(
+          section: _editorSectionModel,
+          builder: (
+            BuildContext context,
+            BoxImageParams boxImageParams,
+          ) {
+            if (dropzoneParams.errorType != ErrorType.idle) {
+              debugPrint('Error: ${dropzoneParams.errorType}');
+            }
+            return Center(
+              child: IconButton(
+                icon: Icon(
+                  dropzoneParams.errorType == ErrorType.idle
+                      ? _getIconBasedOnState(null)
+                      : Icons.error,
+                  color: dropzoneParams.dragging
+                      ? Colors.blue.shade400
+                      : boxImageParams.thumbnail != null
+                          ? Colors.white
+                          : Colors.grey.shade400,
+                ),
+                onPressed: () {},
               ),
-              onPressed: () {},
-            ),
-          );
-        },
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }

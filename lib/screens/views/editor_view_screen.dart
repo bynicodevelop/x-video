@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/components/scaffold/tool_bar_editor_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
+import 'package:x_video_ai/controllers/content_list_controller.dart';
 import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical_view_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/video_view_editor_screen.dart';
@@ -17,7 +19,7 @@ class EditorViewScreen extends ConsumerStatefulWidget {
 
 class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
   final PageController _pageController = PageController(
-    initialPage: 0,
+    initialPage: 1,
   );
 
   @override
@@ -35,6 +37,19 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
             ));
       }
     });
+
+    if (kDebugMode) {
+      Future.microtask(() {
+        ref.read(contentListControllerProvider.notifier).loadContents(
+            "/Volumes/Macintosh HD/Users/nicolasmoricet/Documents/XVideoIA/Nouveau project");
+        final contentModels =
+            ref.read(contentListControllerProvider.notifier).contentList;
+
+        ref
+            .read(contentControllerProvider.notifier)
+            .initContent(contentModels[0]);
+      });
+    }
   }
 
   @override
@@ -60,10 +75,13 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
               : null,
       body: PageView(
         controller: _pageController,
-        children: const [
-          ChronicalViewEditorScreen(),
-          VideoViewEditorScreen(),
-        ],
+        children:
+            ref.read(contentControllerProvider.notifier).content.id.isNotEmpty
+                ? [
+                    const ChronicalViewEditorScreen(),
+                    const VideoViewEditorScreen(),
+                  ]
+                : [],
       ),
     );
   }

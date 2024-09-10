@@ -20,8 +20,10 @@ class _ChronicalEditorFormElementState
     super.initState();
 
     Future.microtask(() {
-      final content = ref.read(contentControllerProvider.notifier);
-      _contentController.text = content.content.chronical!['content'] ?? '';
+      if (mounted) {
+        final content = ref.read(contentControllerProvider.notifier);
+        _contentController.text = content.content.chronical!['content'] ?? '';
+      }
     });
   }
 
