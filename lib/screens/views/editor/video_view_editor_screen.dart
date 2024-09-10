@@ -6,6 +6,7 @@ import 'package:x_video_ai/controllers/sections_controller.dart';
 import 'package:x_video_ai/controllers/video_data_generator_controller.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/screens/views/editor/video/vignette_reader.dart';
+import 'package:x_video_ai/screens/views/editor/video/vignette_reader_controller.dart';
 
 class VideoViewEditorScreen extends ConsumerStatefulWidget {
   const VideoViewEditorScreen({super.key});
@@ -78,9 +79,20 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
                           .read(sectionsControllerProvider.notifier)
                           .sections
                           .map(
-                            (VideoSectionModel section) =>
-                                VignetteReaderVideoEditor(
-                              section: section,
+                            (VideoSectionModel section) => Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: VignetteReaderVideoEditor(
+                                section: section,
+                                onCompleted:
+                                    (VignetteReaderState? vignetteReaderState) {
+                                  ref
+                                      .read(sectionsControllerProvider.notifier)
+                                      .updateSection(section.copyWith(
+                                        fileName: vignetteReaderState
+                                            ?.videoDataModel?.name,
+                                      ));
+                                },
+                              ),
                             ),
                           )
                           .toList(),

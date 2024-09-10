@@ -73,8 +73,6 @@ class FFMpeg {
       print('Error: ${result.stderr}');
       throw Exception('FFmpeg process failed');
     }
-
-    print('Video processed successfully: ${result.stdout}');
   }
 
   /// Génère une miniature d'une vidéo en utilisant FFmpeg.

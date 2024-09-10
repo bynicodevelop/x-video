@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/models/category_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/category_service.dart';
 
-enum CategoryContainer { idle, notInCategory, inCategory }
-
-class CategoryListController extends StateNotifier<Map<String, dynamic>> {
+class CategoryListController extends StateNotifier<List<CategoryModel>> {
   final CategoryService _categoryService;
   final ContentController _contentController;
 
@@ -16,19 +13,9 @@ class CategoryListController extends StateNotifier<Map<String, dynamic>> {
     ContentController contentController,
   )   : _categoryService = categoryService,
         _contentController = contentController,
-        super({
-          "categories": [],
-          "isInCategories": CategoryContainer.idle,
-          "section": null,
-          "key": null,
-        });
+        super([]);
 
-  List<CategoryModel> get categories =>
-      List<CategoryModel>.from(state["categories"]);
-  CategoryContainer get isInCategories => state["isInCategories"];
-  Key? get key => state["key"];
-
-  VideoSectionModel? get section => state["section"];
+  List<CategoryModel> get categories => state;
 
   Future<void> loadCategories() async {
     final String projectPath = _contentController.state.path;
@@ -37,51 +24,26 @@ class CategoryListController extends StateNotifier<Map<String, dynamic>> {
       final List<CategoryModel> categories =
           await _categoryService.getCategories(projectPath);
       categories.sort((a, b) => a.name.compareTo(b.name));
-      state = {
-        ...state,
-        "categories": categories,
-      };
+
+      state = categories;
     } catch (e) {
-      state = {
-        ...state,
-        "categories": [],
-      };
+      state = [];
     }
   }
 
-  void keywordIsInCategory(
-    Key key,
+  bool keywordIsInCategory(
     VideoSectionModel section,
   ) {
-    final List<CategoryModel> categories = List<CategoryModel>.from(
-      state["categories"],
-    );
-    final bool isInCategories = categories.any(
+    final bool isInCategories = state.any(
       (category) => category.keywords.contains(section.keyword),
     );
 
-    state = {
-      ...state,
-      "isInCategories": isInCategories
-          ? CategoryContainer.inCategory
-          : CategoryContainer.notInCategory,
-      "section": section,
-      "key": key,
-    };
-  }
-
-  void resetKeywordIsInCategory() {
-    state = {
-      ...state,
-      "isInCategories": CategoryContainer.idle,
-      "section": null,
-      "key": null,
-    };
+    return isInCategories;
   }
 }
 
 final categoryListControllerProvider =
-    StateNotifierProvider<CategoryListController, Map<String, dynamic>>(
+    StateNotifierProvider<CategoryListController, List<CategoryModel>>(
   (ref) => CategoryListController(
     CategoryService(),
     ref.read(contentControllerProvider.notifier),

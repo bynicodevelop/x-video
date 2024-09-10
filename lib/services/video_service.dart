@@ -4,6 +4,7 @@ import 'dart:typed_data';
 // ignore: depend_on_referenced_packages
 import 'package:cross_file/cross_file.dart';
 import 'package:x_video_ai/gateway/ffmpeg.dart';
+import 'package:x_video_ai/models/video_information.dart';
 import 'package:x_video_ai/models/video_model.dart';
 import 'package:x_video_ai/services/abstracts/file_service.dart';
 import 'package:x_video_ai/utils/constants.dart';
@@ -24,75 +25,71 @@ class VideoService extends FileService {
   }
 
   Future<VideoDataModel> uploadToTmpFolder(
-    XFile file,
+    VideoDataModel videoDataModel,
     String projectPath,
   ) async {
     final String tmpPath = '$projectPath/$_tmpFolder';
-    final String md5Name = await generateMD5Name(file);
-    final String fileExtension = _getFileExtension(file);
-    final String filePath = '$tmpPath/$md5Name.$fileExtension';
+    final String fileExtension = _getFileExtension(videoDataModel.file!);
+    final String filePath = '$tmpPath/${videoDataModel.name}.$fileExtension';
 
     try {
       await createDirectory(tmpPath);
-      await file.saveTo(filePath);
-      return VideoDataModel(
-        name: md5Name,
-        start: 0,
-        end: 0,
-        duration: 0,
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
+      await videoDataModel.file!.saveTo(filePath);
 
-  Future<VideoDataModel> getInformation(
-    VideoDataModel video,
-    String projectPath,
-  ) async {
-    final String pathFile =
-        '$projectPath/$_tmpFolder/${video.name}.$kVideoExtension';
-
-    try {
-      final Map<String, dynamic> information =
-          await _ffmpeg.getVideoInformation(pathFile);
-
-      return video.mergeWith({
-        'duration': information['duration'],
+      return videoDataModel.mergeWith({
+        'file': XFile(filePath),
       });
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<Map<String, dynamic>> standardizeVideo(
-    String fileName,
+  Future<VideoInformation> getInformation(
+    XFile video,
+  ) async {
+    try {
+      final Map<String, dynamic> information =
+          await _ffmpeg.getVideoInformation(video.path);
+
+      return VideoInformation(
+        duration: information['duration'],
+        width: information['width'],
+        height: information['height'],
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<VideoDataModel> standardizeVideo(
+    VideoDataModel videoDataModel,
     String projectPath, {
     String format = kOrientation16_9,
   }) async {
-    final String tmpPath = '$projectPath/$_tmpFolder';
     final String standardizePath = '$projectPath/$_videosFolder';
-
-    final XFile file = XFile('$tmpPath/$fileName.$kVideoExtension');
-
     final String standardizeFilePath =
-        '$standardizePath/$fileName.$kVideoExtension';
+        '$standardizePath/${videoDataModel.file!.name}.$kVideoExtension';
 
     try {
       await createDirectory(standardizePath);
       await _ffmpeg.processVideo(
-        inputPath: file.path,
+        inputPath: videoDataModel.file!.path,
         outputPath: standardizeFilePath,
         format: format,
       );
 
-      File fileToDelete = File(file.path);
-      await fileToDelete.delete();
+      // rename file
+      XFile newFile = XFile(standardizeFilePath);
+      final String fileName = await generateMD5Name(newFile);
+      final String newFilePath = '$standardizePath/$fileName.$kVideoExtension';
 
-      return {
+      await File(standardizeFilePath).rename(newFilePath);
+      await File(videoDataModel.file!.path).delete();
+
+      return videoDataModel.mergeWith({
         'name': fileName,
-        'file': XFile(standardizeFilePath),
-      };
+        'file': XFile(newFilePath),
+      });
     } catch (e) {
       rethrow;
     }

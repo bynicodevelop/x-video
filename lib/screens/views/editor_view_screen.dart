@@ -5,6 +5,7 @@ import 'package:x_video_ai/components/scaffold/tool_bar_editor_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/controllers/content_list_controller.dart';
+import 'package:x_video_ai/controllers/video_data_controller.dart';
 import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical_view_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/video_view_editor_screen.dart';
@@ -38,8 +39,8 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
       }
     });
 
-    if (kDebugMode) {
-      Future.microtask(() {
+    Future.microtask(() {
+      if (kDebugMode) {
         ref.read(contentListControllerProvider.notifier).loadContents(
             "/Volumes/Macintosh HD/Users/nicolasmoricet/Documents/XVideoIA/Nouveau project");
         final contentModels =
@@ -48,13 +49,16 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
         ref
             .read(contentControllerProvider.notifier)
             .initContent(contentModels[0]);
-      });
-    }
+      }
+
+      ref.read(videoDataControllerProvider.notifier).loadVideos();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     ref.watch(contentControllerProvider);
+    ref.watch(videoDataControllerProvider);
 
     return Scaffold(
       bottomNavigationBar:

@@ -19,7 +19,7 @@ class VideoDataModel extends TimmingModel implements JsonDeserializable {
   });
 
   @override
-  fromJson(Map<String, dynamic> json) => VideoDataModel(
+  VideoDataModel fromJson(Map<String, dynamic> json) => VideoDataModel(
         name: json['name'],
         start: json['start'],
         end: json['end'],
@@ -27,7 +27,7 @@ class VideoDataModel extends TimmingModel implements JsonDeserializable {
       );
 
   @override
-  mergeWith(Map<String, dynamic> json) => VideoDataModel(
+  VideoDataModel mergeWith(Map<String, dynamic> json) => VideoDataModel(
         name: json['name'] ?? name,
         start: json['start'] ?? start,
         end: json['end'] ?? end,
@@ -49,6 +49,13 @@ class VideoDataModel extends TimmingModel implements JsonDeserializable {
         ...toJson(),
         'fileState': fileState?.toJson(),
       }.toString();
+
+  static VideoDataModel factory(Map<String, dynamic> json) => VideoDataModel(
+        name: json['name'],
+        start: json['start'],
+        end: json['end'],
+        duration: json['duration'],
+      );
 
   static VideoDataModel getDefault() => VideoDataModel(
         name: '',

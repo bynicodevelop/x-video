@@ -145,7 +145,8 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
         .whereType<SrtWordModel>()
         .toList();
 
-    final List<VideoSectionModel> sections = _sectionService.createSections(
+    final List<VideoSectionModel> sections =
+        await _sectionService.createSections(
       words,
       maxDuration: 3,
     );

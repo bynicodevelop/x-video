@@ -68,13 +68,15 @@ class CategoryController extends StateNotifier<CategoryModel?> {
     });
   }
 
-  void save() {
+  Future<void> save() async {
     final String projectPath = _contentController.state.path;
 
-    _categoryService.updateCategory(
+    await _categoryService.updateCategory(
       state!,
       projectPath,
     );
+
+    state = null;
   }
 }
 

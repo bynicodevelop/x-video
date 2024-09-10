@@ -1,17 +1,24 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/models/video_model.dart';
+import 'package:x_video_ai/services/video_config_service.dart';
 
 class VideoDataControllerProvider extends StateNotifier<List<VideoDataModel>> {
-  VideoDataControllerProvider() : super([]);
+  final VideoConfigService _videoConfigService;
+  final ContentController _contentController;
+
+  VideoDataControllerProvider(
+    VideoConfigService videoConfigService,
+    ContentController contentController,
+  )   : _videoConfigService = videoConfigService,
+        _contentController = contentController,
+        super([]);
 
   List<VideoDataModel> get videos => state;
 
-  VideoDataModel getVideoByName(
-    String name,
-  ) {
-    return state.firstWhere(
-      (v) => v.name == name,
-      orElse: () => VideoDataModel.getDefault(),
+  void loadVideos() {
+    state = _videoConfigService.loadVideos(
+      _contentController.state.path,
     );
   }
 
@@ -19,27 +26,18 @@ class VideoDataControllerProvider extends StateNotifier<List<VideoDataModel>> {
     VideoDataModel video,
   ) {
     state = [...state, video];
-  }
 
-  void removeVideo(
-    VideoDataModel video,
-  ) {
-    state = state.where((v) => v.name != video.name).toList();
-  }
-
-  void updateVideo(
-    VideoDataModel video,
-  ) {
-    state = state.map((v) {
-      if (v.name == video.name) {
-        return video;
-      }
-      return v;
-    }).toList();
+    _videoConfigService.saveVideos(
+      video,
+      _contentController.state.path,
+    );
   }
 }
 
 final videoDataControllerProvider =
     StateNotifierProvider<VideoDataControllerProvider, List<VideoDataModel>>(
-  (ref) => VideoDataControllerProvider(),
+  (ref) => VideoDataControllerProvider(
+    VideoConfigService(),
+    ref.read(contentControllerProvider.notifier),
+  ),
 );

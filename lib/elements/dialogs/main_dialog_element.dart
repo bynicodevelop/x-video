@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainDialogElement extends ConsumerWidget {
   final Widget child;
+  final Function()? onClose;
   final String? title;
   final ButtonStyleButton? confirm;
   final ButtonStyleButton? cancel;
@@ -11,6 +12,7 @@ class MainDialogElement extends ConsumerWidget {
 
   const MainDialogElement({
     required this.child,
+    this.onClose,
     this.confirm,
     this.cancel,
     this.title,
@@ -35,7 +37,10 @@ class MainDialogElement extends ConsumerWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  if (onClose != null) onClose!();
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           ),

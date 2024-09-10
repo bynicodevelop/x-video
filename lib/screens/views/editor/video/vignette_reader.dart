@@ -1,24 +1,23 @@
-// ignore: depend_on_referenced_packages
-import 'package:cross_file/cross_file.dart';
-import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:x_video_ai/controllers/editor_section_controller.dart';
-import 'package:x_video_ai/controllers/upload_controller.dart';
+import 'package:x_video_ai/controllers/category_controller.dart';
+import 'package:x_video_ai/controllers/category_list_controller.dart';
+import 'package:x_video_ai/controllers/video_data_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
 import 'package:x_video_ai/elements/files/dropzone_element.dart';
 import 'package:x_video_ai/elements/images/box_image.dart';
-import 'package:x_video_ai/models/editor_section_model.dart';
-import 'package:x_video_ai/models/upload_state_model.dart';
-import 'package:x_video_ai/models/video_model.dart';
+import 'package:x_video_ai/models/category_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
+import 'package:x_video_ai/screens/views/editor/video/vignette_reader_controller.dart';
 import 'package:x_video_ai/screens/views/sort_keyword_screen.dart';
 
 class VignetteReaderVideoEditor extends ConsumerStatefulWidget {
+  final Function(VignetteReaderState?) onCompleted;
   final VideoSectionModel section;
 
   const VignetteReaderVideoEditor({
     required this.section,
+    required this.onCompleted,
     super.key,
   });
 
@@ -29,63 +28,52 @@ class VignetteReaderVideoEditor extends ConsumerStatefulWidget {
 
 class _VignetteReaderVideoState
     extends ConsumerState<VignetteReaderVideoEditor> {
-  final bool _dragging = false;
-  EditorSectionModel? _editorSectionModel;
-
   @override
   void initState() {
     super.initState();
 
-    if (widget.section.fileName != null) {
-      Future.microtask(
-        () async => setState(() async {
-          _editorSectionModel =
-              await ref.read(editorSectionControllerProvider.notifier).add(
-                    widget.section,
-                  );
-        }),
-      );
-    }
+    Future.microtask(() {
+      ref.read(categoryListControllerProvider.notifier).loadCategories();
+
+      ref.read(vignetteReaderControllerProvider.notifier).initState(
+            widget.section,
+          );
+    });
   }
 
-  IconData _getIconBasedOnState(FileUploadState? fileState) {
-    if (fileState == null) {
-      return Icons.file_upload_outlined;
+  IconData _getIconBasedOnState(VignetteReaderStatus? status) {
+    if (status == VignetteReaderStatus.uploading) {
+      return Icons.upload_file;
     }
 
-    switch (fileState.status) {
-      case UploadStatus.uploading:
-        return Icons
-            .hourglass_top; // Indiquer que le fichier est en cours d'upload
-      case UploadStatus.uploaded:
-        return Icons.check_circle; // Indiquer que l'upload a réussi
-      case UploadStatus.uploadFailed:
-        return Icons.error; // Indiquer une erreur
-      case UploadStatus.idle:
-      default:
-        return Icons.file_upload_outlined;
-    }
+    return Icons.file_upload_outlined; // Add a return statement at the end
   }
 
   void _createKeywordModal(
     BuildContext context,
-    VideoDataModel videoData,
-    VideoSectionModel section,
+    VignetteReaderState vignetteReaderState,
   ) {
     showDialog(
       context: context,
       builder: (context) => MainDialogElement(
         width: MediaQuery.of(context).size.width,
         height: double.infinity,
+        onClose: () {
+          ref
+              .read(vignetteReaderControllerProvider.notifier)
+              .resetVignetteReaderState(
+                vignetteReaderState,
+              );
+        },
         child: SortKeywordSreen(
-          video: videoData,
-          section: section,
-          key: widget.key!,
-          onCompleted: () {
-            ref.read(uploadControllerProvider.notifier).completeUpload(
-                  videoData,
+          vignetteReaderState: vignetteReaderState,
+          onCompleted: (CategoryModel category) {
+            ref.read(categoryControllerProvider.notifier).loadCategory(
+                  category.name,
                 );
-
+            ref.read(vignetteReaderControllerProvider.notifier).upload(
+                  vignetteReaderState,
+                );
             Navigator.of(context).pop();
           },
         ),
@@ -93,67 +81,88 @@ class _VignetteReaderVideoState
     );
   }
 
+  void _onUploading(
+    BuildContext context,
+    VignetteReaderState nextStat,
+  ) {
+    final bool keywordIsInCategory =
+        ref.read(categoryListControllerProvider.notifier).keywordIsInCategory(
+              widget.section,
+            );
+
+    if (!keywordIsInCategory) {
+      _createKeywordModal(context, nextStat);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ref.watch(uploadControllerProvider);
-    // final videoDadaController = ref.watch(videoDataControllerProvider);
-    // ref.watch(boxImageControllerProvider.notifier).generateThumbnailFromVideoId(
-    //       widget.section.file,
-    //       widget.key!,
-    //     );
+    ref.watch(categoryListControllerProvider);
+    final vignetteReaderController =
+        ref.watch(vignetteReaderControllerProvider);
 
-    // ref.listen(videoDataControllerProvider, (previous, next) {
-    //   if (previous == next) return;
+    final thumbnail = vignetteReaderController
+        .firstWhere(
+          (element) => element?.section == widget.section,
+          orElse: () => null,
+        )
+        ?.thumbnail;
 
-    //   final VideoDataModel videoData = next.firstWhere(
-    //     (element) => element.file == _file,
-    //     orElse: () => VideoDataModel.getDefault(),
-    //   );
+    ref.listen(
+      vignetteReaderControllerProvider,
+      (previous, next) {
+        final nextStat = next.firstWhere(
+          (element) => element?.section == widget.section,
+          orElse: () => null,
+        );
 
-    //   if (videoData.fileState != null) {
-    //     if (videoData.fileState!.status == UploadStatus.uploading) {
-    //       final categoryListController =
-    //           ref.read(categoryListControllerProvider.notifier);
+        if (nextStat != null) {
+          switch (nextStat.status) {
+            case VignetteReaderStatus.uploading:
+              _onUploading(context, nextStat);
+              break;
+            case VignetteReaderStatus.uploaded:
+              ref.read(categoryControllerProvider.notifier).addVideo(
+                    nextStat.videoDataModel!.name,
+                  );
+              ref.read(categoryControllerProvider.notifier).addKeyword(
+                    nextStat.section.keyword!,
+                  );
+              ref.read(categoryControllerProvider.notifier).save();
+              ref.read(videoDataControllerProvider.notifier).addVideo(
+                    nextStat.videoDataModel!,
+                  );
 
-    //       categoryListController.keywordIsInCategory(
-    //         widget.key!,
-    //         widget.section,
-    //       );
+              widget.onCompleted(nextStat);
 
-    //       if (categoryListController.isInCategories ==
-    //               CategoryContainer.notInCategory &&
-    //           videoData.name.isNotEmpty) {
-    //         _createKeywordModal(
-    //           context,
-    //           videoData,
-    //           widget.section,
-    //         );
-    //       }
-    //     }
-
-    //     if (videoData.fileState!.status == UploadStatus.uploaded) {
-    //       print('Uploade complete');
-    //     }
-    //   }
-    // });
-
-    // final VideoDataModel videoData = videoDadaController.firstWhere(
-    //   (element) => element.file == _file,
-    //   orElse: () => VideoDataModel.getDefault(),
-    // );
+              break;
+            default:
+              break;
+          }
+        }
+      },
+    );
 
     return DropzoneElement(
-      onFile: (files) {},
-      builder: (context, dropzoneParams) {
+      onFile: (files) {
+        ref.read(vignetteReaderControllerProvider.notifier).addVideoDataModel(
+              widget.section,
+              files.first,
+            );
+      },
+      builder: (
+        context,
+        dropzoneParams,
+      ) {
         return BoxImage(
-          section: _editorSectionModel,
+          thumbnail: thumbnail,
           builder: (
             BuildContext context,
-            BoxImageParams boxImageParams,
           ) {
             if (dropzoneParams.errorType != ErrorType.idle) {
               debugPrint('Error: ${dropzoneParams.errorType}');
             }
+
             return Center(
               child: IconButton(
                 icon: Icon(
@@ -162,7 +171,7 @@ class _VignetteReaderVideoState
                       : Icons.error,
                   color: dropzoneParams.dragging
                       ? Colors.blue.shade400
-                      : boxImageParams.thumbnail != null
+                      : thumbnail != null
                           ? Colors.white
                           : Colors.grey.shade400,
                 ),

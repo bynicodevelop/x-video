@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unorm_dart/unorm_dart.dart' as unorm;
 import 'package:x_video_ai/controllers/category_controller.dart';
 import 'package:x_video_ai/controllers/category_list_controller.dart';
-import 'package:x_video_ai/controllers/video_data_controller.dart';
 import 'package:x_video_ai/models/category_model.dart';
 
 class CategoryFormElement extends ConsumerStatefulWidget {
@@ -101,7 +100,6 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
     final categoryListController =
         ref.read(categoryListControllerProvider.notifier);
     ref.watch(categoryListControllerProvider);
-    ref.watch(videoDataControllerProvider);
 
     return Stack(
       children: [
