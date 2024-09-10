@@ -22,12 +22,26 @@ class MainDialogElement extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AlertDialog(
-      title: title != null ? Text(title!) : null,
       content: SizedBox(
         height: height ?? 100,
         width: width,
-        child: SingleChildScrollView(
-          child: child,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            title: title != null ? Text(title!) : null,
+            centerTitle: false,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+          body: SingleChildScrollView(
+            child: child,
+          ),
         ),
       ),
       actions: [

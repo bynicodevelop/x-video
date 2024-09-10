@@ -24,7 +24,8 @@ class ThumbnailController extends StateNotifier<Map<String, Uint8List?>> {
   // Fonction pour générer et stocker la miniature pour chaque section
   Future<void> setThumbnail(VideoSectionModel section) async {
     final String projectPath = _contentController.state.path;
-    final String filePath = '$projectPath/videos/${section.file}.$kVideoExtension';
+    final String filePath =
+        '$projectPath/videos/${section.fileName}.$kVideoExtension';
 
     // Vérification de l'existence du fichier vidéo
     if (!await File(filePath).exists()) {
@@ -44,13 +45,14 @@ class ThumbnailController extends StateNotifier<Map<String, Uint8List?>> {
       // Mettre à jour l'état avec la miniature associée à la section
       state = {
         ...state,
-        section.file!: thumbnail, // Utiliser le nom de fichier comme clé unique
+        section.fileName!:
+            thumbnail, // Utiliser le nom de fichier comme clé unique
       };
     } catch (e) {
       print('Erreur lors de la génération de la miniature: $e');
       state = {
         ...state,
-        section.file!: null,
+        section.fileName!: null,
       };
     }
   }

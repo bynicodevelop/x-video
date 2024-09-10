@@ -8,3 +8,8 @@ Future<String> generateMD5Name(XFile file) async {
   final Digest md5Hash = md5.convert(fileBytes);
   return md5Hash.toString();
 }
+
+Future<String> generateMD5NameFromString(String string) async {
+  final Digest md5Hash = md5.convert(string.codeUnits);
+  return md5Hash.toString();
+}

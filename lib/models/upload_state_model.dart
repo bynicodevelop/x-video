@@ -1,7 +1,7 @@
 // ignore: depend_on_referenced_packages
 import 'package:cross_file/cross_file.dart';
 
-enum UploadStatus { idle, uploading, uploaded, uploadFailed }
+enum UploadStatus { idle, uploading, uploadedInTmp, uploaded, uploadFailed }
 
 class FileUploadState {
   final XFile file;
@@ -24,12 +24,27 @@ class FileUploadState {
       message: message ?? this.message,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'file': file.path,
+      'status': status.toString(),
+      'message': message,
+    };
+  }
+
+  static FileUploadState getDefault() => FileUploadState(
+        file: XFile(''),
+        status: UploadStatus.idle,
+      );
 }
 
 class UploadStateState {
   final List<FileUploadState> files;
 
-  UploadStateState({required this.files});
+  UploadStateState({
+    required this.files,
+  });
 
   UploadStateState copyWith({
     List<FileUploadState>? files,

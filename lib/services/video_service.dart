@@ -56,7 +56,7 @@ class VideoService extends FileService {
     try {
       final Map<String, dynamic> information =
           await _ffmpeg.getVideoInformation(pathFile);
-          
+
       return video.mergeWith({
         'duration': information['duration'],
       });
@@ -66,14 +66,17 @@ class VideoService extends FileService {
   }
 
   Future<Map<String, dynamic>> standardizeVideo(
-    XFile file,
+    String fileName,
     String projectPath, {
     String format = kOrientation16_9,
   }) async {
+    final String tmpPath = '$projectPath/$_tmpFolder';
     final String standardizePath = '$projectPath/$_videosFolder';
-    final String md5Name = await generateMD5Name(file);
+
+    final XFile file = XFile('$tmpPath/$fileName.$kVideoExtension');
+
     final String standardizeFilePath =
-        '$standardizePath/$md5Name.$kVideoExtension';
+        '$standardizePath/$fileName.$kVideoExtension';
 
     try {
       await createDirectory(standardizePath);
@@ -87,7 +90,7 @@ class VideoService extends FileService {
       await fileToDelete.delete();
 
       return {
-        'name': md5Name,
+        'name': fileName,
         'file': XFile(standardizeFilePath),
       };
     } catch (e) {

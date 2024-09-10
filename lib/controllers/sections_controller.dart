@@ -16,6 +16,22 @@ class SectionsControllerProvider
           .map((e) => VideoSectionModel.fromJson(e))
           .whereType<VideoSectionModel>()
           .toList();
+
+  void updateSection(
+    VideoSectionModel section,
+  ) {
+    final List<VideoSectionModel> newSections = sections.map((e) {
+      if (e.start == section.start && e.end == section.end) {
+        return section;
+      }
+      return e;
+    }).toList();
+
+    _contentController.setSections(newSections.map((e) => e.toJson()).toList());
+    _contentController.save();
+
+    state = newSections;
+  }
 }
 
 final sectionsControllerProvider =

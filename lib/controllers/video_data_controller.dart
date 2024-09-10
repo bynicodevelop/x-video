@@ -6,9 +6,14 @@ class VideoDataControllerProvider extends StateNotifier<List<VideoDataModel>> {
 
   List<VideoDataModel> get videos => state;
 
-  VideoDataModel get selectedVideo => state.firstWhere((v) {
-        return v.selected;
-      }, orElse: () => VideoDataModel.getDefault());
+  VideoDataModel getVideoByName(
+    String name,
+  ) {
+    return state.firstWhere(
+      (v) => v.name == name,
+      orElse: () => VideoDataModel.getDefault(),
+    );
+  }
 
   void addVideo(
     VideoDataModel video,

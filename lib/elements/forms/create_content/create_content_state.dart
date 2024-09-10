@@ -1,4 +1,4 @@
-import 'package:x_video_ai/services/abstracts/json_deserializable.dart';
+import 'package:x_video_ai/models/abstracts/json_deserializable.dart';
 
 class CreateContentState implements JsonDeserializable {
   final String id;

@@ -3,25 +3,26 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/elements/images/box_image_controller.dart';
+import 'package:x_video_ai/models/editor_section_model.dart';
 
 class BoxImageParams {
-  final Key key;
   final bool dragging;
   final Uint8List? thumbnail;
 
   BoxImageParams({
-    required this.key,
     required this.dragging,
     this.thumbnail,
   });
 }
 
 class BoxImage extends ConsumerStatefulWidget {
+  final EditorSectionModel? section;
   final bool dragging;
   final Widget Function(BuildContext context, BoxImageParams params) builder;
 
   const BoxImage({
     required this.builder,
+    this.section,
     this.dragging = false,
     super.key,
   });
@@ -32,11 +33,21 @@ class BoxImage extends ConsumerStatefulWidget {
 
 class _BoxImageState extends ConsumerState<BoxImage> {
   @override
+  void initState() {
+    super.initState();
+
+    if (widget.section != null) {
+      // Future.microtask(() => )
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     ref.watch(boxImageControllerProvider);
-    final thumbnail = ref
-        .watch(boxImageControllerProvider.notifier)
-        .getThumbnail(widget.key!);
+    const thumbnail = null;
+    // final thumbnail = ref
+    //     .watch(boxImageControllerProvider.notifier)
+    //     .getThumbnail(widget.key!);
 
     return Container(
       width: 250,
@@ -59,7 +70,6 @@ class _BoxImageState extends ConsumerState<BoxImage> {
       child: widget.builder(
         context,
         BoxImageParams(
-          key: widget.key!,
           dragging: widget.dragging,
           thumbnail: thumbnail,
         ),

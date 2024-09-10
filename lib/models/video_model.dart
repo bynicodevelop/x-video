@@ -47,6 +47,12 @@ class VideoDataModel extends TimmingModel implements JsonDeserializable {
         'duration': duration,
       };
 
+  @override
+  String toString() => {
+        ...toJson(),
+        'fileState': fileState?.toJson(),
+      }.toString();
+
   static VideoDataModel getDefault() => VideoDataModel(
         name: '',
         start: 0,

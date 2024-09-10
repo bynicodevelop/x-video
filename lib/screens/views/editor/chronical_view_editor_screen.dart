@@ -117,6 +117,8 @@ class _ChronicalViewEditorScreenState
                 ref.read(contentListControllerProvider.notifier).contentList;
 
             return MainDialogElement(
+              width: MediaQuery.of(context).size.width * 0.25,
+              height: MediaQuery.of(context).size.height * 0.60,
               title: 'Ouvrir un contenu existant',
               child: ListView.builder(
                 shrinkWrap: true,
