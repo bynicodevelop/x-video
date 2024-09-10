@@ -6,7 +6,6 @@ import 'package:x_video_ai/models/upload_state_model.dart';
 
 class VideoDataModel extends TimmingModel implements JsonDeserializable {
   final String name;
-  final bool selected;
   final XFile? file;
   final FileUploadState? fileState;
 
@@ -17,7 +16,6 @@ class VideoDataModel extends TimmingModel implements JsonDeserializable {
     required super.duration,
     this.file,
     this.fileState,
-    this.selected = false,
   });
 
   @override
@@ -36,7 +34,6 @@ class VideoDataModel extends TimmingModel implements JsonDeserializable {
         duration: json['duration'] ?? duration,
         file: json['file'] ?? file,
         fileState: json['fileState'] ?? fileState,
-        selected: json['selected'] ?? selected,
       );
 
   @override

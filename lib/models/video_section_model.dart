@@ -1,6 +1,7 @@
 import 'package:x_video_ai/models/abstracts/timming_model.dart';
 
 class VideoSectionModel implements TimmingModel {
+  final String id;
   final String sentence;
   final String? fileName;
   final String? keyword;
@@ -13,6 +14,7 @@ class VideoSectionModel implements TimmingModel {
   final double duration;
 
   VideoSectionModel({
+    required this.id,
     required this.sentence,
     required this.start,
     required this.end,
@@ -22,6 +24,7 @@ class VideoSectionModel implements TimmingModel {
   });
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'sentence': sentence,
         'keyword': keyword,
         'start': start,
@@ -32,6 +35,7 @@ class VideoSectionModel implements TimmingModel {
 
   factory VideoSectionModel.fromJson(Map<String, dynamic> json) =>
       VideoSectionModel(
+        id: json['id'],
         sentence: json['sentence'],
         keyword: json['keyword'],
         start: json['start'],
@@ -49,6 +53,7 @@ class VideoSectionModel implements TimmingModel {
     String? fileName,
   }) =>
       VideoSectionModel(
+        id: id,
         sentence: sentence ?? this.sentence,
         keyword: keyword ?? this.keyword,
         start: start ?? this.start,

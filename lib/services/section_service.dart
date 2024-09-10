@@ -3,15 +3,16 @@ import 'package:x_video_ai/gateway/open_ai_gateway.dart';
 import 'package:x_video_ai/models/srt_word_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/utils/constants.dart';
+import 'package:x_video_ai/utils/generate_md5_name.dart';
 
 class SectionService {
   /// Permet de découper une liste de mots en sections de durée maximale
   /// TODO: optimiser la fonction avec un algorithme plus performant comme un pattern de temps
   /// Comme par exemple un tableau de durée en secondes [3, 5, 4, 3]
-  List<VideoSectionModel> createSections(
+  Future<List<VideoSectionModel>> createSections(
     List<SrtWordModel> srtWithGroup, {
     double maxDuration = 10,
-  }) {
+  }) async {
     if (srtWithGroup.isEmpty) {
       return [];
     }
@@ -34,6 +35,9 @@ class SectionService {
         // Ajouter la section actuelle uniquement si la phrase n'est pas vide
         if (currentSentence.isNotEmpty) {
           sections.add(VideoSectionModel(
+            id: await generateMD5NameFromString(
+              "$currentSentence$currentStart$currentEnd",
+            ),
             sentence: currentSentence.trim(),
             start: currentStart,
             end: currentEnd,
@@ -60,6 +64,9 @@ class SectionService {
     // Ajouter la dernière section restante si elle n'a pas encore été ajoutée
     if (currentSentence.isNotEmpty) {
       sections.add(VideoSectionModel(
+        id: await generateMD5NameFromString(
+          "$currentSentence$currentStart$currentEnd",
+        ),
         sentence: currentSentence.trim(),
         start: currentStart,
         end: currentEnd,
