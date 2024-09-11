@@ -25,12 +25,12 @@ class VideoDataControllerProvider extends StateNotifier<List<VideoDataModel>> {
   void addVideo(
     VideoDataModel video,
   ) {
-    state = [...state, video];
-
     _videoConfigService.saveVideos(
       video,
       _contentController.state.path,
     );
+
+    state = [...state, video];
   }
 }
 

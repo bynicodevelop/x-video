@@ -79,23 +79,24 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
                           .read(sectionsControllerProvider.notifier)
                           .sections
                           .map(
-                            (VideoSectionModel section) => Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: VignetteReaderVideoEditor(
-                                section: section,
-                                onCompleted:
-                                    (VignetteReaderState? vignetteReaderState) {
-                                  ref
-                                      .read(sectionsControllerProvider.notifier)
-                                      .updateSection(section.copyWith(
-                                        fileName: vignetteReaderState
-                                            ?.videoDataModel?.name,
-                                      ));
-                                },
-                              ),
+                        (VideoSectionModel section) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: VignetteReaderVideoEditor(
+                              section: section,
+                              onCompleted:
+                                  (VignetteReaderState? vignetteReaderState) {
+                                ref
+                                    .read(sectionsControllerProvider.notifier)
+                                    .updateSection(section.copyWith(
+                                      fileName: vignetteReaderState
+                                          ?.videoDataModel?.name,
+                                    ));
+                              },
                             ),
-                          )
-                          .toList(),
+                          );
+                        },
+                      ).toList(),
                     ),
                   ),
                 ),

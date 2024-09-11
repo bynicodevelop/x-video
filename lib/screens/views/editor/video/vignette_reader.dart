@@ -31,14 +31,24 @@ class _VignetteReaderVideoState
   @override
   void initState() {
     super.initState();
+    Future.microtask(_initiateVignetteReaderController);
+  }
 
-    Future.microtask(() async {
-      ref.read(categoryListControllerProvider.notifier).loadCategories();
+  @override
+  void didUpdateWidget(covariant VignetteReaderVideoEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
-      await ref.read(vignetteReaderControllerProvider.notifier).initState(
-            widget.section,
-          );
-    });
+    if (oldWidget.section != widget.section) {
+      Future.microtask(_initiateVignetteReaderController);
+    }
+  }
+
+  Future<void> _initiateVignetteReaderController() async {
+    await ref.read(categoryListControllerProvider.notifier).loadCategories();
+
+    await ref.read(vignetteReaderControllerProvider.notifier).initState(
+          widget.section,
+        );
   }
 
   IconData _getIconBasedOnState(VignetteReaderStatus? status) {
@@ -134,7 +144,6 @@ class _VignetteReaderVideoState
                   );
 
               widget.onCompleted(nextStat);
-
               break;
             default:
               break;

@@ -47,10 +47,12 @@ class VignetteReaderState {
   }
 
   VignetteReaderState reset() {
+    print('reset');
+    print(thumbnail);
     return VignetteReaderState(
       section: section,
       status: VignetteReaderStatus.idle,
-      thumbnail: null,
+      thumbnail: thumbnail,
     );
   }
 
@@ -78,14 +80,23 @@ class VignetteReaderControllerProvider
   Future<void> initState(
     VideoSectionModel section,
   ) async {
+    final VignetteReaderState? vignetteReaderState = state.firstWhere(
+      (element) => element?.section.id == section.id,
+      orElse: () => null,
+    );
+
     Uint8List? thumbnail;
+
+    if (vignetteReaderState != null) {
+      thumbnail = vignetteReaderState.thumbnail;
+    }
 
     if (section.fileName != null && section.fileName!.isNotEmpty) {
       final String projectPath = _contentController.state.path;
       final String name = "${section.fileName!}.$kVideoExtension";
       final XFile file = XFile('$projectPath/videos/$name');
 
-      thumbnail = await _videoService.generateThumbnail(
+      thumbnail ??= await _videoService.generateThumbnail(
         file: file,
         outputPath: projectPath,
       );
