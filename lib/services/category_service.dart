@@ -1,19 +1,20 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/category_model.dart';
-import 'package:x_video_ai/services/abstracts/file_service.dart';
 
-class CategoryService extends FileService {
+class CategoryService {
+  final FileGateway _fileGateway;
+
+  CategoryService(
+    FileGateway fileGateway,
+  ) : _fileGateway = fileGateway;
+
   final String _categoriesFile = 'categories.json';
 
-  File _getCategoriesFile(String projectPath) {
-    final String categoriesPath = '$projectPath/$_categoriesFile';
-    return File(categoriesPath);
-  }
-
   List<CategoryModel> _readCategories(String projectPath) {
-    final File file = _getCategoriesFile(projectPath);
+    final FileWrapper file =
+        _fileGateway.getFile("$projectPath/$_categoriesFile");
 
     if (file.existsSync()) {
       final String categoriesString = file.readAsStringSync();
@@ -33,11 +34,9 @@ class CategoryService extends FileService {
     List<CategoryModel> categories,
     String projectPath,
   ) async {
-    final File file = _getCategoriesFile(projectPath);
-
-    await createDirectory(
-      projectPath,
-    );
+    final FileWrapper file =
+        _fileGateway.getFile("$projectPath/$_categoriesFile");
+    await _fileGateway.createDirectory(projectPath);
 
     final List<dynamic> categoriesJson =
         categories.map((e) => e.toJson()).toList();
