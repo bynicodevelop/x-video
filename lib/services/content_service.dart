@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/content_model.dart';
 
 class ContentService {
-  const ContentService();
+  final FileGateway _fileGateway;
+
+  const ContentService(
+    this._fileGateway,
+  );
 
   void saveContent(ContentModel contentModel) {
     if (contentModel.path.isEmpty) {
@@ -17,7 +22,7 @@ class ContentService {
 
     final String path = contentModel.path;
 
-    final File file = _getFile("$path/contents/$fileName.json");
+    final FileWrapper file = _fileGateway.getFile("$path/contents/$fileName.json");
     final Map<String, dynamic> jsonContent = getContent(file.path);
     final Map<String, dynamic> mergedContent = contentModel.toJson();
 
@@ -31,7 +36,7 @@ class ContentService {
       throw Exception("Path is required");
     }
 
-    final Directory directory = Directory("$path/contents");
+    final DirectoryWrapper directory = _fileGateway.getDirectory("$path/contents");
     final List<FileSystemEntity> files = directory
         .listSync()
         .where((element) => element.path.endsWith('.json'))
@@ -62,7 +67,7 @@ class ContentService {
   }
 
   Map<String, dynamic> getContent(String path) {
-    final File file = _getFile(path);
+    final FileWrapper file = _fileGateway.getFile(path);
 
     if (!file.existsSync()) {
       file.createSync(recursive: true);
@@ -83,12 +88,5 @@ class ContentService {
     final List<String> fileNameParts = fileName.split('.');
 
     return fileNameParts.first;
-  }
-
-  File _getFile(String path) {
-    final Directory directory = Directory(path);
-    final File file = File(directory.path);
-
-    return file;
   }
 }
