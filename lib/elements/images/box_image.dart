@@ -30,6 +30,7 @@ class _BoxImageState extends ConsumerState<BoxImage> {
             ? DecorationImage(
                 image: MemoryImage(widget.thumbnail!),
                 opacity: 0.7,
+                fit: BoxFit.cover,
               )
             : null,
       ),
