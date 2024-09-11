@@ -14,7 +14,7 @@ void main() {
   SectionService sectionService = SectionService();
 
   group('createSections', () {
-    test('should split words into sections based on maxDuration', () {
+    test('should split words into sections based on maxDuration', () async {
       // Arrange
       final srtWithGroup = [
         SrtWordModel(word: 'Le', start: 0.0, end: 0.3, duration: 0.3),
@@ -31,19 +31,22 @@ void main() {
           sectionService.createSections(srtWithGroup, maxDuration: 2.0);
 
       // Assert
-      expect(sections.length, equals(2)); // Correction ici, 2 sections au total
-      expect(sections[0].sentence, equals('Le CAC 40 trébuche'));
-      expect(sections[0].start, equals(0.0));
-      expect(sections[0].end, equals(2.0));
-      expect(sections[0].duration, equals(2.0));
+      final actualSections = await sections;
+      expect(actualSections.length,
+          equals(2)); // Correction ici, 2 sections au total
+      expect(actualSections[0].sentence, equals('Le CAC 40 trébuche'));
+      expect(actualSections[0].start, equals(0.0));
+      expect(actualSections[0].end, equals(2.0));
+      expect(actualSections[0].duration, equals(2.0));
 
-      expect(sections[1].sentence, equals('TotalEnergie poids lourd'));
-      expect(sections[1].start, equals(2.0));
-      expect(sections[1].end, equals(4.0));
-      expect(sections[1].duration, equals(2.0));
+      expect(actualSections[1].sentence, equals('TotalEnergie poids lourd'));
+      expect(actualSections[1].start, equals(2.0));
+      expect(actualSections[1].end, equals(4.0));
+      expect(actualSections[1].duration, equals(2.0));
     });
 
-    test('should create a single section if words fit within maxDuration', () {
+    test('should create a single section if words fit within maxDuration',
+        () async {
       // Arrange
       final srtWithGroup = [
         SrtWordModel(word: 'Hello', start: 0.0, end: 1.0, duration: 1.0),
@@ -55,14 +58,15 @@ void main() {
           sectionService.createSections(srtWithGroup, maxDuration: 10.0);
 
       // Assert
-      expect(sections.length, equals(1));
-      expect(sections[0].sentence, equals('Hello world'));
-      expect(sections[0].start, equals(0.0));
-      expect(sections[0].end, equals(2.0));
-      expect(sections[0].duration, equals(2.0));
+      final actualSections = await sections;
+      expect(actualSections.length, equals(1));
+      expect(actualSections[0].sentence, equals('Hello world'));
+      expect(actualSections[0].start, equals(0.0));
+      expect(actualSections[0].end, equals(2.0));
+      expect(actualSections[0].duration, equals(2.0));
     });
 
-    test('should handle empty input list', () {
+    test('should handle empty input list', () async {
       // Arrange
       final srtWithGroup = <SrtWordModel>[];
 
@@ -71,10 +75,12 @@ void main() {
           sectionService.createSections(srtWithGroup, maxDuration: 5.0);
 
       // Assert
-      expect(sections.length, equals(0));
+      final actualSections = await sections;
+      expect(actualSections.length, equals(0));
     });
 
-    test('should split words even if maxDuration is exceeded by one word', () {
+    test('should split words even if maxDuration is exceeded by one word',
+        () async {
       // Arrange
       final srtWithGroup = [
         SrtWordModel(word: 'Le', start: 0.0, end: 0.3, duration: 0.3),
@@ -88,19 +94,21 @@ void main() {
           sectionService.createSections(srtWithGroup, maxDuration: 2.0);
 
       // Assert
-      expect(sections.length, equals(2));
-      expect(sections[0].sentence, equals('Le CAC 40'));
-      expect(sections[0].start, equals(0.0));
-      expect(sections[0].end, equals(1.0));
-      expect(sections[0].duration, equals(1.0));
+      final actualSections = await sections;
+      expect(actualSections.length, equals(2));
+      expect(actualSections[0].sentence, equals('Le CAC 40'));
+      expect(actualSections[0].start, equals(0.0));
+      expect(actualSections[0].end, equals(1.0));
+      expect(actualSections[0].duration, equals(1.0));
 
-      expect(sections[1].sentence, equals('trébuche'));
-      expect(sections[1].start, equals(1.0));
-      expect(sections[1].end, equals(3.5));
-      expect(sections[1].duration, equals(2.5));
+      expect(actualSections[1].sentence, equals('trébuche'));
+      expect(actualSections[1].start, equals(1.0));
+      expect(actualSections[1].end, equals(3.5));
+      expect(actualSections[1].duration, equals(2.5));
     });
 
-    test('should handle single word sections if maxDuration is very small', () {
+    test('should handle single word sections if maxDuration is very small',
+        () async {
       // Arrange
       final srtWithGroup = [
         SrtWordModel(word: 'Hello', start: 0.0, end: 1.0, duration: 1.0),
@@ -112,9 +120,10 @@ void main() {
           sectionService.createSections(srtWithGroup, maxDuration: 0.5);
 
       // Assert
-      expect(sections.length, equals(2));
-      expect(sections[0].sentence, equals('Hello'));
-      expect(sections[1].sentence, equals('world'));
+      final actualSections = await sections;
+      expect(actualSections.length, equals(2));
+      expect(actualSections[0].sentence, equals('Hello'));
+      expect(actualSections[1].sentence, equals('world'));
     });
   });
 
@@ -124,6 +133,7 @@ void main() {
       final mockOpenAIGateway = MockOpenAIGateway<String>();
       final sections = [
         VideoSectionModel(
+          id: '1',
           sentence: 'Le CAC 40 trébuche.',
           start: 0.0,
           end: 4.0,
@@ -153,12 +163,14 @@ void main() {
       final mockOpenAIGateway = MockOpenAIGateway<String>();
       final sections = [
         VideoSectionModel(
+          id: '1',
           sentence: 'Le CAC 40 trébuche.',
           start: 0.0,
           end: 4.0,
           duration: 4.0,
         ),
         VideoSectionModel(
+          id: '2',
           sentence: 'Les investisseurs sont inquiets.',
           start: 4.0,
           end: 8.0,
@@ -197,6 +209,7 @@ void main() {
       final mockOpenAIGateway = MockOpenAIGateway<String>();
       final sections = [
         VideoSectionModel(
+          id: '1',
           sentence: '',
           start: 0.0,
           end: 4.0,
@@ -226,6 +239,7 @@ void main() {
       final mockOpenAIGateway = MockOpenAIGateway<String>();
       final sections = [
         VideoSectionModel(
+          id: '1',
           sentence: 'Le CAC 40 trébuche.',
           start: 0.0,
           end: 4.0,
