@@ -32,14 +32,20 @@ class CategoryListController extends StateNotifier<List<CategoryModel>> {
     }
   }
 
-  bool keywordIsInCategory(
+  CategoryModel? keywordIsInCategory(
     VideoSectionModel section,
   ) {
-    final bool isInCategories = state.any(
-      (category) => category.keywords.contains(section.keyword),
-    );
+    final List<CategoryModel> categories = state
+        .where(
+          (category) => category.keywords.contains(section.keyword),
+        )
+        .toList();
 
-    return isInCategories;
+    if (categories.isEmpty) {
+      return null;
+    }
+
+    return categories.first;
   }
 }
 

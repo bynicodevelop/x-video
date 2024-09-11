@@ -78,12 +78,7 @@ class _VignetteReaderVideoState
         child: SortKeywordSreen(
           vignetteReaderState: vignetteReaderState,
           onCompleted: (CategoryModel category) {
-            ref.read(categoryControllerProvider.notifier).loadCategory(
-                  category.name,
-                );
-            ref.read(vignetteReaderControllerProvider.notifier).upload(
-                  vignetteReaderState,
-                );
+            _upload(category, vignetteReaderState);
             Navigator.of(context).pop();
           },
         ),
@@ -91,18 +86,33 @@ class _VignetteReaderVideoState
     );
   }
 
+  void _upload(
+    CategoryModel category,
+    VignetteReaderState vignetteReaderState,
+  ) {
+    ref.read(categoryControllerProvider.notifier).loadCategory(
+          category.name,
+        );
+    ref.read(vignetteReaderControllerProvider.notifier).upload(
+          vignetteReaderState,
+        );
+  }
+
   void _onUploading(
     BuildContext context,
     VignetteReaderState nextStat,
   ) {
-    final bool keywordIsInCategory =
+    final CategoryModel? keywordIsInCategory =
         ref.read(categoryListControllerProvider.notifier).keywordIsInCategory(
               widget.section,
             );
 
-    if (!keywordIsInCategory) {
+    if (keywordIsInCategory == null) {
       _createKeywordModal(context, nextStat);
+      return;
     }
+
+    _upload(keywordIsInCategory, nextStat);
   }
 
   @override
