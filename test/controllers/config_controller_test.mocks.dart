@@ -3,9 +3,10 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i2;
+import 'package:x_video_ai/gateway/file_getaway.dart' as _i4;
 import 'package:x_video_ai/models/abstracts/json_deserializable.dart' as _i1;
 import 'package:x_video_ai/services/config_service.dart' as _i3;
 
@@ -33,6 +34,27 @@ class _FakeConfigService_0<T1 extends _i1.JsonDeserializable>
         );
 }
 
+class _FakeFileWrapper_1 extends _i2.SmartFake implements _i4.FileWrapper {
+  _FakeFileWrapper_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDirectoryWrapper_2 extends _i2.SmartFake
+    implements _i4.DirectoryWrapper {
+  _FakeDirectoryWrapper_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -49,23 +71,23 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
       ) as bool);
 
   @override
-  _i4.Future<_i3.ConfigService<T>> createConfiguration() => (super.noSuchMethod(
+  _i5.Future<_i3.ConfigService<T>> createConfiguration() => (super.noSuchMethod(
         Invocation.method(
           #createConfiguration,
           [],
         ),
         returnValue:
-            _i4.Future<_i3.ConfigService<T>>.value(_FakeConfigService_0<T>(
+            _i5.Future<_i3.ConfigService<T>>.value(_FakeConfigService_0<T>(
           this,
           Invocation.method(
             #createConfiguration,
             [],
           ),
         )),
-      ) as _i4.Future<_i3.ConfigService<T>>);
+      ) as _i5.Future<_i3.ConfigService<T>>);
 
   @override
-  _i4.Future<_i3.ConfigService<T>> loadConfiguration(
+  _i5.Future<_i3.ConfigService<T>> loadConfiguration(
     String? path,
     T? model, {
     String? name = r'config.json',
@@ -80,7 +102,7 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
           {#name: name},
         ),
         returnValue:
-            _i4.Future<_i3.ConfigService<T>>.value(_FakeConfigService_0<T>(
+            _i5.Future<_i3.ConfigService<T>>.value(_FakeConfigService_0<T>(
           this,
           Invocation.method(
             #loadConfiguration,
@@ -91,10 +113,10 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
             {#name: name},
           ),
         )),
-      ) as _i4.Future<_i3.ConfigService<T>>);
+      ) as _i5.Future<_i3.ConfigService<T>>);
 
   @override
-  _i4.Future<_i3.ConfigService<T>> updateConfiguration(
+  _i5.Future<_i3.ConfigService<T>> updateConfiguration(
     String? key,
     dynamic value,
   ) =>
@@ -107,7 +129,7 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
           ],
         ),
         returnValue:
-            _i4.Future<_i3.ConfigService<T>>.value(_FakeConfigService_0<T>(
+            _i5.Future<_i3.ConfigService<T>>.value(_FakeConfigService_0<T>(
           this,
           Invocation.method(
             #updateConfiguration,
@@ -117,7 +139,7 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
             ],
           ),
         )),
-      ) as _i4.Future<_i3.ConfigService<T>>);
+      ) as _i5.Future<_i3.ConfigService<T>>);
 
   @override
   _i3.ConfigService<T> copyWith({
@@ -151,4 +173,53 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
           ),
         ),
       ) as _i3.ConfigService<T>);
+}
+
+/// A class which mocks [FileGateway].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFileGateway extends _i2.Mock implements _i4.FileGateway {
+  MockFileGateway() {
+    _i2.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.FileWrapper getFile(String? path) => (super.noSuchMethod(
+        Invocation.method(
+          #getFile,
+          [path],
+        ),
+        returnValue: _FakeFileWrapper_1(
+          this,
+          Invocation.method(
+            #getFile,
+            [path],
+          ),
+        ),
+      ) as _i4.FileWrapper);
+
+  @override
+  _i5.Future<void> createDirectory(String? path) => (super.noSuchMethod(
+        Invocation.method(
+          #createDirectory,
+          [path],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i4.DirectoryWrapper getDirectory(String? path) => (super.noSuchMethod(
+        Invocation.method(
+          #getDirectory,
+          [path],
+        ),
+        returnValue: _FakeDirectoryWrapper_2(
+          this,
+          Invocation.method(
+            #getDirectory,
+            [path],
+          ),
+        ),
+      ) as _i4.DirectoryWrapper);
 }
