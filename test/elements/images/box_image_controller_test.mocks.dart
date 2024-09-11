@@ -157,16 +157,6 @@ class MockVideoService extends _i1.Mock implements _i5.VideoService {
         ),
         returnValue: _i6.Future<_i8.Uint8List?>.value(),
       ) as _i6.Future<_i8.Uint8List?>);
-
-  @override
-  _i6.Future<void> createDirectory(String? path) => (super.noSuchMethod(
-        Invocation.method(
-          #createDirectory,
-          [path],
-        ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
 }
 
 /// A class which mocks [ContentController].

@@ -6,6 +6,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/gateway/ffmpeg.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/video_service.dart';
 import 'package:x_video_ai/utils/constants.dart';
@@ -67,6 +68,7 @@ final thumbnailControllerProvider =
     StateNotifierProvider<ThumbnailController, Map<String, Uint8List?>>(
   (ref) => ThumbnailController(
     VideoService(
+      FileGateway(),
       FFMpeg(),
     ),
     ref.watch(contentControllerProvider.notifier),

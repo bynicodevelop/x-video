@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/gateway/ffmpeg.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/services/video_service.dart';
 import 'package:x_video_ai/utils/constants.dart';
 
@@ -108,6 +109,7 @@ final boxImageControllerProvider =
     StateNotifierProvider<BoxImageController, List<ThumbnailModel>>(
   (ref) => BoxImageController(
     VideoService(
+      FileGateway(),
       FFMpeg(),
     ),
     ref.read(contentControllerProvider.notifier),

@@ -4,18 +4,20 @@ import 'dart:typed_data';
 // ignore: depend_on_referenced_packages
 import 'package:cross_file/cross_file.dart';
 import 'package:x_video_ai/gateway/ffmpeg.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/video_information.dart';
 import 'package:x_video_ai/models/video_model.dart';
-import 'package:x_video_ai/services/abstracts/file_service.dart';
 import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/generate_md5_name.dart';
 
-class VideoService extends FileService {
+class VideoService {
+  final FileGateway _fileGateway;
   final FFMpeg _ffmpeg;
   final String _tmpFolder = 'tmp';
   final String _videosFolder = 'videos';
 
   VideoService(
+    this._fileGateway,
     this._ffmpeg,
   );
 
@@ -33,7 +35,7 @@ class VideoService extends FileService {
     final String filePath = '$tmpPath/${videoDataModel.name}.$fileExtension';
 
     try {
-      await createDirectory(tmpPath);
+      await _fileGateway.createDirectory(tmpPath);
       await videoDataModel.file!.saveTo(filePath);
 
       return videoDataModel.mergeWith({
@@ -71,7 +73,7 @@ class VideoService extends FileService {
         '$standardizePath/${videoDataModel.file!.name}.$kVideoExtension';
 
     try {
-      await createDirectory(standardizePath);
+      await _fileGateway.createDirectory(standardizePath);
       await _ffmpeg.processVideo(
         inputPath: videoDataModel.file!.path,
         outputPath: standardizeFilePath,
@@ -100,7 +102,7 @@ class VideoService extends FileService {
       required String outputPath,
       String? fileName}) async {
     try {
-      await createDirectory('$outputPath/$_tmpFolder');
+      await _fileGateway.createDirectory('$outputPath/$_tmpFolder');
 
       return await _ffmpeg.generateThumbnail(
         inputFile: file.path,

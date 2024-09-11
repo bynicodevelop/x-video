@@ -6,6 +6,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/gateway/ffmpeg.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/video_information.dart';
 import 'package:x_video_ai/models/video_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
@@ -233,6 +234,7 @@ final vignetteReaderControllerProvider = StateNotifierProvider<
   (ref) {
     return VignetteReaderControllerProvider(
       VideoService(
+        FileGateway(),
         FFMpeg(),
       ),
       ref.watch(contentControllerProvider.notifier),
