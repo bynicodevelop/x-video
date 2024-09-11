@@ -78,6 +78,7 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
                 )
               : null,
       body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
         children:
             ref.read(contentControllerProvider.notifier).content.id.isNotEmpty
