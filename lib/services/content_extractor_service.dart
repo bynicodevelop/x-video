@@ -1,14 +1,20 @@
 import 'dart:convert';
-import 'dart:io';
+
+import 'package:x_video_ai/gateway/file_getaway.dart';
 
 class ContentExtractorService {
+  final FileGateway _fileGateway;
   final String fileName = 'rss_content.json';
+
+  ContentExtractorService(
+    FileGateway fileGateway,
+  ) : _fileGateway = fileGateway;
 
   Future<void> extractContent(
     Map<String, String> content,
     String path,
   ) async {
-    final File file = _getFile(path);
+    final FileWrapper file = _fileGateway.getFile("$path/$fileName");
     final List<Map<String, String>> rssContent = getContent(path);
     final int index = rssContent.indexWhere(
       (element) => element['link'] == content['link'],
@@ -21,7 +27,7 @@ class ContentExtractorService {
   }
 
   List<Map<String, String>> getContent(String path) {
-    final File file = _getFile(path);
+    final FileWrapper file = _fileGateway.getFile("$path/$fileName");
 
     if (!file.existsSync()) {
       file.createSync(recursive: true);
@@ -41,12 +47,5 @@ class ContentExtractorService {
     }).toList();
 
     return rssContent;
-  }
-
-  File _getFile(String path) {
-    final Directory directory = Directory(path);
-    final File file = File('${directory.path}/$fileName');
-
-    return file;
   }
 }
