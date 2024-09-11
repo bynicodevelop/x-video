@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/services/content_service.dart';
 import 'package:x_video_ai/utils/constants.dart';
@@ -29,7 +30,9 @@ class ContentListController extends StateNotifier<List<ContentModel>> {
 final contentListControllerProvider =
     StateNotifierProvider<ContentListController, List<ContentModel>>((ref) {
   return ContentListController(
-    const ContentService(),
+    ContentService(
+      FileGateway(),
+    ),
     ref.read(loadingControllerProvider.notifier),
   );
 });

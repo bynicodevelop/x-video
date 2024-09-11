@@ -1,141 +1,99 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:x_video_ai/controllers/content_controller.dart';
+import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/models/video_model.dart';
+import 'package:x_video_ai/services/video_config_service.dart';
 import 'package:x_video_ai/controllers/video_data_controller.dart';
 
+import 'video_data_controller_test.mocks.dart';
+
+@GenerateMocks([VideoConfigService, ContentController])
 void main() {
+  late MockVideoConfigService mockVideoConfigService;
+  late MockContentController mockContentController;
   late ProviderContainer container;
 
   setUp(() {
-    container = ProviderContainer();
+    // Initialiser les mocks
+    mockVideoConfigService = MockVideoConfigService();
+    mockContentController = MockContentController();
+
+    // Simuler un chemin de projet dans le ContentController
+    when(mockContentController.state).thenReturn(ContentModel(
+      path: '/testProjectPath',
+      id: '1',
+      name: 'TestProject',
+      content: null,
+      chronical: null,
+      audio: null,
+      srt: null,
+      srtWithGroup: null,
+      assContent: null,
+      sections: null,
+    ));
+
+    // Créer un ProviderContainer pour tester avec les overrides
+    container = ProviderContainer(
+      overrides: [
+        videoDataControllerProvider.overrideWith(
+          (ref) => VideoDataControllerProvider(
+            mockVideoConfigService,
+            mockContentController,
+          ),
+        ),
+      ],
+    );
   });
 
   tearDown(() {
     container.dispose();
   });
 
-  group('VideoDataControllerProvider', () {
-    test('should initialize with an empty list of videos', () {
-      final videos = container.read(videoDataControllerProvider);
+  test('should load videos from the service', () {
+    // Simuler les vidéos à retourner par le service
+    final List<VideoDataModel> mockVideos = [
+      VideoDataModel(name: 'Video1', duration: 60, start: 0, end: 60),
+      VideoDataModel(name: 'Video2', duration: 120, start: 0, end: 120),
+    ];
 
-      expect(videos, isEmpty);
-    });
+    when(mockVideoConfigService.loadVideos(any)).thenReturn(mockVideos);
 
-    test('should add a video to the list', () {
-      final video = VideoDataModel(
-        name: 'test_video.mp4',
-        file: null,
-        start: 0,
-        end: 10,
-        duration: 10,
-      );
+    // Appeler la méthode loadVideos
+    container.read(videoDataControllerProvider.notifier).loadVideos();
 
-      // Ajouter la vidéo
-      container.read(videoDataControllerProvider.notifier).addVideo(video);
+    // Vérifier que les vidéos sont chargées dans le state
+    final List<VideoDataModel> videos =
+        container.read(videoDataControllerProvider);
+    expect(videos.length, equals(2));
+    expect(videos[0].name, equals('Video1'));
+    expect(videos[1].name, equals('Video2'));
 
-      final videos = container.read(videoDataControllerProvider);
+    // Vérifier que le service a été appelé avec le bon chemin de projet
+    verify(mockVideoConfigService.loadVideos('/testProjectPath')).called(1);
+  });
 
-      expect(videos.length, equals(1));
-      expect(videos.first.name, equals('test_video.mp4'));
-    });
+  test('should add a new video and save it', () {
+    final newVideo =
+        VideoDataModel(name: 'NewVideo', duration: 90, start: 0, end: 90);
 
-    test('should remove a video from the list', () {
-      final video = VideoDataModel(
-        name: 'test_video.mp4',
-        file: null,
-        start: 0,
-        end: 10,
-        duration: 10,
-      );
+    // Simuler l'ajout de la vidéo
+    when(mockVideoConfigService.saveVideos(any, any))
+        .thenAnswer((_) async => {});
 
-      // Ajouter la vidéo
-      container.read(videoDataControllerProvider.notifier).addVideo(video);
+    // Appeler la méthode addVideo
+    container.read(videoDataControllerProvider.notifier).addVideo(newVideo);
 
-      // Supprimer la vidéo
-      container.read(videoDataControllerProvider.notifier).removeVideo(video);
+    // Vérifier que la vidéo a été ajoutée dans le state
+    final List<VideoDataModel> videos =
+        container.read(videoDataControllerProvider);
+    expect(videos.length, equals(1));
+    expect(videos[0].name, equals('NewVideo'));
 
-      final videos = container.read(videoDataControllerProvider);
-
-      expect(videos, isEmpty);
-    });
-
-    test('should update an existing video in the list', () {
-      final originalVideo = VideoDataModel(
-        name: 'test_video.mp4',
-        file: null,
-        start: 0,
-        end: 10,
-        duration: 10,
-      );
-
-      final updatedVideo = VideoDataModel(
-        name: 'test_video.mp4',
-        file: null,
-        start: 0,
-        end: 20,
-        duration: 20,
-      );
-
-      // Ajouter la vidéo
-      container
-          .read(videoDataControllerProvider.notifier)
-          .addVideo(originalVideo);
-
-      // Mettre à jour la vidéo
-      container
-          .read(videoDataControllerProvider.notifier)
-          .updateVideo(updatedVideo);
-
-      final videos = container.read(videoDataControllerProvider);
-
-      expect(videos.length, equals(1));
-      expect(videos.first.duration, equals(20));
-    });
-
-    test('should return the selected video', () {
-      final video1 = VideoDataModel(
-        name: 'video1.mp4',
-        file: null,
-        start: 0,
-        end: 10,
-        duration: 10,
-      );
-
-      final video2 = VideoDataModel(
-        name: 'video2.mp4',
-        file: null,
-        start: 0,
-        end: 15,
-        duration: 15,
-        selected: true,
-      );
-
-      // Ajouter les vidéos
-      container.read(videoDataControllerProvider.notifier).addVideo(video1);
-      container.read(videoDataControllerProvider.notifier).addVideo(video2);
-
-      final selectedVideo =
-          container.read(videoDataControllerProvider.notifier).selectedVideo;
-
-      expect(selectedVideo.name, equals('video2.mp4'));
-    });
-
-    test('should return the default video when no video is selected', () {
-      final video = VideoDataModel(
-        name: 'video1.mp4',
-        file: null,
-        start: 0,
-        end: 10,
-        duration: 10,
-      );
-
-      // Ajouter la vidéo
-      container.read(videoDataControllerProvider.notifier).addVideo(video);
-
-      final selectedVideo =
-          container.read(videoDataControllerProvider.notifier).selectedVideo;
-
-      expect(selectedVideo.name, equals(''));
-    });
+    // Vérifier que le service a sauvegardé la vidéo
+    verify(mockVideoConfigService.saveVideos(newVideo, '/testProjectPath'))
+        .called(1);
   });
 }

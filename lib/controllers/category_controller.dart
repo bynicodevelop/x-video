@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/category_list_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/category_model.dart';
 import 'package:x_video_ai/services/category_service.dart';
 
@@ -83,7 +84,9 @@ class CategoryController extends StateNotifier<CategoryModel?> {
 final categoryControllerProvider =
     StateNotifierProvider<CategoryController, CategoryModel?>(
   (ref) => CategoryController(
-    CategoryService(),
+    CategoryService(
+      FileGateway(),
+    ),
     ref.read(contentControllerProvider.notifier),
     ref.read(categoryListControllerProvider.notifier),
   ),

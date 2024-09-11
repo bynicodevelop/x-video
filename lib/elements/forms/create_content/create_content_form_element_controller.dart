@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/elements/forms/create_content/create_content_state.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/services/content_service.dart';
 
@@ -86,7 +87,9 @@ final createContentFormControllerProvider =
         "${configController.configService?.model?.path}/${configController.configService?.model?.name}";
 
     return CreateContentFormController(
-      const ContentService(),
+      ContentService(
+        FileGateway(),
+      ),
       contentController,
       path,
     );

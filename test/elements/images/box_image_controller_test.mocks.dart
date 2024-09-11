@@ -3,17 +3,18 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
-import 'dart:typed_data' as _i7;
+import 'dart:async' as _i6;
+import 'dart:typed_data' as _i8;
 
-import 'package:cross_file/cross_file.dart' as _i6;
-import 'package:flutter_riverpod/flutter_riverpod.dart' as _i9;
+import 'package:cross_file/cross_file.dart' as _i7;
+import 'package:flutter_riverpod/flutter_riverpod.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:state_notifier/state_notifier.dart' as _i10;
-import 'package:x_video_ai/controllers/content_controller.dart' as _i8;
-import 'package:x_video_ai/models/content_model.dart' as _i3;
+import 'package:state_notifier/state_notifier.dart' as _i11;
+import 'package:x_video_ai/controllers/content_controller.dart' as _i9;
+import 'package:x_video_ai/models/content_model.dart' as _i4;
+import 'package:x_video_ai/models/video_information.dart' as _i3;
 import 'package:x_video_ai/models/video_model.dart' as _i2;
-import 'package:x_video_ai/services/video_service.dart' as _i4;
+import 'package:x_video_ai/services/video_service.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -39,8 +40,19 @@ class _FakeVideoDataModel_0 extends _i1.SmartFake
         );
 }
 
-class _FakeContentModel_1 extends _i1.SmartFake implements _i3.ContentModel {
-  _FakeContentModel_1(
+class _FakeVideoInformation_1 extends _i1.SmartFake
+    implements _i3.VideoInformation {
+  _FakeVideoInformation_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeContentModel_2 extends _i1.SmartFake implements _i4.ContentModel {
+  _FakeContentModel_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -52,64 +64,56 @@ class _FakeContentModel_1 extends _i1.SmartFake implements _i3.ContentModel {
 /// A class which mocks [VideoService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVideoService extends _i1.Mock implements _i4.VideoService {
+class MockVideoService extends _i1.Mock implements _i5.VideoService {
   MockVideoService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Future<_i2.VideoDataModel> uploadToTmpFolder(
-    _i6.XFile? file,
+  _i6.Future<_i2.VideoDataModel> uploadToTmpFolder(
+    _i2.VideoDataModel? videoDataModel,
     String? projectPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #uploadToTmpFolder,
           [
-            file,
+            videoDataModel,
             projectPath,
           ],
         ),
-        returnValue: _i5.Future<_i2.VideoDataModel>.value(_FakeVideoDataModel_0(
+        returnValue: _i6.Future<_i2.VideoDataModel>.value(_FakeVideoDataModel_0(
           this,
           Invocation.method(
             #uploadToTmpFolder,
             [
-              file,
+              videoDataModel,
               projectPath,
             ],
           ),
         )),
-      ) as _i5.Future<_i2.VideoDataModel>);
+      ) as _i6.Future<_i2.VideoDataModel>);
 
   @override
-  _i5.Future<_i2.VideoDataModel> getInformation(
-    _i2.VideoDataModel? video,
-    String? projectPath,
-  ) =>
+  _i6.Future<_i3.VideoInformation> getInformation(_i7.XFile? video) =>
       (super.noSuchMethod(
         Invocation.method(
           #getInformation,
-          [
-            video,
-            projectPath,
-          ],
+          [video],
         ),
-        returnValue: _i5.Future<_i2.VideoDataModel>.value(_FakeVideoDataModel_0(
+        returnValue:
+            _i6.Future<_i3.VideoInformation>.value(_FakeVideoInformation_1(
           this,
           Invocation.method(
             #getInformation,
-            [
-              video,
-              projectPath,
-            ],
+            [video],
           ),
         )),
-      ) as _i5.Future<_i2.VideoDataModel>);
+      ) as _i6.Future<_i3.VideoInformation>);
 
   @override
-  _i5.Future<Map<String, dynamic>> standardizeVideo(
-    _i6.XFile? file,
+  _i6.Future<_i2.VideoDataModel> standardizeVideo(
+    _i2.VideoDataModel? videoDataModel,
     String? projectPath, {
     String? format = r'1920:1080',
   }) =>
@@ -117,18 +121,27 @@ class MockVideoService extends _i1.Mock implements _i4.VideoService {
         Invocation.method(
           #standardizeVideo,
           [
-            file,
+            videoDataModel,
             projectPath,
           ],
           {#format: format},
         ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+        returnValue: _i6.Future<_i2.VideoDataModel>.value(_FakeVideoDataModel_0(
+          this,
+          Invocation.method(
+            #standardizeVideo,
+            [
+              videoDataModel,
+              projectPath,
+            ],
+            {#format: format},
+          ),
+        )),
+      ) as _i6.Future<_i2.VideoDataModel>);
 
   @override
-  _i5.Future<_i7.Uint8List?> generateThumbnail({
-    required _i6.XFile? file,
+  _i6.Future<_i8.Uint8List?> generateThumbnail({
+    required _i7.XFile? file,
     required String? outputPath,
     String? fileName,
   }) =>
@@ -142,24 +155,24 @@ class MockVideoService extends _i1.Mock implements _i4.VideoService {
             #fileName: fileName,
           },
         ),
-        returnValue: _i5.Future<_i7.Uint8List?>.value(),
-      ) as _i5.Future<_i7.Uint8List?>);
+        returnValue: _i6.Future<_i8.Uint8List?>.value(),
+      ) as _i6.Future<_i8.Uint8List?>);
 
   @override
-  _i5.Future<void> createDirectory(String? path) => (super.noSuchMethod(
+  _i6.Future<void> createDirectory(String? path) => (super.noSuchMethod(
         Invocation.method(
           #createDirectory,
           [path],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 }
 
 /// A class which mocks [ContentController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockContentController extends _i1.Mock implements _i8.ContentController {
+class MockContentController extends _i1.Mock implements _i9.ContentController {
   MockContentController() {
     _i1.throwOnMissingStub(this);
   }
@@ -183,16 +196,16 @@ class MockContentController extends _i1.Mock implements _i8.ContentController {
       ) as bool);
 
   @override
-  _i3.ContentModel get content => (super.noSuchMethod(
+  _i4.ContentModel get content => (super.noSuchMethod(
         Invocation.getter(#content),
-        returnValue: _FakeContentModel_1(
+        returnValue: _FakeContentModel_2(
           this,
           Invocation.getter(#content),
         ),
-      ) as _i3.ContentModel);
+      ) as _i4.ContentModel);
 
   @override
-  set onError(_i9.ErrorListener? _onError) => super.noSuchMethod(
+  set onError(_i10.ErrorListener? _onError) => super.noSuchMethod(
         Invocation.setter(
           #onError,
           _onError,
@@ -207,22 +220,22 @@ class MockContentController extends _i1.Mock implements _i8.ContentController {
       ) as bool);
 
   @override
-  _i5.Stream<_i3.ContentModel> get stream => (super.noSuchMethod(
+  _i6.Stream<_i4.ContentModel> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _i5.Stream<_i3.ContentModel>.empty(),
-      ) as _i5.Stream<_i3.ContentModel>);
+        returnValue: _i6.Stream<_i4.ContentModel>.empty(),
+      ) as _i6.Stream<_i4.ContentModel>);
 
   @override
-  _i3.ContentModel get state => (super.noSuchMethod(
+  _i4.ContentModel get state => (super.noSuchMethod(
         Invocation.getter(#state),
-        returnValue: _FakeContentModel_1(
+        returnValue: _FakeContentModel_2(
           this,
           Invocation.getter(#state),
         ),
-      ) as _i3.ContentModel);
+      ) as _i4.ContentModel);
 
   @override
-  set state(_i3.ContentModel? value) => super.noSuchMethod(
+  set state(_i4.ContentModel? value) => super.noSuchMethod(
         Invocation.setter(
           #state,
           value,
@@ -231,13 +244,13 @@ class MockContentController extends _i1.Mock implements _i8.ContentController {
       );
 
   @override
-  _i3.ContentModel get debugState => (super.noSuchMethod(
+  _i4.ContentModel get debugState => (super.noSuchMethod(
         Invocation.getter(#debugState),
-        returnValue: _FakeContentModel_1(
+        returnValue: _FakeContentModel_2(
           this,
           Invocation.getter(#debugState),
         ),
-      ) as _i3.ContentModel);
+      ) as _i4.ContentModel);
 
   @override
   bool get hasListeners => (super.noSuchMethod(
@@ -246,7 +259,7 @@ class MockContentController extends _i1.Mock implements _i8.ContentController {
       ) as bool);
 
   @override
-  void initContent(_i3.ContentModel? contentModel) => super.noSuchMethod(
+  void initContent(_i4.ContentModel? contentModel) => super.noSuchMethod(
         Invocation.method(
           #initContent,
           [contentModel],
@@ -345,8 +358,8 @@ class MockContentController extends _i1.Mock implements _i8.ContentController {
 
   @override
   bool updateShouldNotify(
-    _i3.ContentModel? old,
-    _i3.ContentModel? current,
+    _i4.ContentModel? old,
+    _i4.ContentModel? current,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -360,8 +373,8 @@ class MockContentController extends _i1.Mock implements _i8.ContentController {
       ) as bool);
 
   @override
-  _i9.RemoveListener addListener(
-    _i10.Listener<_i3.ContentModel>? listener, {
+  _i10.RemoveListener addListener(
+    _i11.Listener<_i4.ContentModel>? listener, {
     bool? fireImmediately = true,
   }) =>
       (super.noSuchMethod(
@@ -371,7 +384,7 @@ class MockContentController extends _i1.Mock implements _i8.ContentController {
           {#fireImmediately: fireImmediately},
         ),
         returnValue: () {},
-      ) as _i9.RemoveListener);
+      ) as _i10.RemoveListener);
 
   @override
   void dispose() => super.noSuchMethod(

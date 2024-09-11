@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/services/content_extractor_service.dart';
 
 class ExportContentController extends StateNotifier {
@@ -40,6 +41,8 @@ final exportContentControllerProvider =
   return ExportContentController(
     ref.read(configControllerProvider.notifier),
     ref.read(loadingControllerProvider.notifier),
-    ContentExtractorService(),
+    ContentExtractorService(
+      FileGateway(),
+    ),
   );
 });

@@ -70,7 +70,7 @@ void main() {
 
     // Vérifier que les catégories sont chargées et triées par ordre alphabétique
     final List<CategoryModel> categories = List<CategoryModel>.from(
-      container.read(categoryListControllerProvider)["categories"],
+      container.read(categoryListControllerProvider),
     );
     expect(categories.length, equals(3));
     expect(categories[0].name, equals('Apple'));
@@ -92,7 +92,7 @@ void main() {
 
     // Vérifier que la liste des catégories est vide
     final List<CategoryModel> categories = List<CategoryModel>.from(
-      container.read(categoryListControllerProvider)["categories"],
+      container.read(categoryListControllerProvider),
     );
     expect(categories.length, equals(0));
 
@@ -115,7 +115,7 @@ void main() {
 
     // Vérifier que la liste des catégories est restée vide
     final List<CategoryModel> categories = List<CategoryModel>.from(
-      container.read(categoryListControllerProvider)["categories"],
+      container.read(categoryListControllerProvider),
     );
     expect(categories.isEmpty, isTrue);
 
