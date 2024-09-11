@@ -32,10 +32,10 @@ class _VignetteReaderVideoState
   void initState() {
     super.initState();
 
-    Future.microtask(() {
+    Future.microtask(() async {
       ref.read(categoryListControllerProvider.notifier).loadCategories();
 
-      ref.read(vignetteReaderControllerProvider.notifier).initState(
+      await ref.read(vignetteReaderControllerProvider.notifier).initState(
             widget.section,
           );
     });

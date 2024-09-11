@@ -10,6 +10,7 @@ import 'package:x_video_ai/models/video_information.dart';
 import 'package:x_video_ai/models/video_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/video_service.dart';
+import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/generate_md5_name.dart';
 
 enum VignetteReaderStatus {
@@ -74,13 +75,27 @@ class VignetteReaderControllerProvider
         _contentController = contentController,
         super([]);
 
-  void initState(
+  Future<void> initState(
     VideoSectionModel section,
-  ) {
+  ) async {
+    Uint8List? thumbnail;
+
+    if (section.fileName != null && section.fileName!.isNotEmpty) {
+      final String projectPath = _contentController.state.path;
+      final String name = "${section.fileName!}.$kVideoExtension";
+      final XFile file = XFile('$projectPath/videos/$name');
+
+      thumbnail = await _videoService.generateThumbnail(
+        file: file,
+        outputPath: projectPath,
+      );
+    }
+
     state = [
       ...state,
       VignetteReaderState(
         section: section,
+        thumbnail: thumbnail,
       ),
     ];
   }
