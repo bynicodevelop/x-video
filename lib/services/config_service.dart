@@ -1,19 +1,22 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/abstracts/json_deserializable.dart';
 
 class ConfigService<T extends JsonDeserializable> {
+  final FileGateway _fileGateway;
   String? _path;
   String? _name;
   T? _model;
   bool _isLoaded = false;
 
   ConfigService({
+    required FileGateway fileGateway,
     String? path,
     String? name,
     T? model,
-  })  : _path = path,
+  })  : _fileGateway = fileGateway,
+        _path = path,
         _name = name,
         _model = model;
 
@@ -27,17 +30,9 @@ class ConfigService<T extends JsonDeserializable> {
       throw Exception('Path or name not defined');
     }
 
-    final Directory directory = Directory(_path!);
+    await _fileGateway.createDirectory(_path!);
 
-    if (!await directory.exists()) {
-      await directory.create(
-        recursive: true,
-      );
-    }
-
-    final File fileConfig = File(
-      '$_path/$_name',
-    );
+    final FileWrapper fileConfig = _fileGateway.getFile('$_path/$_name');
 
     if (!fileConfig.existsSync()) {
       fileConfig.writeAsStringSync(
@@ -57,9 +52,7 @@ class ConfigService<T extends JsonDeserializable> {
   }) async {
     _isLoaded = true;
 
-    final File fileConfig = File(
-      '$path/$name',
-    );
+    final FileWrapper fileConfig = _fileGateway.getFile('$path/$name');
 
     if (!fileConfig.existsSync()) {
       throw Exception('Config file not found');
@@ -87,7 +80,7 @@ class ConfigService<T extends JsonDeserializable> {
       throw Exception('Path, name, or model not defined');
     }
 
-    final File fileConfig = File('$_path/$_name');
+    final FileWrapper fileConfig = _fileGateway.getFile('$_path/$_name');
 
     if (!await fileConfig.exists()) {
       throw Exception('Config file not found');
@@ -121,6 +114,7 @@ class ConfigService<T extends JsonDeserializable> {
       path: path ?? _path,
       name: name ?? _name,
       model: model ?? _model,
+      fileGateway: _fileGateway,
     );
   }
 }
