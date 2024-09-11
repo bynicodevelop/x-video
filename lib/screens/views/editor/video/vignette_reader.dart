@@ -52,6 +52,10 @@ class _VignetteReaderVideoState
   }
 
   IconData _getIconBasedOnState(VignetteReaderStatus? status) {
+    if (status == null) {
+      return Icons.hourglass_top_outlined;
+    }
+
     if (status == VignetteReaderStatus.uploading) {
       return Icons.upload_file;
     }
@@ -186,7 +190,14 @@ class _VignetteReaderVideoState
               child: IconButton(
                 icon: Icon(
                   dropzoneParams.errorType == ErrorType.idle
-                      ? _getIconBasedOnState(null)
+                      ? _getIconBasedOnState(
+                          vignetteReaderController
+                              .firstWhere(
+                                (element) => element?.section == widget.section,
+                                orElse: () => null,
+                              )
+                              ?.status,
+                        )
                       : Icons.error,
                   color: dropzoneParams.dragging
                       ? Colors.blue.shade400
