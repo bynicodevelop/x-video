@@ -106,7 +106,6 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
   Future<void> _initializeAndPlayVideo(
     VideoPlayerData videoPlayerData,
   ) async {
-    print("Initializing video: ${videoPlayerData.path}");
     if (_isTransitioning) return;
     _isTransitioning = true;
 
@@ -135,18 +134,13 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
   }
 
   Future<void> _preloadNextVideo() async {
-    print("Preloading next video");
-
     final int nextIndex = _currentVideoIndex + 1;
     if (nextIndex < state['videos'].length) {
-      print("Next video index: $nextIndex");
       final nextVideoData = state['videos'][nextIndex];
       _nextVideoPlayerController =
           VideoPlayerController.file(File(nextVideoData.path!));
 
       await _nextVideoPlayerController!.initialize();
-
-      print("Next video preloaded: ${nextVideoData.path}");
     }
   }
 
