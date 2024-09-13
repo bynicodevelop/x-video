@@ -177,36 +177,41 @@ class _VignetteReaderVideoState
         context,
         dropzoneParams,
       ) {
-        return BoxImage(
-          thumbnail: thumbnail,
-          builder: (
-            BuildContext context,
-          ) {
-            if (dropzoneParams.errorType != ErrorType.idle) {
-              debugPrint('Error: ${dropzoneParams.errorType}');
-            }
+        return Consumer(
+          builder: (context, ref, child) {
+            return BoxImage(
+              thumbnail: thumbnail,
+              builder: (
+                BuildContext context,
+              ) {
+                if (dropzoneParams.errorType != ErrorType.idle) {
+                  debugPrint('Error: ${dropzoneParams.errorType}');
+                }
 
-            return Center(
-              child: IconButton(
-                icon: Icon(
-                  dropzoneParams.errorType == ErrorType.idle
-                      ? _getIconBasedOnState(
-                          vignetteReaderController
-                              .firstWhere(
-                                (element) => element?.section == widget.section,
-                                orElse: () => null,
-                              )
-                              ?.status,
-                        )
-                      : Icons.error,
-                  color: dropzoneParams.dragging
-                      ? Colors.blue.shade400
-                      : thumbnail != null
-                          ? Colors.white
-                          : Colors.grey.shade400,
-                ),
-                onPressed: () {},
-              ),
+                return Center(
+                  child: IconButton(
+                    icon: Icon(
+                      dropzoneParams.errorType == ErrorType.idle
+                          ? _getIconBasedOnState(
+                              vignetteReaderController
+                                  .firstWhere(
+                                    (element) =>
+                                        element?.section == widget.section,
+                                    orElse: () => null,
+                                  )
+                                  ?.status,
+                            )
+                          : Icons.error,
+                      color: dropzoneParams.dragging
+                          ? Colors.blue.shade400
+                          : thumbnail != null
+                              ? Colors.white
+                              : Colors.grey.shade400,
+                    ),
+                    onPressed: () {},
+                  ),
+                );
+              },
             );
           },
         );

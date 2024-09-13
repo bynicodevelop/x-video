@@ -128,8 +128,6 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
 
     playVideo();
     _isTransitioning = false;
-
-    // Précharger la prochaine vidéo après avoir démarré la lecture
     _preloadNextVideo();
   }
 

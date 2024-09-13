@@ -54,30 +54,30 @@ class _DropzoneElementState extends ConsumerState<DropzoneElement> {
   @override
   Widget build(BuildContext context) {
     return DropTarget(
-        onDragDone: (detail) => _handleFileDrop(detail.files),
-        onDragEntered: (detail) {
-          if (!_dragging) {
-            setState(() => _dragging = true);
-          }
-        },
-        onDragExited: (detail) {
-          if (_dragging) {
-            setState(() => _dragging = false);
-          }
-        },
-        child: Container(
-          width: 250,
-          decoration: BoxDecoration(
-            color: _dragging ? Colors.blue.shade100 : Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(8),
+      onDragDone: (detail) => _handleFileDrop(detail.files),
+      onDragEntered: (detail) {
+        if (!_dragging) {
+          setState(() => _dragging = true);
+        }
+      },
+      onDragExited: (detail) {
+        if (_dragging) {
+          setState(() => _dragging = false);
+        }
+      },
+      child: Container(
+        width: 250,
+        decoration: BoxDecoration(
+          color: _dragging ? Colors.blue.shade100 : Colors.grey.shade300,
+        ),
+        child: widget.builder(
+          context,
+          DropzoneParams(
+            dragging: _dragging,
+            errorType: _errorType,
           ),
-          child: widget.builder(
-            context,
-            DropzoneParams(
-              dragging: _dragging,
-              errorType: _errorType,
-            ),
-          ),
-        ));
+        ),
+      ),
+    );
   }
 }

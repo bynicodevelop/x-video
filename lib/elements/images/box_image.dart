@@ -25,7 +25,6 @@ class _BoxImageState extends ConsumerState<BoxImage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
         image: widget.thumbnail != null
             ? DecorationImage(
                 image: MemoryImage(widget.thumbnail!),
