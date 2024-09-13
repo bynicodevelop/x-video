@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/sections_controller.dart';
 import 'package:x_video_ai/controllers/video_data_generator_controller.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
+import 'package:x_video_ai/screens/views/editor/video/video_player_editor.dart';
 import 'package:x_video_ai/screens/views/editor/video/vignette_reader.dart';
 import 'package:x_video_ai/screens/views/editor/video/vignette_reader_controller.dart';
 
@@ -46,22 +47,7 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
               separatorColor: Colors.grey.shade300,
               separatorThickness: 2,
               children: List<Widget>.from([
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.2,
-                    vertical: 20,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        child: const Placeholder(),
-                      ),
-                    ],
-                  ),
-                ),
+                const VideoPlayerEditor(),
                 Listener(
                   onPointerSignal: (event) {
                     if (event is PointerScrollEvent) {
