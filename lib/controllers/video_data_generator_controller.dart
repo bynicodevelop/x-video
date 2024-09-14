@@ -72,7 +72,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     );
 
     _contentController.setAudio(
-      "${_contentController.content.id}.mp3",
+      "${_contentController.content.id}.$kAudioExtension",
     );
 
     _contentController.save();
@@ -86,7 +86,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
 
     final Map<String, dynamic> transcriptionContent =
         await _audioService.transcribeAudioToText(
-      "${_configController.configService?.model?.path}/${_configController.configService?.model?.name}/contents/${_contentController.content.id}.mp3",
+      "${_configController.configService?.model?.path}/${_configController.configService?.model?.name}/contents/${_contentController.content.id}.$kAudioExtension",
     );
 
     _contentController.setSrt(

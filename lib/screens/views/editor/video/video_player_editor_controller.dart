@@ -5,6 +5,7 @@ import 'package:video_player/video_player.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/utils/constants.dart';
+import 'package:just_audio/just_audio.dart';
 
 class VideoPlayerData {
   final String? path;
@@ -35,8 +36,9 @@ class VideoPlayerData {
 }
 
 class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
   final ContentController _contentController;
-  VideoPlayerController? videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   VideoPlayerController? _nextVideoPlayerController;
   int _currentVideoIndex = 0;
   bool _isTransitioning = false;
@@ -46,7 +48,7 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
   )   : _contentController = contentController,
         super({
           'videos': [],
-          'isPlaying': false,
+          'isPlaying': false, // Défini à false ici
           'index': 0,
         });
 
@@ -54,10 +56,13 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
 
   int get currentVideoIndex => state['index'];
 
-  void initVideoPlayerEditor(
+  VideoPlayerController? get videoPlayerController => _videoPlayerController;
+
+  Future<void> initVideoPlayerEditor(
     List<VideoSectionModel> sections,
-  ) {
+  ) async {
     final String projectPath = _contentController.state.path;
+    final String projectId = _contentController.state.id;
 
     final List<VideoPlayerData> videoPlayerData = sections.map(
       (section) {
@@ -74,13 +79,17 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
 
     state = {
       'videos': videoPlayerData,
-      'isPlaying': true,
+      'isPlaying': false, // Défini à false ici
       'index': _currentVideoIndex,
     };
 
+    await _audioPlayer
+        .setFilePath("$projectPath/contents/$projectId.$kAudioExtension");
+    await _audioPlayer.seek(Duration.zero); // Positionner l'audio à zéro
+
     if (videoPlayerData.isNotEmpty) {
-      _initializeAndPlayVideo(videoPlayerData.first);
-      _updateIsPlayingState(true, videoPlayerData.first);
+      await _initializeAndPlayVideo(videoPlayerData.first);
+      _updateIsPlayingState(false, videoPlayerData.first); // isPlaying à false
     }
   }
 
@@ -110,23 +119,24 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
     _isTransitioning = true;
 
     if (_nextVideoPlayerController != null) {
-      videoPlayerController = _nextVideoPlayerController;
+      _videoPlayerController = _nextVideoPlayerController;
     } else {
-      if (videoPlayerController != null) {
-        await videoPlayerController!.dispose();
+      if (_videoPlayerController != null) {
+        await _videoPlayerController!.dispose();
       }
 
-      videoPlayerController =
+      _videoPlayerController =
           VideoPlayerController.file(File(videoPlayerData.path!));
 
-      await videoPlayerController!.initialize();
+      await _videoPlayerController!.initialize();
+      await _videoPlayerController!
+          .seekTo(Duration.zero); // Positionner la vidéo à zéro
     }
 
-    videoPlayerController!.addListener(() {
-      listener(videoPlayerController!, videoPlayerData);
+    _videoPlayerController!.addListener(() {
+      listener(_videoPlayerController!, videoPlayerData);
     });
 
-    playVideo();
     _isTransitioning = false;
     _preloadNextVideo();
   }
@@ -160,33 +170,40 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
     if (_currentVideoIndex < state['videos'].length - 1) {
       _currentVideoIndex++;
 
-      // Utiliser le contrôleur vidéo préchargé pour la prochaine vidéo
       await _initializeAndPlayVideo(state['videos'][_currentVideoIndex]);
-      _updateIsPlayingState(true, state['videos'][_currentVideoIndex]);
+
+      // Démarrer la lecture si elle est en cours
+      if (isPlayingState) {
+        playVideo();
+      }
+
+      _updateIsPlayingState(
+          isPlayingState, state['videos'][_currentVideoIndex]);
     }
   }
 
   void playVideo() {
-    state = {
-      ...state,
-      'isPlaying': true,
-    };
-
-    videoPlayerController?.play();
+    print("playVideo");
+    if (_videoPlayerController?.value.isInitialized == true &&
+        _audioPlayer.playerState.processingState == ProcessingState.ready) {
+      _videoPlayerController!.play();
+      _audioPlayer.play();
+      _updateIsPlayingState(true, state['videos'][_currentVideoIndex]);
+    }
   }
 
   void pauseVideo() {
-    state = {
-      ...state,
-      'isPlaying': false,
-    };
-    videoPlayerController?.pause();
+    _updateIsPlayingState(false, state['videos'][_currentVideoIndex]);
+
+    _videoPlayerController?.pause();
+    _audioPlayer.pause();
   }
 
   @override
   void dispose() {
-    videoPlayerController?.dispose();
-    _nextVideoPlayerController?.dispose(); // Libérer le contrôleur préchargé
+    _videoPlayerController?.dispose();
+    _nextVideoPlayerController?.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 }

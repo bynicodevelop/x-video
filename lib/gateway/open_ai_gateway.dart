@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_openai/dart_openai.dart';
+import 'package:x_video_ai/utils/constants.dart';
 
 const kTypeText = 'text';
 const kTypeJsonObject = 'json_object';
@@ -49,7 +50,8 @@ class OpenAIGateway<T> {
       outputDirectory: outputDirectory,
     );
 
-    final String newPath = "${outputDirectory.path}/$outputFileName.mp3";
+    final String newPath =
+        "${outputDirectory.path}/$outputFileName.$kAudioExtension";
     final File newFile = File(newPath);
 
     audioFile.renameSync(newPath);

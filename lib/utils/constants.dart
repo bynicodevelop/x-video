@@ -14,6 +14,7 @@ const String kOrientation9_16 = "1080:1920";
 const String kOrientation16_9 = "1920:1080";
 
 // file extension
+const String kAudioExtension = "mp3";
 const String kVideoExtension = "mp4";
 const String kImageExtension = "jpg";
 

@@ -53,6 +53,7 @@ dependencies:
   desktop_drop: ^0.4.4
   crypto: ^3.0.3
   video_player: ^2.9.1
+  just_audio: ^0.9.40
 
 
 dev_dependencies:
