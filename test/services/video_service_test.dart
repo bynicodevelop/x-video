@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+// ignore: depend_on_referenced_packages
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -8,20 +10,42 @@ import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/video_model.dart';
 import 'package:x_video_ai/services/video_service.dart';
 
-import '../utils/generate_md5_name_test.mocks.dart';
 import 'video_service_test.mocks.dart';
+
+class FakeXFile extends XFile {
+  final Uint8List _bytes;
+  final String _path;
+  String?
+      savedToPath; // Ajoutez cette variable pour enregistrer le chemin de sauvegarde
+
+  FakeXFile(this._bytes, [this._path = ''])
+      : super.fromData(_bytes, name: _path);
+
+  @override
+  String get path => _path;
+
+  @override
+  Future<Uint8List> readAsBytes() async {
+    return _bytes;
+  }
+
+  @override
+  Future<void> saveTo(String path) async {
+    savedToPath = path; // Enregistrez le chemin de sauvegarde
+  }
+}
 
 @GenerateMocks([FileGateway, FFMpeg])
 void main() {
   late MockFileGateway mockFileGateway;
   late MockFFMpeg mockFFMpeg;
-  late MockXFile mockXFile;
+  late FakeXFile mockXFile;
   late VideoService videoService;
 
   setUp(() {
     mockFileGateway = MockFileGateway();
     mockFFMpeg = MockFFMpeg();
-    mockXFile = MockXFile();
+    mockXFile = FakeXFile(Uint8List.fromList([]), '/test/path/test.mp4');
     videoService = VideoService(mockFileGateway, mockFFMpeg);
   });
 
@@ -36,22 +60,19 @@ void main() {
       );
       const projectPath = '/test/project';
 
-      // Stub the file extension
-      when(mockXFile.path).thenReturn('/test/path/test.mp4');
-
       // Stub creating directory
       when(mockFileGateway.createDirectory(any)).thenAnswer((_) async {});
-
-      // Stub file saving
-      when(mockXFile.saveTo(any)).thenAnswer((_) async {});
 
       final result =
           await videoService.uploadToTmpFolder(videoDataModel, projectPath);
 
-      // Verify that the file is saved to the correct temporary folder
+      // Vérifiez que le répertoire a été créé
       verify(mockFileGateway.createDirectory('$projectPath/tmp')).called(1);
-      verify(mockXFile.saveTo('$projectPath/tmp/testVideo.mp4')).called(1);
 
+      // Vérifiez que le fichier a été sauvegardé au bon endroit
+      expect(mockXFile.savedToPath, equals('$projectPath/tmp/testVideo.mp4'));
+
+      // Vérifiez que le chemin du fichier dans le résultat est correct
       expect(result.file!.path, equals('$projectPath/tmp/testVideo.mp4'));
     });
 

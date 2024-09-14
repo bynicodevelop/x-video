@@ -70,10 +70,13 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
                       onPressed: () => _pageController.jumpToPage(0),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.cut_outlined),
+                      icon: const Icon(Icons.movie_edit),
                       onPressed: () => _pageController.jumpToPage(1),
                     ),
-                    // Génération des images
+                    IconButton(
+                      icon: const Icon(Icons.coffee_maker),
+                      onPressed: () => _pageController.jumpToPage(1),
+                    ),
                   ],
                 )
               : null,
