@@ -59,7 +59,7 @@ class _VideoPlayerEditorState extends ConsumerState<VideoPlayerEditor> {
           ),
         ),
         Positioned(
-          bottom: 0,
+          bottom: 16,
           left: 0,
           right: 0,
           child: Row(
