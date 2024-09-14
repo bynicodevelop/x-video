@@ -8,6 +8,7 @@ import 'package:x_video_ai/controllers/content_list_controller.dart';
 import 'package:x_video_ai/controllers/video_data_controller.dart';
 import 'package:x_video_ai/models/content_model.dart';
 import 'package:x_video_ai/screens/views/editor/chronical_view_editor_screen.dart';
+import 'package:x_video_ai/screens/views/editor/video_creator_editor_screen.dart';
 import 'package:x_video_ai/screens/views/editor/video_view_editor_screen.dart';
 
 class EditorViewScreen extends ConsumerStatefulWidget {
@@ -20,7 +21,7 @@ class EditorViewScreen extends ConsumerStatefulWidget {
 
 class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
   final PageController _pageController = PageController(
-    initialPage: 1,
+    initialPage: 2,
   );
 
   @override
@@ -75,7 +76,7 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.coffee_maker),
-                      onPressed: () => _pageController.jumpToPage(1),
+                      onPressed: () => _pageController.jumpToPage(2),
                     ),
                   ],
                 )
@@ -88,6 +89,7 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
                 ? [
                     const ChronicalViewEditorScreen(),
                     const VideoViewEditorScreen(),
+                    const VideoCreatorEditorScreen(),
                   ]
                 : [],
       ),

@@ -21,6 +21,7 @@ class VideoViewEditorScreen extends ConsumerStatefulWidget {
 
 class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
   final ScrollController _scrollController = ScrollController();
+  
   @override
   void initState() {
     super.initState();
