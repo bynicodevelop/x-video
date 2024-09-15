@@ -20,6 +20,10 @@ class SectionsControllerProvider
   List<VideoSectionModel> get sections => state;
 
   void initSections() {
+    if (_contentController.content.sections == null) {
+      return;
+    }
+
     List<VideoSectionModel> sections =
         _contentController.content.sections?['content']
             .map((e) {

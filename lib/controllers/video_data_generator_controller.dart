@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/gateway/open_ai_gateway.dart';
 import 'package:x_video_ai/models/open_ai_config_model.dart';
 import 'package:x_video_ai/models/progress_state_model.dart';
@@ -13,6 +14,7 @@ import 'package:x_video_ai/services/section_service.dart';
 import 'package:x_video_ai/utils/constants.dart';
 
 class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
+  final OpenAIGateway<String> _openAIGateway;
   final AudioService _audioService;
   final SectionService _sectionService;
   final ContentController _contentController;
@@ -20,12 +22,14 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   final LoadingController _loadingController;
 
   VideoDataGeneratorController(
+    OpenAIGateway<String> openAIGateway,
     AudioService audioService,
     SectionService sectionService,
     ContentController contentController,
     ConfigController configController,
     LoadingController loadingController,
-  )   : _audioService = audioService,
+  )   : _openAIGateway = openAIGateway,
+        _audioService = audioService,
         _sectionService = sectionService,
         _configController = configController,
         _contentController = contentController,
@@ -48,7 +52,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     await _generateSRT();
     await _createSubtitles();
     await _generateSections();
-    await _generateKeywords();
+    // await _generateKeywords();
 
     _loadingController.stopLoading(kLoadingMain);
   }
@@ -86,15 +90,16 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
       "Extraction des sous-titres (SRT)...",
     );
 
+    if (_contentController.content.srt != null) {
+      return;
+    }
+
     final Map<String, dynamic> transcriptionContent =
         await _audioService.transcribeAudioToText(
       "${_configController.configService?.model?.path}/${_configController.configService?.model?.name}/contents/${_contentController.content.id}.$kAudioExtension",
     );
 
-    _contentController.setSrt(
-      transcriptionContent,
-    );
-
+    _contentController.setSrt(transcriptionContent);
     _contentController.save();
   }
 
@@ -104,6 +109,10 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
       // TODO: Add translation
       "Génération des sous-titres (SRT)...",
     );
+
+    if (_contentController.content.srtWithGroup != null) {
+      return;
+    }
 
     List<SrtSentenceModel> srtWithGroup = _audioService.generateSRT(
       _contentController.content.srt?['content'],
@@ -123,6 +132,10 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
       "Création des sous-titres...",
     );
 
+    if (_contentController.content.assContent != null) {
+      return;
+    }
+
     String assContent = _audioService.createSubtitles(
       _contentController.content.srtWithGroup?['content']
           .map((e) => SrtSentenceModel.fromJson(e))
@@ -130,10 +143,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
           .toList(),
     );
 
-    _contentController.setAss(
-      assContent,
-    );
-
+    _contentController.setAss(assContent);
     _contentController.save();
   }
 
@@ -143,6 +153,10 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
       // TODO: Add translation
       "Génération des sections...",
     );
+
+    if (_contentController.content.sections != null) {
+      return;
+    }
 
     List<SrtWordModel> words = _contentController
         .content.srt?['content']['words']
@@ -170,9 +184,10 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
       "Génération des mots-clés...",
     );
 
-    OpenAIGateway<String> openAIGateway = OpenAIGateway<String>(
-      _configController.configService?.model?.apiKeyOpenAi ?? '',
-    );
+    // TODO: Controller plutôt qu'il y a des mots-clés
+    if (_contentController.content.sections != null) {
+      return;
+    }
 
     List<VideoSectionModel> sections = _contentController
         .content.sections?['content']
@@ -183,7 +198,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     final List<VideoSectionModel> sectionsWithKeywords =
         await _sectionService.generateKeywords(
       sections,
-      openAIGateway,
+      _openAIGateway,
       _configController.configService?.model?.modelOpenAi ?? '',
     );
 
@@ -217,12 +232,17 @@ final videoDataGeneratorControllerProvider =
     final ConfigController configController =
         ref.read(configControllerProvider.notifier);
 
-    OpenAIGateway openAIGateway = OpenAIGateway<String>(
+    OpenAIGateway<String> openAIGateway = OpenAIGateway<String>(
+      FileGateway(),
       configController.configService?.model?.apiKeyOpenAi ?? '',
     );
 
     return VideoDataGeneratorController(
-      AudioService(openAIGateway),
+      openAIGateway,
+      AudioService(
+        FileGateway(),
+        openAIGateway,
+      ),
       SectionService(),
       ref.read(contentControllerProvider.notifier),
       ref.read(configControllerProvider.notifier),

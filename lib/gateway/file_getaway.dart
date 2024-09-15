@@ -8,6 +8,11 @@ class FileGateway {
     return _FileWrapperImpl(file);
   }
 
+  bool exists(String path) {
+    final _FileWrapperImpl file = _FileWrapperImpl(File(path));
+    return file.existsSync();
+  }
+
   Future<void> createDirectory(String path) async {
     final Directory dir = Directory(path);
 

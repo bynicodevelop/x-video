@@ -1,22 +1,35 @@
 import 'dart:io';
 
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/gateway/open_ai_gateway.dart';
 import 'package:x_video_ai/models/open_ai_config_model.dart';
 import 'package:x_video_ai/models/srt_sentence_model.dart';
 import 'package:x_video_ai/models/srt_word_model.dart';
+import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/sentence.dart';
 import 'package:x_video_ai/utils/srt_subtitle.dart';
 
 class AudioService {
-  final OpenAIGateway openAIGateway;
+  final FileGateway _fileGateway;
+  final OpenAIGateway _openAIGateway;
 
-  AudioService(this.openAIGateway);
+  AudioService(
+    FileGateway fileGateway,
+    OpenAIGateway openAIGateway,
+  )   : _fileGateway = fileGateway,
+        _openAIGateway = openAIGateway;
 
-  Future<File> convertTextToSpeech(
+  Future<FileWrapper> convertTextToSpeech(
     String chronical,
     OpentAiConfigModel config,
   ) async {
-    return openAIGateway.convertTextToSpeech(
+    final String audioPath =
+        "${config.path}/${config.audioFileName}.$kAudioExtension";
+    if (_fileGateway.exists(audioPath)) {
+      return _fileGateway.getFile(audioPath);
+    }
+
+    return _openAIGateway.convertTextToSpeech(
       model: config.model,
       input: chronical,
       voice: config.voice,
@@ -28,7 +41,7 @@ class AudioService {
   Future<Map<String, dynamic>> transcribeAudioToText(
     final String pathFile,
   ) async {
-    return openAIGateway.transcribeAudioToText(
+    return _openAIGateway.transcribeAudioToText(
       pathFile: pathFile,
     );
   }

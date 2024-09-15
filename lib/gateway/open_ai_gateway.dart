@@ -2,13 +2,19 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_openai/dart_openai.dart';
+import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/utils/constants.dart';
 
 const kTypeText = 'text';
 const kTypeJsonObject = 'json_object';
 
 class OpenAIGateway<T> {
-  OpenAIGateway(String apiKey) {
+  final FileGateway _fileGateway;
+
+  OpenAIGateway(
+    FileGateway fileGateway,
+    String apiKey,
+  ) : _fileGateway = fileGateway {
     OpenAI.apiKey = apiKey;
   }
 
@@ -33,7 +39,7 @@ class OpenAIGateway<T> {
     return content.isNotEmpty ? jsonDecode(content) : {} as T;
   }
 
-  Future<File> convertTextToSpeech({
+  Future<FileWrapper> convertTextToSpeech({
     required String model,
     required String input,
     required String voice,
@@ -52,7 +58,8 @@ class OpenAIGateway<T> {
 
     final String newPath =
         "${outputDirectory.path}/$outputFileName.$kAudioExtension";
-    final File newFile = File(newPath);
+
+    final FileWrapper newFile = _fileGateway.getFile(newPath);
 
     audioFile.renameSync(newPath);
 
@@ -62,11 +69,11 @@ class OpenAIGateway<T> {
   Future<Map<String, dynamic>> transcribeAudioToText({
     required String pathFile,
   }) async {
-    final File audioFile = File(pathFile);
+    final FileWrapper audioFile = _fileGateway.getFile(pathFile);
 
     final OpenAIAudioModel transcription =
         await OpenAI.instance.audio.createTranscription(
-      file: audioFile,
+      file: audioFile as File,
       model: "whisper-1",
       responseFormat: OpenAIAudioResponseFormat.verbose_json,
       timestamp_granularities: [OpenAIAudioTimestampGranularity.word],
