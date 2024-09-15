@@ -22,7 +22,8 @@ class ContentService {
 
     final String path = contentModel.path;
 
-    final FileWrapper file = _fileGateway.getFile("$path/contents/$fileName.json");
+    final FileWrapper file =
+        _fileGateway.getFile("$path/contents/$fileName.json");
     final Map<String, dynamic> jsonContent = getContent(file.path);
     final Map<String, dynamic> mergedContent = contentModel.toJson();
 
@@ -36,7 +37,10 @@ class ContentService {
       throw Exception("Path is required");
     }
 
-    final DirectoryWrapper directory = _fileGateway.getDirectory("$path/contents");
+    _fileGateway.createDirectory("$path/contents");
+
+    final DirectoryWrapper directory =
+        _fileGateway.getDirectory("$path/contents");
     final List<FileSystemEntity> files = directory
         .listSync()
         .where((element) => element.path.endsWith('.json'))

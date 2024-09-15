@@ -22,7 +22,11 @@ class _ChronicalEditorFormElementState
     Future.microtask(() {
       if (mounted) {
         final content = ref.read(contentControllerProvider.notifier);
-        _contentController.text = content.content.chronical!['content'] ?? '';
+
+        _contentController.text = content.content.chronical != null &&
+                content.content.chronical!['content'] != null
+            ? content.content.chronical!['content']
+            : '';
       }
     });
   }

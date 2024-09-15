@@ -45,11 +45,11 @@ class ConfigService<T extends JsonDeserializable> {
     return this;
   }
 
-  Future<ConfigService<T>> loadConfiguration(
+  ConfigService<T> loadConfiguration(
     String path,
     T model, {
     String name = 'config.json',
-  }) async {
+  }) {
     _isLoaded = true;
 
     final FileWrapper fileConfig = _fileGateway.getFile('$path/$name');

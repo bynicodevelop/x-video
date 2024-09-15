@@ -14,14 +14,14 @@ class ConfigController extends StateNotifier<ConfigService<ProjectModel>?> {
   ConfigService<ProjectModel>? get configService => state;
   ProjectModel? get model => state!.model;
 
-  Future<void> loadConfiguration({
+  void loadConfiguration({
     required String path,
   }) async {
     final ConfigService configService = ConfigService<ProjectModel>(
       fileGateway: _fileGateway,
     );
 
-    state = await configService.loadConfiguration(
+    state = configService.loadConfiguration(
       path,
       ProjectModel(
         name: '',

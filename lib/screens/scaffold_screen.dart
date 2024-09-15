@@ -5,9 +5,11 @@ import 'package:x_video_ai/components/buttons/popover_button_component.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_component.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
+import 'package:x_video_ai/controllers/content_list_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/page_controller.dart';
 import 'package:x_video_ai/controllers/project_controller.dart';
+import 'package:x_video_ai/controllers/video_data_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
 import 'package:x_video_ai/elements/forms/create_project_form_element.dart';
 import 'package:x_video_ai/gateway/file_picker_gateway.dart';
@@ -29,21 +31,6 @@ class ScafflodScreen extends ConsumerStatefulWidget {
 }
 
 class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    // if (kDebugMode) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     // TODO: Ne pas commiter
-    //     ref.read(configControllerProvider.notifier).loadConfiguration(
-    //           path:
-    //               '/Volumes/Macintosh HD/Users/nicolasmoricet/Documents/XVideoIA/Nouveau project',
-    //         );
-    //   });
-    // }
-  }
-
   void _openFolderAndCreateProject(BuildContext context) {
     FilePickerGateway.openFolder().then((value) {
       if (value != null) {
@@ -55,9 +42,15 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
   void _openFolderAndLoadConfiguration() {
     FilePickerGateway.openFolder().then((value) {
       if (value != null) {
-        ref
-            .read(configControllerProvider.notifier)
-            .loadConfiguration(path: value);
+        final configController = ref.read(configControllerProvider.notifier);
+        configController.loadConfiguration(path: value);
+        
+        final configService = configController.configService!;
+
+        ref.read(contentListControllerProvider.notifier).loadContents(
+            "${configService.model!.path}/${configService.model!.name}");
+
+        ref.read(videoDataControllerProvider.notifier).loadVideos();
       }
     });
   }
