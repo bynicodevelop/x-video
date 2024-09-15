@@ -91,6 +91,8 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
       'isPlayable': isPlayable,
     };
 
+    if (!isPlayable) return;
+
     await _audioPlayer
         .setFilePath("$projectPath/contents/$projectId.$kAudioExtension");
     await _audioPlayer.seek(Duration.zero); // Positionner l'audio à zéro

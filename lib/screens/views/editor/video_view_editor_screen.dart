@@ -74,6 +74,46 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
     });
   }
 
+  void _updateSectionPlayer(
+    VideoSectionModel section,
+    VignetteReaderState? vignetteReaderState,
+  ) {
+    final sessionController = ref.read(sectionsControllerProvider.notifier);
+
+    sessionController.updateSection(
+      section.mergeWith(
+        fileName: vignetteReaderState?.videoDataModel?.name,
+      ),
+    );
+
+    ref
+        .read(videoPlayerEditorControllerProvider.notifier)
+        .initVideoPlayerEditor(sessionController.sections);
+  }
+
+  Padding _vignetteWidget(MapEntry<int, VideoSectionModel> entry) {
+    final int index = entry.key;
+    final VideoSectionModel section = entry.value;
+    final BorderRadius borderRadius = BorderRadius.circular(8);
+    return Padding(
+      padding: const EdgeInsets.only(
+        right: 8,
+      ),
+      child: VideoSelectorEditor(
+        key: _sectionKeys[index],
+        index: index,
+        borderRadius: borderRadius,
+        child: VignetteReaderVideoEditor(
+          key: ValueKey(section.id),
+          section: section,
+          onCompleted: (VignetteReaderState? vignetteReaderState) {
+            _updateSectionPlayer(section, vignetteReaderState);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(videoDataGeneratorControllerProvider);
@@ -126,39 +166,8 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
                           .sections
                           .asMap()
                           .entries
-                          .map(
-                        (MapEntry<int, VideoSectionModel> entry) {
-                          final int index = entry.key;
-                          final VideoSectionModel section = entry.value;
-                          final BorderRadius borderRadius =
-                              BorderRadius.circular(8);
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                              right: 8,
-                            ),
-                            child: VideoSelectorEditor(
-                              key: _sectionKeys[index],
-                              index: index,
-                              borderRadius: borderRadius,
-                              child: VignetteReaderVideoEditor(
-                                key: ValueKey(section.id),
-                                section: section,
-                                onCompleted:
-                                    (VignetteReaderState? vignetteReaderState) {
-                                  ref
-                                      .read(sectionsControllerProvider.notifier)
-                                      .updateSection(
-                                        section.mergeWith(
-                                          fileName: vignetteReaderState
-                                              ?.videoDataModel?.name,
-                                        ),
-                                      );
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ).toList(),
+                          .map(_vignetteWidget)
+                          .toList(),
                     ),
                   ),
                 ),
