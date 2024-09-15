@@ -4,12 +4,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
-import 'dart:convert' as _i8;
 import 'dart:typed_data' as _i5;
 
-import 'package:cross_file/src/types/interface.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
 import 'package:x_video_ai/gateway/ffmpeg.dart' as _i4;
 import 'package:x_video_ai/gateway/file_getaway.dart' as _i2;
 
@@ -39,16 +36,6 @@ class _FakeFileWrapper_0 extends _i1.SmartFake implements _i2.FileWrapper {
 class _FakeDirectoryWrapper_1 extends _i1.SmartFake
     implements _i2.DirectoryWrapper {
   _FakeDirectoryWrapper_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeDateTime_2 extends _i1.SmartFake implements DateTime {
-  _FakeDateTime_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -165,109 +152,90 @@ class MockFFMpeg extends _i1.Mock implements _i4.FFMpeg {
         returnValue:
             _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
       ) as _i3.Future<Map<String, dynamic>>);
-}
-
-/// A class which mocks [XFile].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockXFile extends _i1.Mock implements _i6.XFile {
-  MockXFile() {
-    _i1.throwOnMissingStub(this);
-  }
 
   @override
-  String get path => (super.noSuchMethod(
-        Invocation.getter(#path),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.getter(#path),
-        ),
-      ) as String);
-
-  @override
-  String get name => (super.noSuchMethod(
-        Invocation.getter(#name),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.getter(#name),
-        ),
-      ) as String);
-
-  @override
-  _i3.Future<void> saveTo(String? path) => (super.noSuchMethod(
+  _i3.Future<void> cutSegment(
+    String? inputPath,
+    String? outputPath,
+    double? duration,
+    String? format,
+    void Function(double)? onProgress,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #saveTo,
-          [path],
+          #cutSegment,
+          [
+            inputPath,
+            outputPath,
+            duration,
+            format,
+            onProgress,
+          ],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<int> length() => (super.noSuchMethod(
-        Invocation.method(
-          #length,
-          [],
-        ),
-        returnValue: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
-
-  @override
-  _i3.Future<String> readAsString(
-          {_i8.Encoding? encoding = const _i8.Utf8Codec()}) =>
+  _i3.Future<void> concat(
+    List<String>? tempFiles,
+    String? tempDir,
+    String? outputVideoPath,
+    void Function(double)? onProgress,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #readAsString,
-          [],
-          {#encoding: encoding},
-        ),
-        returnValue: _i3.Future<String>.value(_i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #readAsString,
-            [],
-            {#encoding: encoding},
-          ),
-        )),
-      ) as _i3.Future<String>);
-
-  @override
-  _i3.Future<_i5.Uint8List> readAsBytes() => (super.noSuchMethod(
-        Invocation.method(
-          #readAsBytes,
-          [],
-        ),
-        returnValue: _i3.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
-      ) as _i3.Future<_i5.Uint8List>);
-
-  @override
-  _i3.Stream<_i5.Uint8List> openRead([
-    int? start,
-    int? end,
-  ]) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #openRead,
+          #concat,
           [
-            start,
-            end,
+            tempFiles,
+            tempDir,
+            outputVideoPath,
+            onProgress,
           ],
         ),
-        returnValue: _i3.Stream<_i5.Uint8List>.empty(),
-      ) as _i3.Stream<_i5.Uint8List>);
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i3.Future<DateTime> lastModified() => (super.noSuchMethod(
+  _i3.Future<void> addAudioToVideo(
+    String? videoPath,
+    String? audioPath,
+    String? outputVideoPath,
+    void Function(double)? onProgress,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #lastModified,
-          [],
+          #addAudioToVideo,
+          [
+            videoPath,
+            audioPath,
+            outputVideoPath,
+            onProgress,
+          ],
         ),
-        returnValue: _i3.Future<DateTime>.value(_FakeDateTime_2(
-          this,
-          Invocation.method(
-            #lastModified,
-            [],
-          ),
-        )),
-      ) as _i3.Future<DateTime>);
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> addSubtitlesToVideo(
+    String? videoPath,
+    String? subtitlesContent,
+    String? outputVideoPath,
+    void Function(double)? onProgress,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addSubtitlesToVideo,
+          [
+            videoPath,
+            subtitlesContent,
+            outputVideoPath,
+            onProgress,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }

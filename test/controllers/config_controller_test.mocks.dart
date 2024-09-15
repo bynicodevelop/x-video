@@ -87,7 +87,7 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
       ) as _i5.Future<_i3.ConfigService<T>>);
 
   @override
-  _i5.Future<_i3.ConfigService<T>> loadConfiguration(
+  _i3.ConfigService<T> loadConfiguration(
     String? path,
     T? model, {
     String? name = r'config.json',
@@ -101,8 +101,7 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
           ],
           {#name: name},
         ),
-        returnValue:
-            _i5.Future<_i3.ConfigService<T>>.value(_FakeConfigService_0<T>(
+        returnValue: _FakeConfigService_0<T>(
           this,
           Invocation.method(
             #loadConfiguration,
@@ -112,8 +111,8 @@ class MockConfigService<T extends _i1.JsonDeserializable> extends _i2.Mock
             ],
             {#name: name},
           ),
-        )),
-      ) as _i5.Future<_i3.ConfigService<T>>);
+        ),
+      ) as _i3.ConfigService<T>);
 
   @override
   _i5.Future<_i3.ConfigService<T>> updateConfiguration(

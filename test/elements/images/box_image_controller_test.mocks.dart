@@ -7,13 +7,14 @@ import 'dart:async' as _i6;
 import 'dart:typed_data' as _i8;
 
 import 'package:cross_file/cross_file.dart' as _i7;
-import 'package:flutter_riverpod/flutter_riverpod.dart' as _i10;
+import 'package:flutter_riverpod/flutter_riverpod.dart' as _i11;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:state_notifier/state_notifier.dart' as _i11;
-import 'package:x_video_ai/controllers/content_controller.dart' as _i9;
+import 'package:state_notifier/state_notifier.dart' as _i12;
+import 'package:x_video_ai/controllers/content_controller.dart' as _i10;
 import 'package:x_video_ai/models/content_model.dart' as _i4;
 import 'package:x_video_ai/models/video_information.dart' as _i3;
 import 'package:x_video_ai/models/video_model.dart' as _i2;
+import 'package:x_video_ai/models/video_section_model.dart' as _i9;
 import 'package:x_video_ai/services/video_service.dart' as _i5;
 
 // ignore_for_file: type=lint
@@ -157,12 +158,96 @@ class MockVideoService extends _i1.Mock implements _i5.VideoService {
         ),
         returnValue: _i6.Future<_i8.Uint8List?>.value(),
       ) as _i6.Future<_i8.Uint8List?>);
+
+  @override
+  _i6.Future<void> cutSegment(
+    _i9.VideoSectionModel? video,
+    String? projectPath,
+    String? projectId,
+    void Function(double)? onProgress, {
+    String? format = r'1920:1080',
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #cutSegment,
+          [
+            video,
+            projectPath,
+            projectId,
+            onProgress,
+          ],
+          {#format: format},
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> concatenateVideos(
+    List<_i9.VideoSectionModel>? videos,
+    String? projectPath,
+    String? projectId,
+    void Function(double)? onProgress,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #concatenateVideos,
+          [
+            videos,
+            projectPath,
+            projectId,
+            onProgress,
+          ],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> concatenateAudios(
+    String? projectPath,
+    String? projectId,
+    void Function(double)? onProgress,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #concatenateAudios,
+          [
+            projectPath,
+            projectId,
+            onProgress,
+          ],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> addSubtitles(
+    String? projectPath,
+    String? projectId,
+    String? assContent,
+    void Function(double)? onProgress,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addSubtitles,
+          [
+            projectPath,
+            projectId,
+            assContent,
+            onProgress,
+          ],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 }
 
 /// A class which mocks [ContentController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockContentController extends _i1.Mock implements _i9.ContentController {
+class MockContentController extends _i1.Mock implements _i10.ContentController {
   MockContentController() {
     _i1.throwOnMissingStub(this);
   }
@@ -195,7 +280,7 @@ class MockContentController extends _i1.Mock implements _i9.ContentController {
       ) as _i4.ContentModel);
 
   @override
-  set onError(_i10.ErrorListener? _onError) => super.noSuchMethod(
+  set onError(_i11.ErrorListener? _onError) => super.noSuchMethod(
         Invocation.setter(
           #onError,
           _onError,
@@ -363,8 +448,8 @@ class MockContentController extends _i1.Mock implements _i9.ContentController {
       ) as bool);
 
   @override
-  _i10.RemoveListener addListener(
-    _i11.Listener<_i4.ContentModel>? listener, {
+  _i11.RemoveListener addListener(
+    _i12.Listener<_i4.ContentModel>? listener, {
     bool? fireImmediately = true,
   }) =>
       (super.noSuchMethod(
@@ -374,7 +459,7 @@ class MockContentController extends _i1.Mock implements _i9.ContentController {
           {#fireImmediately: fireImmediately},
         ),
         returnValue: () {},
-      ) as _i10.RemoveListener);
+      ) as _i11.RemoveListener);
 
   @override
   void dispose() => super.noSuchMethod(

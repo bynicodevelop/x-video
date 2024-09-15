@@ -71,16 +71,14 @@ class MockConfigController extends _i1.Mock implements _i2.ConfigController {
       ) as bool);
 
   @override
-  _i4.Future<void> loadConfiguration({required String? path}) =>
-      (super.noSuchMethod(
+  void loadConfiguration({required String? path}) => super.noSuchMethod(
         Invocation.method(
           #loadConfiguration,
           [],
           {#path: path},
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValueForMissingStub: null,
+      );
 
   @override
   void initConfiguration({

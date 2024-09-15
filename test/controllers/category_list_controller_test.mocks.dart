@@ -3,15 +3,15 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:state_notifier/state_notifier.dart' as _i8;
 import 'package:x_video_ai/controllers/content_controller.dart' as _i6;
-import 'package:x_video_ai/models/category_model.dart' as _i5;
-import 'package:x_video_ai/models/content_model.dart' as _i2;
-import 'package:x_video_ai/services/category_service.dart' as _i3;
+import 'package:x_video_ai/models/category_model.dart' as _i2;
+import 'package:x_video_ai/models/content_model.dart' as _i3;
+import 'package:x_video_ai/services/category_service.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -26,8 +26,18 @@ import 'package:x_video_ai/services/category_service.dart' as _i3;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeContentModel_0 extends _i1.SmartFake implements _i2.ContentModel {
-  _FakeContentModel_0(
+class _FakeCategoryModel_0 extends _i1.SmartFake implements _i2.CategoryModel {
+  _FakeCategoryModel_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeContentModel_1 extends _i1.SmartFake implements _i3.ContentModel {
+  _FakeContentModel_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -39,25 +49,25 @@ class _FakeContentModel_0 extends _i1.SmartFake implements _i2.ContentModel {
 /// A class which mocks [CategoryService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCategoryService extends _i1.Mock implements _i3.CategoryService {
+class MockCategoryService extends _i1.Mock implements _i4.CategoryService {
   MockCategoryService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<List<_i5.CategoryModel>> getCategories(String? projectPath) =>
+  _i5.Future<List<_i2.CategoryModel>> getCategories(String? projectPath) =>
       (super.noSuchMethod(
         Invocation.method(
           #getCategories,
           [projectPath],
         ),
         returnValue:
-            _i4.Future<List<_i5.CategoryModel>>.value(<_i5.CategoryModel>[]),
-      ) as _i4.Future<List<_i5.CategoryModel>>);
+            _i5.Future<List<_i2.CategoryModel>>.value(<_i2.CategoryModel>[]),
+      ) as _i5.Future<List<_i2.CategoryModel>>);
 
   @override
-  _i4.Future<void> addCategory(
-    _i5.CategoryModel? category,
+  _i5.Future<void> addCategory(
+    _i2.CategoryModel? category,
     String? projectPath,
   ) =>
       (super.noSuchMethod(
@@ -68,13 +78,13 @@ class MockCategoryService extends _i1.Mock implements _i3.CategoryService {
             projectPath,
           ],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> updateCategory(
-    _i5.CategoryModel? category,
+  _i5.Future<void> updateCategory(
+    _i2.CategoryModel? category,
     String? projectPath,
   ) =>
       (super.noSuchMethod(
@@ -85,9 +95,34 @@ class MockCategoryService extends _i1.Mock implements _i3.CategoryService {
             projectPath,
           ],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i2.CategoryModel findCategoryByKeyword(
+    String? keyword,
+    String? projectPath,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #findCategoryByKeyword,
+          [
+            keyword,
+            projectPath,
+          ],
+        ),
+        returnValue: _FakeCategoryModel_0(
+          this,
+          Invocation.method(
+            #findCategoryByKeyword,
+            [
+              keyword,
+              projectPath,
+            ],
+          ),
+        ),
+      ) as _i2.CategoryModel);
 }
 
 /// A class which mocks [ContentController].
@@ -117,13 +152,13 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       ) as bool);
 
   @override
-  _i2.ContentModel get content => (super.noSuchMethod(
+  _i3.ContentModel get content => (super.noSuchMethod(
         Invocation.getter(#content),
-        returnValue: _FakeContentModel_0(
+        returnValue: _FakeContentModel_1(
           this,
           Invocation.getter(#content),
         ),
-      ) as _i2.ContentModel);
+      ) as _i3.ContentModel);
 
   @override
   set onError(_i7.ErrorListener? _onError) => super.noSuchMethod(
@@ -141,22 +176,22 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       ) as bool);
 
   @override
-  _i4.Stream<_i2.ContentModel> get stream => (super.noSuchMethod(
+  _i5.Stream<_i3.ContentModel> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _i4.Stream<_i2.ContentModel>.empty(),
-      ) as _i4.Stream<_i2.ContentModel>);
+        returnValue: _i5.Stream<_i3.ContentModel>.empty(),
+      ) as _i5.Stream<_i3.ContentModel>);
 
   @override
-  _i2.ContentModel get state => (super.noSuchMethod(
+  _i3.ContentModel get state => (super.noSuchMethod(
         Invocation.getter(#state),
-        returnValue: _FakeContentModel_0(
+        returnValue: _FakeContentModel_1(
           this,
           Invocation.getter(#state),
         ),
-      ) as _i2.ContentModel);
+      ) as _i3.ContentModel);
 
   @override
-  set state(_i2.ContentModel? value) => super.noSuchMethod(
+  set state(_i3.ContentModel? value) => super.noSuchMethod(
         Invocation.setter(
           #state,
           value,
@@ -165,13 +200,13 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       );
 
   @override
-  _i2.ContentModel get debugState => (super.noSuchMethod(
+  _i3.ContentModel get debugState => (super.noSuchMethod(
         Invocation.getter(#debugState),
-        returnValue: _FakeContentModel_0(
+        returnValue: _FakeContentModel_1(
           this,
           Invocation.getter(#debugState),
         ),
-      ) as _i2.ContentModel);
+      ) as _i3.ContentModel);
 
   @override
   bool get hasListeners => (super.noSuchMethod(
@@ -180,7 +215,7 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
       ) as bool);
 
   @override
-  void initContent(_i2.ContentModel? contentModel) => super.noSuchMethod(
+  void initContent(_i3.ContentModel? contentModel) => super.noSuchMethod(
         Invocation.method(
           #initContent,
           [contentModel],
@@ -279,8 +314,8 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
 
   @override
   bool updateShouldNotify(
-    _i2.ContentModel? old,
-    _i2.ContentModel? current,
+    _i3.ContentModel? old,
+    _i3.ContentModel? current,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -295,7 +330,7 @@ class MockContentController extends _i1.Mock implements _i6.ContentController {
 
   @override
   _i7.RemoveListener addListener(
-    _i8.Listener<_i2.ContentModel>? listener, {
+    _i8.Listener<_i3.ContentModel>? listener, {
     bool? fireImmediately = true,
   }) =>
       (super.noSuchMethod(
