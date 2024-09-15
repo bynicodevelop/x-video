@@ -192,7 +192,6 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
   }
 
   void playVideo() {
-    print("playVideo");
     if (_videoPlayerController?.value.isInitialized == true &&
         _audioPlayer.playerState.processingState == ProcessingState.ready) {
       _videoPlayerController!.play();
