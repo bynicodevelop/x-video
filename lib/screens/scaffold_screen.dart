@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -34,15 +33,15 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
   void initState() {
     super.initState();
 
-    if (kDebugMode) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // TODO: Ne pas commiter
-        ref.read(configControllerProvider.notifier).loadConfiguration(
-              path:
-                  '/Volumes/Macintosh HD/Users/nicolasmoricet/Documents/XVideoIA/Nouveau project',
-            );
-      });
-    }
+    // if (kDebugMode) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     // TODO: Ne pas commiter
+    //     ref.read(configControllerProvider.notifier).loadConfiguration(
+    //           path:
+    //               '/Volumes/Macintosh HD/Users/nicolasmoricet/Documents/XVideoIA/Nouveau project',
+    //         );
+    //   });
+    // }
   }
 
   void _openFolderAndCreateProject(BuildContext context) {
@@ -159,8 +158,9 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
   ) {
     final ConfigService<ProjectModel>? configService =
         ref.watch(configControllerProvider);
-
     ref.watch(loadingControllerProvider);
+
+    final loadingController = ref.read(loadingControllerProvider.notifier);
 
     return Stack(
       children: [
@@ -222,9 +222,7 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
           ),
         ),
         Visibility(
-          visible: ref
-              .read(loadingControllerProvider.notifier)
-              .isLoading(kLoadingMain),
+          visible: loadingController.isLoading(kLoadingMain),
           child: Container(
             color: Theme.of(context).scaffoldBackgroundColor.withOpacity(
                   0.7,
@@ -240,11 +238,7 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
                   height: 20,
                 ),
                 Text(
-                  ref
-                          .read(loadingControllerProvider.notifier)
-                          .progressState
-                          ?.message ??
-                      '',
+                  loadingController.progressState?.message ?? '',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
