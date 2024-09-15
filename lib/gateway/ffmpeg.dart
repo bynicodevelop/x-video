@@ -113,10 +113,12 @@ class FFMpeg {
     String filename = 'thumbnail',
   }) async {
     const String prefix = 'thumbnail_';
+    final String uniqueId = '${DateTime.now().millisecondsSinceEpoch}_';
 
     try {
       // Chemin complet pour stocker la miniature
-      final thumbnailPath = '$outputPath/$prefix$filename.$kImageExtension';
+      final thumbnailPath =
+          '$outputPath/$prefix$uniqueId$filename.$kImageExtension';
 
       // Exécuter FFmpeg pour générer la miniature
       final result = await Process.run(
