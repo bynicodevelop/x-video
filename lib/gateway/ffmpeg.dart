@@ -215,4 +215,374 @@ class FFMpeg {
       return {};
     }
   }
+
+  Future<void> cutSegment(
+    String inputPath,
+    String outputPath,
+    double duration,
+    String format,
+    void Function(double progress) onProgress,
+  ) async {
+    // Créer les options vidéo
+    final List<String> defaultOptions = [
+      '-t', '$duration', // Durée de la vidéo
+      '-pix_fmt', 'yuv420p', // Format pixel yuv420p
+      '-vsync', 'vfr', // Synchronisation vidéo variable
+      '-movflags', 'faststart', // Optimisation pour un démarrage rapide
+    ];
+
+    // Créer les filtres vidéo
+    final String videoFilter =
+        'scale=$format:force_original_aspect_ratio=increase,crop=$format';
+
+    // Créer la commande ffmpeg
+    final List<String> command = [
+      '-i', inputPath, // Chemin d'entrée
+      ...defaultOptions, // Options par défaut
+      '-c:v', 'libx264', // Codec vidéo libx264
+      '-c:a', 'aac', // Codec audio AAC
+      '-vf', videoFilter, // Appliquer les filtres vidéo
+      '-y', // Écraser le fichier de sortie s'il existe déjà
+      outputPath, // Chemin de sortie
+    ];
+
+    try {
+      // Exécuter la commande ffmpeg avec Process.start pour suivre la progression
+      final process = await Process.start('ffmpeg', command);
+
+      double lastProgress = 0.0;
+
+      // Écouter le flux stderr pour extraire la progression
+      process.stderr
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen((line) {
+        // Décommenter pour voir toutes les sorties ffmpeg
+        // print(line);
+
+        final progress = _parseProgress(line, duration);
+        if (progress != null) {
+          if (progress >= lastProgress) {
+            lastProgress = progress;
+            onProgress(progress);
+          }
+        }
+      });
+
+      // Attendre la fin du processus
+      final exitCode = await process.exitCode;
+
+      // Gérer l'exécution du processus
+      if (exitCode != 0) {
+        // Lire le message d'erreur complet
+        final error = await process.stderr.transform(utf8.decoder).join();
+        print('Error: $error');
+        throw Exception('FFmpeg process failed');
+      } else {
+        onProgress(100.0);
+      }
+    } catch (e) {
+      print('Error creating segment: $outputPath - ${e.toString()}');
+      throw Exception('Failed to create segment');
+    }
+  }
+
+  Future<void> concat(
+    List<String> tempFiles,
+    String tempDir,
+    String outputVideoPath,
+    void Function(double progress) onProgress,
+  ) async {
+    try {
+      print('Concatenating ${tempFiles.length} videos');
+
+      // Construire la commande FFmpeg
+      final List<String> command = [];
+
+      for (var tempFile in tempFiles) {
+        command.addAll(['-i', tempFile]);
+      }
+
+      final inputStreams =
+          List.generate(tempFiles.length, (i) => '[$i:v]').join();
+      final filterComplex =
+          '$inputStreams concat=n=${tempFiles.length}:v=1[outv]';
+
+      command.addAll([
+        '-filter_complex',
+        filterComplex,
+        '-map',
+        '[outv]',
+        '-c:v',
+        'libx264',
+        '-movflags',
+        'faststart',
+        '-y',
+        outputVideoPath,
+      ]);
+
+      print('Executing command: ffmpeg ${command.join(' ')}');
+
+      // Démarrer le processus FFmpeg
+      final process =
+          await Process.start('ffmpeg', command, workingDirectory: tempDir);
+
+      // Calculer la durée totale des vidéos
+      final totalDuration = await _getTotalDuration(tempFiles);
+
+      // Écouter le flux stderr pour extraire la progression
+      process.stderr
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen((line) {
+        final progress = _parseProgress(line, totalDuration);
+        if (progress != null) {
+          onProgress(progress);
+        }
+      });
+
+      // Attendre la fin du processus
+      final exitCode = await process.exitCode;
+
+      if (exitCode != 0) {
+        print('Error: Process exited with code $exitCode');
+        throw Exception('FFmpeg process failed');
+      }
+
+      onProgress(100.0);
+    } catch (e) {
+      print('Error concatenating videos: $e');
+      print(
+          'Details: tempFiles=$tempFiles, tempDir=$tempDir, outputVideoPath=$outputVideoPath');
+      throw Exception('Failed to concatenate videos');
+    }
+  }
+
+  Future<void> addAudioToVideo(
+    String videoPath,
+    String audioPath,
+    String outputVideoPath,
+    void Function(double progress) onProgress,
+  ) async {
+    print('Adding audio to video');
+
+    // Construire la commande FFmpeg
+    final List<String> command = [
+      '-i',
+      videoPath,
+      '-i',
+      audioPath,
+      '-map',
+      '0:v',
+      '-map',
+      '1:a',
+      '-c:v',
+      'copy',
+      '-c:a',
+      'aac',
+      '-pix_fmt',
+      'yuv420p',
+      '-movflags',
+      'faststart',
+      '-shortest',
+      '-y',
+      outputVideoPath,
+    ];
+
+    try {
+      // Obtenir la durée totale pour calculer la progression
+      final totalDuration = await _getTotalDuration(
+        [videoPath, audioPath],
+        mode: 'shortest',
+      );
+
+      // Démarrer le processus FFmpeg
+      final process = await Process.start('ffmpeg', command);
+
+      // Écouter le flux stderr pour extraire la progression
+      process.stderr
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen((line) {
+        // Décommenter la ligne suivante pour voir toutes les sorties FFmpeg
+        // print(line);
+        final progress = _parseProgress(line, totalDuration);
+        if (progress != null) {
+          onProgress(progress);
+        }
+      });
+
+      // Attendre la fin du processus
+      final exitCode = await process.exitCode;
+
+      if (exitCode != 0) {
+        print('Error: Process exited with code $exitCode');
+        throw Exception('FFmpeg process failed');
+      } else {
+        onProgress(100.0);
+        print('Video with audio created: $outputVideoPath');
+      }
+    } catch (e) {
+      print('Error adding audio to video: $e');
+      throw Exception('Failed to add audio to video');
+    }
+  }
+
+  Future<void> addSubtitlesToVideo(
+    String videoPath,
+    String subtitlesContent,
+    String outputVideoPath,
+    void Function(double progress) onProgress,
+  ) async {
+    print('Adding subtitles to video');
+
+    // Créer un fichier temporaire pour les sous-titres
+    final tempSubtitlesFile =
+        await File('${Directory.systemTemp.path}/temp_subtitles.ass').create();
+
+    // Obtenir la durée totale de la vidéo avec ffprobe
+    final duration = await _getVideoDuration(videoPath);
+
+    try {
+      // Écrire le contenu des sous-titres dans le fichier temporaire
+      await tempSubtitlesFile.writeAsString(subtitlesContent);
+
+      // Construire la commande FFmpeg avec le fichier temporaire
+      final List<String> command = [
+        '-i', videoPath,
+        '-vf',
+        'subtitles=${tempSubtitlesFile.path}', // Utilisation du fichier temporaire
+        '-c:v', 'libx264',
+        '-pix_fmt', 'yuv420p',
+        '-movflags', 'faststart',
+        '-y', outputVideoPath,
+      ];
+
+      print('Executing FFmpeg command: ffmpeg ${command.join(' ')}');
+
+      // Démarrer le processus FFmpeg
+      final process = await Process.start('ffmpeg', command);
+
+      // Capturer les erreurs et les messages
+      process.stderr
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen((line) {
+        // Extraction de la progression à partir de la sortie de FFmpeg
+        final progress = _parseProgress(line, duration);
+        if (progress != null) {
+          onProgress(progress);
+        }
+      });
+
+      // Attendre la fin du processus FFmpeg
+      final exitCode = await process.exitCode;
+
+      if (exitCode != 0) {
+        throw Exception('FFmpeg process failed with exit code $exitCode');
+      } else {
+        onProgress(100.0);
+        print('Video with subtitles created: $outputVideoPath');
+      }
+    } catch (e) {
+      print('Error adding subtitles to video: $e');
+      throw Exception('Failed to add subtitles to video');
+    } finally {
+      // Supprimer le fichier temporaire après utilisation
+      if (await tempSubtitlesFile.exists()) {
+        await tempSubtitlesFile.delete();
+      }
+    }
+  }
+
+  Future<double> _getTotalDuration(
+    List<String> mediaPaths, {
+    String mode = 'total', // 'total', 'shortest', 'longest'
+  }) async {
+    List<double> durations = [];
+
+    for (var path in mediaPaths) {
+      final result = await Process.run('ffprobe', [
+        '-v',
+        'error',
+        '-show_entries',
+        'format=duration',
+        '-of',
+        'default=noprint_wrappers=1:nokey=1',
+        path,
+      ]);
+
+      if (result.exitCode == 0) {
+        final duration = double.tryParse(result.stdout.toString().trim());
+        if (duration != null) {
+          durations.add(duration);
+        }
+      } else {
+        print('Error getting duration of $path: ${result.stderr}');
+        throw Exception('Error getting duration of $path');
+      }
+    }
+
+    if (durations.isEmpty) {
+      throw Exception('Unable to retrieve durations.');
+    }
+
+    switch (mode) {
+      case 'shortest':
+        return durations.reduce((a, b) => a < b ? a : b);
+      case 'longest':
+        return durations.reduce((a, b) => a > b ? a : b);
+      default:
+        return durations.reduce((a, b) => a + b);
+    }
+  }
+
+  Future<double> _getVideoDuration(String videoPath) async {
+    final result = await Process.run('ffprobe', [
+      '-v',
+      'error',
+      '-show_entries',
+      'format=duration',
+      '-of',
+      'default=noprint_wrappers=1:nokey=1',
+      videoPath,
+    ]);
+
+    if (result.exitCode == 0) {
+      return double.parse(result.stdout.toString().trim());
+    } else {
+      throw Exception('Failed to get video duration: ${result.stderr}');
+    }
+  }
+
+// Fonction pour analyser la progression à partir des sorties de FFmpeg
+  double? _parseProgress(String line, double totalDuration) {
+    final regex = RegExp(r'time=(\d+:\d+:\d+\.\d+)');
+    final match = regex.firstMatch(line);
+
+    if (match != null) {
+      final timeString = match.group(1)!;
+      final elapsedSeconds = _timeStringToSeconds(timeString);
+
+      final progress = (elapsedSeconds / totalDuration) * 100;
+      return progress.clamp(0.0, 100.0);
+    }
+
+    return null;
+  }
+
+// Convertir une chaîne de temps HH:MM:SS.sss en secondes
+  double _timeStringToSeconds(String timeString) {
+    final parts = timeString.split(':');
+
+    if (parts.length != 3) {
+      return 0.0;
+    }
+
+    final hours = double.tryParse(parts[0]) ?? 0.0;
+    final minutes = double.tryParse(parts[1]) ?? 0.0;
+    final seconds = double.tryParse(parts[2]) ?? 0.0;
+
+    return hours * 3600 + minutes * 60 + seconds;
+  }
 }

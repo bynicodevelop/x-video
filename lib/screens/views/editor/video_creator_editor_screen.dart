@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:x_video_ai/controllers/video_creator_controller.dart';
 
 class VideoCreatorEditorScreen extends ConsumerStatefulWidget {
   const VideoCreatorEditorScreen({super.key});
@@ -12,7 +13,52 @@ class VideoCreatorEditorScreen extends ConsumerStatefulWidget {
 class _VideoCreatorEditorScreenState
     extends ConsumerState<VideoCreatorEditorScreen> {
   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      ref.read(videoCreatorControllerProvider.notifier).startWorkflow();
+    });
+  }
+
+  ListTile _item(
+    String label,
+    IconData icon,
+    bool active, {
+    double? progress,
+  }) =>
+      ListTile(
+        leading: Icon(
+          icon,
+          color: progress == 1
+              ? Theme.of(context).primaryColor
+              : Colors.grey.shade400,
+        ),
+        title: Text(
+          label,
+          style: TextStyle(
+            color: active ? Colors.grey.shade800 : Colors.grey.shade400,
+          ),
+        ),
+        // Progress bar
+        subtitle: progress != null
+            ? LinearProgressIndicator(
+                value: progress,
+                backgroundColor: Colors.grey.shade300,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).primaryColor,
+                ),
+              )
+            : null,
+      );
+
+  @override
   Widget build(BuildContext context) {
+    ref.watch(videoCreatorControllerProvider);
+
+    final videoCreatorController =
+        ref.read(videoCreatorControllerProvider.notifier);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -24,53 +70,34 @@ class _VideoCreatorEditorScreenState
           child: ListView(
             shrinkWrap: true,
             children: [
-              ListTile(
-                leading: Icon(
-                  Icons.video_settings_outlined,
-                  color: Colors.green.shade600,
-                ),
-                title: Text(
-                  'Prepare Video Screen',
-                  style: TextStyle(
-                    color: Colors.grey.shade800,
-                  ),
-                ),
+              _item(
+                'Prepare Video Data',
+                Icons.video_settings_outlined,
+                videoCreatorController.hasPrepared,
+                progress: videoCreatorController.prepareProgress,
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.music_video_outlined,
-                  color: Colors.grey.shade400,
-                ),
-                title: Text(
-                  'Associate Video and Audio Screen',
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                  ),
-                ),
+              _item(
+                'Concatenate Videos',
+                Icons.merge_outlined,
+                videoCreatorController.hasConcatenated,
+                progress: videoCreatorController.concatenateProgress,
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.subtitles,
-                  color: Colors.grey.shade400,
-                ),
-                title: Text(
-                  'Add subtitle Screen',
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                  ),
-                ),
+              _item(
+                'Add Audio',
+                Icons.music_video_outlined,
+                videoCreatorController.hasAddedAudios,
+                progress: videoCreatorController.addAudiosProgress,
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.high_quality_outlined,
-                  color: Colors.grey.shade400,
-                ),
-                title: Text(
-                  'Option Screen',
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                  ),
-                ),
+              _item(
+                'Add subtitle Screen',
+                Icons.subtitles,
+                videoCreatorController.hasAddedSubtitles,
+                progress: videoCreatorController.addSubtitlesProgress,
+              ),
+              _item(
+                'Option Screen',
+                Icons.high_quality_outlined,
+                videoCreatorController.isFinished,
               ),
             ],
           ),

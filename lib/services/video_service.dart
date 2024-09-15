@@ -7,6 +7,7 @@ import 'package:x_video_ai/gateway/ffmpeg.dart';
 import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/models/video_information.dart';
 import 'package:x_video_ai/models/video_model.dart';
+import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/utils/constants.dart';
 import 'package:x_video_ai/utils/generate_md5_name.dart';
 
@@ -80,7 +81,6 @@ class VideoService {
         format: format,
       );
 
-      // rename file
       XFile newFile = XFile(standardizeFilePath);
       final String fileName = await generateMD5Name(newFile);
       final String newFilePath = '$standardizePath/$fileName.$kVideoExtension';
@@ -97,10 +97,11 @@ class VideoService {
     }
   }
 
-  Future<Uint8List?> generateThumbnail(
-      {required XFile file,
-      required String outputPath,
-      String? fileName}) async {
+  Future<Uint8List?> generateThumbnail({
+    required XFile file,
+    required String outputPath,
+    String? fileName,
+  }) async {
     try {
       await _fileGateway.createDirectory('$outputPath/$_tmpFolder');
 
@@ -112,5 +113,89 @@ class VideoService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> cutSegment(
+    VideoSectionModel video,
+    String projectPath,
+    String projectId,
+    void Function(double progress) onProgress, {
+    String format = kOrientation16_9,
+  }) async {
+    final String inputPath =
+        '$projectPath/$_videosFolder/${video.fileName}.$kVideoExtension';
+    final String outputPath =
+        '$projectPath/$_tmpFolder/$projectId/${video.fileName}.$kVideoExtension';
+    final double duration = video.duration;
+
+    await _fileGateway.createDirectory('$projectPath/$_tmpFolder/$projectId');
+
+    await _ffmpeg.cutSegment(
+      inputPath,
+      outputPath,
+      duration,
+      format,
+      onProgress,
+    );
+  }
+
+  Future<void> concatenateVideos(
+    List<VideoSectionModel> videos,
+    String projectPath,
+    String projectId,
+    void Function(double progress) onProgress,
+  ) async {
+    final List<String> inputFiles = videos
+        .map((e) =>
+            '$projectPath/$_tmpFolder/$projectId/${e.fileName}.$kVideoExtension')
+        .toList();
+    final String outputPath =
+        '$projectPath/$_tmpFolder/$projectId/concatenated.mp4';
+
+    await _ffmpeg.concat(
+      inputFiles,
+      '$projectPath/$_tmpFolder/$projectId',
+      outputPath,
+      onProgress,
+    );
+  }
+
+  Future<void> concatenateAudios(
+    String projectPath,
+    String projectId,
+    void Function(double progress) onProgress,
+  ) async {
+    final String inputVideoPath =
+        '$projectPath/$_tmpFolder/$projectId/concatenated.$kVideoExtension';
+    final String inputAudioPath =
+        '$projectPath/contents/$projectId.$kAudioExtension';
+    final String outputPath =
+        '$projectPath/$_tmpFolder/$projectId/audio-concatenated.$kVideoExtension';
+
+    await _ffmpeg.addAudioToVideo(
+      inputVideoPath,
+      inputAudioPath,
+      outputPath,
+      onProgress,
+    );
+  }
+
+  Future<void> addSubtitles(
+    String projectPath,
+    String projectId,
+    String assContent,
+    void Function(double progress) onProgress,
+  ) async {
+    final String inputVideoPath =
+        '$projectPath/$_tmpFolder/$projectId/audio-concatenated.$kVideoExtension';
+    final String outputPath =
+        '$projectPath/$_tmpFolder/$projectId/final.$kVideoExtension';
+
+    await _ffmpeg.addSubtitlesToVideo(
+      inputVideoPath,
+      assContent,
+      outputPath,
+      onProgress,
+    );
   }
 }
