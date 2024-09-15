@@ -4,11 +4,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
-import 'dart:io' as _i3;
+import 'dart:io' as _i7;
 
 import 'package:dart_openai/dart_openai.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:x_video_ai/gateway/file_getaway.dart' as _i3;
 import 'package:x_video_ai/gateway/open_ai_gateway.dart' as _i4;
 
 // ignore_for_file: type=lint
@@ -34,8 +35,8 @@ class _FakeFuture_0<T1> extends _i1.SmartFake implements _i2.Future<T1> {
         );
 }
 
-class _FakeFile_1 extends _i1.SmartFake implements _i3.File {
-  _FakeFile_1(
+class _FakeFileWrapper_1 extends _i1.SmartFake implements _i3.FileWrapper {
+  _FakeFileWrapper_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -94,11 +95,11 @@ class MockOpenAIGateway<T> extends _i1.Mock implements _i4.OpenAIGateway<T> {
       ) as _i2.Future<T>);
 
   @override
-  _i2.Future<_i3.File> convertTextToSpeech({
+  _i2.Future<_i3.FileWrapper> convertTextToSpeech({
     required String? model,
     required String? input,
     required String? voice,
-    required _i3.Directory? outputDirectory,
+    required _i7.Directory? outputDirectory,
     String? outputFileName = r'audio',
     _i5.OpenAIAudioSpeechResponseFormat? responseFormat,
   }) =>
@@ -115,7 +116,7 @@ class MockOpenAIGateway<T> extends _i1.Mock implements _i4.OpenAIGateway<T> {
             #responseFormat: responseFormat,
           },
         ),
-        returnValue: _i2.Future<_i3.File>.value(_FakeFile_1(
+        returnValue: _i2.Future<_i3.FileWrapper>.value(_FakeFileWrapper_1(
           this,
           Invocation.method(
             #convertTextToSpeech,
@@ -130,7 +131,7 @@ class MockOpenAIGateway<T> extends _i1.Mock implements _i4.OpenAIGateway<T> {
             },
           ),
         )),
-      ) as _i2.Future<_i3.File>);
+      ) as _i2.Future<_i3.FileWrapper>);
 
   @override
   _i2.Future<Map<String, dynamic>> transcribeAudioToText(

@@ -66,6 +66,15 @@ class MockFileGateway extends _i1.Mock implements _i2.FileGateway {
       ) as _i2.FileWrapper);
 
   @override
+  bool exists(String? path) => (super.noSuchMethod(
+        Invocation.method(
+          #exists,
+          [path],
+        ),
+        returnValue: false,
+      ) as bool);
+
+  @override
   _i3.Future<void> createDirectory(String? path) => (super.noSuchMethod(
         Invocation.method(
           #createDirectory,
