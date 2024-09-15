@@ -36,6 +36,7 @@ class _VideoPlayerEditorState extends ConsumerState<VideoPlayerEditor> {
     ref.watch(videoPlayerEditorControllerProvider);
     final videoPlayerController =
         ref.read(videoPlayerEditorControllerProvider.notifier);
+    final isPlayable = videoPlayerController.isPlayable;
 
     return Stack(
       children: [
@@ -43,19 +44,29 @@ class _VideoPlayerEditorState extends ConsumerState<VideoPlayerEditor> {
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.2,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (videoPlayerController.videoPlayerController != null &&
-                  videoPlayerController
-                      .videoPlayerController!.value.isInitialized)
-                AspectRatio(
-                  aspectRatio: videoPlayerController
-                      .videoPlayerController!.value.aspectRatio,
-                  child:
-                      VideoPlayer(videoPlayerController.videoPlayerController!),
-                ),
-            ],
+          child: Center(
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: (!isPlayable ||
+                      videoPlayerController.videoPlayerController == null ||
+                      !videoPlayerController
+                          .videoPlayerController!.value.isInitialized)
+                  ? Container(
+                      color: Colors.black,
+                      child: Center(
+                        child: Text(
+                          '(·.·)',
+                          style: TextStyle(
+                            color: Colors.grey.withOpacity(0.5),
+                            fontSize: 52,
+                          ),
+                        ),
+                      ),
+                    )
+                  : VideoPlayer(
+                      videoPlayerController.videoPlayerController!,
+                    ),
+            ),
           ),
         ),
         Positioned(
@@ -66,13 +77,15 @@ class _VideoPlayerEditorState extends ConsumerState<VideoPlayerEditor> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButtonComponent(
-                onPressed: () {
-                  if (videoPlayerController.isPlayingState) {
-                    videoPlayerController.pauseVideo();
-                  } else {
-                    videoPlayerController.playVideo();
-                  }
-                },
+                onPressed: isPlayable
+                    ? () {
+                        if (videoPlayerController.isPlayingState) {
+                          videoPlayerController.pauseVideo();
+                        } else {
+                          videoPlayerController.playVideo();
+                        }
+                      }
+                    : null,
                 icon: videoPlayerController.isPlayingState
                     ? Icons.pause
                     : Icons.play_arrow,

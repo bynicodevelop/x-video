@@ -50,9 +50,12 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
           'videos': [],
           'isPlaying': false, // Défini à false ici
           'index': 0,
+          'isPlayable': false,
         });
 
   bool get isPlayingState => state['isPlaying'];
+
+  bool get isPlayable => state['isPlayable'];
 
   int get currentVideoIndex => state['index'];
 
@@ -63,6 +66,10 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
   ) async {
     final String projectPath = _contentController.state.path;
     final String projectId = _contentController.state.id;
+
+    final isPlayable = sections.every((section) {
+      return section.fileName != null;
+    });
 
     final List<VideoPlayerData> videoPlayerData = sections.map(
       (section) {
@@ -81,6 +88,7 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
       'videos': videoPlayerData,
       'isPlaying': false, // Défini à false ici
       'index': _currentVideoIndex,
+      'isPlayable': isPlayable,
     };
 
     await _audioPlayer
@@ -109,6 +117,7 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
       }).toList(),
       'isPlaying': isPlaying,
       'index': _currentVideoIndex,
+      'isPlayable': true,
     };
   }
 
