@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
+import 'package:x_video_ai/utils/debounce.dart';
 import 'package:x_video_ai/utils/translate.dart';
 
 class ChronicalEditorFormElement extends ConsumerStatefulWidget {
@@ -19,6 +20,8 @@ class _ChronicalEditorFormElementState
   void initState() {
     super.initState();
 
+    _contentController.addListener(_onContentChanged);
+
     Future.microtask(() {
       if (mounted) {
         final content = ref.read(contentControllerProvider.notifier);
@@ -28,6 +31,18 @@ class _ChronicalEditorFormElementState
             ? content.content.chronical!['content']
             : '';
       }
+    });
+  }
+
+  void _onContentChanged() {
+    debounce(() {
+      final String text = _contentController.text;
+
+      if (text.isEmpty && text.length < 10) return;
+
+      final contentController = ref.read(contentControllerProvider.notifier);
+      contentController.setChronical(text);
+      contentController.save();
     });
   }
 
