@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+// ignore: depend_on_referenced_packages
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/category_controller.dart';
 import 'package:x_video_ai/controllers/category_list_controller.dart';
@@ -207,7 +210,22 @@ class _VignetteReaderVideoState
                               ? Colors.white
                               : Colors.grey.shade400,
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles(
+                        allowMultiple: false,
+                        type: FileType.video,
+                      );
+
+                      if (result == null) {
+                        return;
+                      }
+
+                      ref.read(vignetteReaderControllerProvider.notifier).addVideoDataModel(
+                            widget.section,
+                            XFile(result.files.first.path!),
+                          );
+                    },
                   ),
                 );
               },
