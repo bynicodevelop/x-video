@@ -8,9 +8,11 @@ import 'package:x_video_ai/controllers/category_list_controller.dart';
 import 'package:x_video_ai/models/category_model.dart';
 
 class CategoryFormElement extends ConsumerStatefulWidget {
+  final String keyword;
   final Function(CategoryModel) onCategorySelected;
 
   const CategoryFormElement({
+    required this.keyword,
     required this.onCategorySelected,
     super.key,
   });
@@ -97,6 +99,7 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
 
   @override
   Widget build(BuildContext context) {
+    const heigthSize = 90.0;
     final categoryListController =
         ref.read(categoryListControllerProvider.notifier);
     ref.watch(categoryListControllerProvider);
@@ -106,7 +109,7 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
         if (categoryListController.categories.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(
-              top: 70.0,
+              top: heigthSize,
             ),
             child: Column(
               children: [
@@ -170,43 +173,65 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
         // Champ de texte pour la recherche (sticky)
         Container(
           constraints: const BoxConstraints(
-            minHeight: 70,
+            minHeight: heigthSize,
           ),
-          child: ref
-                  .read(categoryListControllerProvider.notifier)
-                  .categories
-                  .isNotEmpty
-              ? TextField(
-                  controller: _textEditingController,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    // TODO: Add to translation
-                    labelText: 'Rechercher une catégorie',
-                    suffixIcon: _textEditingController.text.isEmpty
-                        ? const Icon(Icons.search)
-                        : IconButton(
-                            onPressed: () => _textEditingController.clear(),
-                            icon: const Icon(Icons.clear),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ref
+                      .read(categoryListControllerProvider.notifier)
+                      .categories
+                      .isNotEmpty
+                  ? TextField(
+                      controller: _textEditingController,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        // TODO: Add to translation
+                        labelText: 'Rechercher une catégorie',
+                        suffixIcon: _textEditingController.text.isEmpty
+                            ? const Icon(Icons.search)
+                            : IconButton(
+                                onPressed: () => _textEditingController.clear(),
+                                icon: const Icon(Icons.clear),
+                              ),
+                      ),
+                    )
+                  : TextField(
+                      controller: _textEditingController,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        // TODO: Add to translation
+                        labelText: 'Créer une catégorie',
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () => _createNewCategory(
+                              _textEditingController.text,
+                            ), // Créer une nouvelle catégorie
                           ),
-                  ),
-                )
-              : TextField(
-                  controller: _textEditingController,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    // TODO: Add to translation
-                    labelText: 'Créer une catégorie',
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () => _createNewCategory(
-                          _textEditingController.text,
-                        ), // Créer une nouvelle catégorie
+                        ),
                       ),
                     ),
-                  ),
-                ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text.rich(
+                TextSpan(
+                    // TODO: Add keyword to the text
+                    text: "Cette partie est associée au mot-clé : ",
+                    style: Theme.of(context).textTheme.bodySmall!,
+                    children: [
+                      TextSpan(
+                        text: widget.keyword,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ]),
+              )
+            ],
+          ),
         ),
       ],
     );

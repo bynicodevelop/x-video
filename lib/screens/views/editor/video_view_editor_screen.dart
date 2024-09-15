@@ -21,13 +21,14 @@ class VideoViewEditorScreen extends ConsumerStatefulWidget {
 
 class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
   final ScrollController _scrollController = ScrollController();
-  
+
   @override
   void initState() {
     super.initState();
 
     Future.microtask(() {
       ref.read(videoDataGeneratorControllerProvider.notifier).startWorkflow();
+      ref.read(sectionsControllerProvider.notifier).initSections();
     });
   }
 
@@ -147,7 +148,7 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
                                   ref
                                       .read(sectionsControllerProvider.notifier)
                                       .updateSection(
-                                        section.copyWith(
+                                        section.mergeWith(
                                           fileName: vignetteReaderState
                                               ?.videoDataModel?.name,
                                         ),

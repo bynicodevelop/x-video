@@ -48,8 +48,6 @@ class VignetteReaderState {
   }
 
   VignetteReaderState reset() {
-    print('reset');
-    print(thumbnail);
     return VignetteReaderState(
       section: section,
       status: VignetteReaderStatus.idle,
@@ -110,15 +108,6 @@ class VignetteReaderControllerProvider
         thumbnail: thumbnail,
       ),
     ];
-  }
-
-  VignetteReaderState? getVignetteReaderState(
-    VideoSectionModel section,
-  ) {
-    return state.firstWhere(
-      (element) => element?.section.id == section.id,
-      orElse: () => null,
-    );
   }
 
   Future<void> addVideoDataModel(

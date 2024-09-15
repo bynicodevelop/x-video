@@ -44,7 +44,26 @@ class VideoSectionModel implements TimmingModel {
         fileName: json['fileName'],
       );
 
+  @Deprecated('Use mergeWith instead')
   VideoSectionModel copyWith({
+    String? sentence,
+    String? keyword,
+    double? start,
+    double? end,
+    double? duration,
+    String? fileName,
+  }) =>
+      VideoSectionModel(
+        id: id,
+        sentence: sentence ?? this.sentence,
+        keyword: keyword ?? this.keyword,
+        start: start ?? this.start,
+        end: end ?? this.end,
+        duration: duration ?? this.duration,
+        fileName: fileName ?? this.fileName,
+      );
+
+  VideoSectionModel mergeWith({
     String? sentence,
     String? keyword,
     double? start,

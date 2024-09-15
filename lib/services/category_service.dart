@@ -77,4 +77,16 @@ class CategoryService {
       projectPath,
     );
   }
+
+  CategoryModel findCategoryByKeyword(
+    String keyword,
+    String projectPath,
+  ) {
+    final List<CategoryModel> categories = _readCategories(projectPath);
+
+    return categories.firstWhere(
+      (category) => category.keywords.contains(keyword),
+      orElse: () => CategoryModel.factory({}),
+    );
+  }
 }

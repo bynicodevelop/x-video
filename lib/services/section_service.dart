@@ -20,20 +20,36 @@ class SectionService {
     List<VideoSectionModel> sections = [];
     String currentSentence = '';
     double currentStart = srtWithGroup.first.start;
-    double accumulatedDuration = 0.0;
-    double currentEnd = 0.0;
+    double currentEnd = currentStart;
+    double accumulatedDuration = 0.0; // Cumul des durées
 
-    for (var wordModel in srtWithGroup) {
+    for (int i = 0; i < srtWithGroup.length; i++) {
+      SrtWordModel wordModel = srtWithGroup[i];
       double wordStart = wordModel.start;
       double wordEnd = wordModel.end;
       String word = wordModel.word;
 
+      // Vérifier si le mot actuel est discontinu par rapport au mot précédent
+      if (i > 0 && wordStart - currentEnd > 0.001) {
+        double discontinuityDuration = wordStart - currentEnd;
+        // Tolérance de 1 milliseconde
+        print(
+            'Discontinuité détectée entre ${srtWithGroup[i - 1].word} et $word : ${wordStart - currentEnd} secondes');
+
+        // Ajouter la durée de la discontinuité à la durée accumulée
+        accumulatedDuration += discontinuityDuration;
+      }
+
+      // Durée du mot courant
       double wordDuration = wordEnd - wordStart;
 
-      // Si ajouter ce mot dépasse la durée maximale, créer une nouvelle section
-      if (accumulatedDuration + wordDuration > maxDuration) {
-        // Ajouter la section actuelle uniquement si la phrase n'est pas vide
+      // Calculer la durée totale si on ajoute ce mot à la section en cours
+      double newAccumulatedDuration = accumulatedDuration + wordDuration;
+
+      // Si la nouvelle section dépasse la durée maximale, on crée une nouvelle section
+      if (newAccumulatedDuration > maxDuration) {
         if (currentSentence.isNotEmpty) {
+          // Ajouter la section actuelle avec la durée accumulée
           sections.add(VideoSectionModel(
             id: await generateMD5NameFromString(
               "$currentSentence$currentStart$currentEnd",
@@ -41,27 +57,28 @@ class SectionService {
             sentence: currentSentence.trim(),
             start: currentStart,
             end: currentEnd,
-            duration: accumulatedDuration,
-            keyword:
-                '', // On peut éventuellement ajouter des keywords ici plus tard
+            duration: accumulatedDuration, // Durée réelle accumulée
+            keyword: '',
           ));
         }
 
         // Réinitialiser les variables pour la nouvelle section
-        currentStart = wordStart;
-        currentSentence = word;
-        accumulatedDuration = wordDuration;
+        currentSentence =
+            word; // Commencer une nouvelle phrase avec le mot actuel
+        currentStart = wordStart; // Début de la nouvelle section
+        accumulatedDuration =
+            wordDuration; // Réinitialiser la durée accumulée pour la nouvelle section
       } else {
-        // Ajouter le mot à la phrase en cours
+        // Ajouter le mot à la section en cours
         currentSentence += ' $word';
-        accumulatedDuration += wordDuration;
+        accumulatedDuration = newAccumulatedDuration; // Ajouter la durée du mot
       }
 
-      // Mettre à jour la fin actuelle de la section
+      // Mettre à jour le temps de fin
       currentEnd = wordEnd;
     }
 
-    // Ajouter la dernière section restante si elle n'a pas encore été ajoutée
+    // Ajouter la dernière section si nécessaire
     if (currentSentence.isNotEmpty) {
       sections.add(VideoSectionModel(
         id: await generateMD5NameFromString(
@@ -70,9 +87,8 @@ class SectionService {
         sentence: currentSentence.trim(),
         start: currentStart,
         end: currentEnd,
-        duration: accumulatedDuration,
-        keyword:
-            '', // On peut éventuellement ajouter des keywords ici plus tard
+        duration: accumulatedDuration, // Utiliser la durée accumulée
+        keyword: '',
       ));
     }
 

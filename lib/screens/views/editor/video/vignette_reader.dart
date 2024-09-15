@@ -188,19 +188,18 @@ class _VignetteReaderVideoState
                   debugPrint('Error: ${dropzoneParams.errorType}');
                 }
 
+                VignetteReaderStatus? status = vignetteReaderController
+                    .firstWhere(
+                      (element) => element?.section == widget.section,
+                      orElse: () => null,
+                    )
+                    ?.status;
+
                 return Center(
                   child: IconButton(
                     icon: Icon(
                       dropzoneParams.errorType == ErrorType.idle
-                          ? _getIconBasedOnState(
-                              vignetteReaderController
-                                  .firstWhere(
-                                    (element) =>
-                                        element?.section == widget.section,
-                                    orElse: () => null,
-                                  )
-                                  ?.status,
-                            )
+                          ? _getIconBasedOnState(status)
                           : Icons.error,
                       color: dropzoneParams.dragging
                           ? Colors.blue.shade400

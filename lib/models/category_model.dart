@@ -12,10 +12,12 @@ class CategoryModel implements JsonDeserializable {
   });
 
   factory CategoryModel.factory(Map<String, dynamic> json) => CategoryModel(
-        name: json['name'],
-        keywords: List<String>.from(json['keywords']),
-        videos: List<String>.from(json['videos']),
+        name: json['name'] ?? '',
+        keywords: List<String>.from(json['keywords'] ?? []),
+        videos: List<String>.from(json['videos'] ?? []),
       );
+
+  bool isEmpty() => name.isEmpty;
 
   @override
   CategoryModel fromJson(Map<String, dynamic> json) => CategoryModel(

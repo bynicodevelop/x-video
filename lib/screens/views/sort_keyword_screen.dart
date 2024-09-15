@@ -44,6 +44,7 @@ class _SortKeywordSreenState extends ConsumerState<SortKeywordSreen> {
         Expanded(
           flex: 1,
           child: CategoryFormElement(
+            keyword: widget.vignetteReaderState.section.keyword!,
             onCategorySelected: (
               CategoryModel category,
             ) {

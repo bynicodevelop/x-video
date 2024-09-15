@@ -112,7 +112,6 @@ class ContentController extends StateNotifier<ContentModel> {
   void updateSections(
     Map<String, dynamic> section,
   ) {
-    // Conversion explicite de la liste dynamique en List<Map<String, dynamic>>
     final List<Map<String, dynamic>> sections =
         (state.sections?['content'] as List<dynamic>)
             .map((e) => e as Map<String, dynamic>)

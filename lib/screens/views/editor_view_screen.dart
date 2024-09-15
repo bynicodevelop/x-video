@@ -21,7 +21,7 @@ class EditorViewScreen extends ConsumerStatefulWidget {
 
 class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
   final PageController _pageController = PageController(
-    initialPage: 2,
+    initialPage: 1,
   );
 
   @override
@@ -67,15 +67,30 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
               ? ToolBarEditorComponent(
                   buttons: [
                     IconButton(
-                      icon: const Icon(Icons.edit_note_outlined),
+                      icon: Icon(
+                        Icons.edit_note_outlined,
+                        color: _pageController.page == 0
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey.shade500,
+                      ),
                       onPressed: () => _pageController.jumpToPage(0),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.movie_edit),
+                      icon: Icon(
+                        Icons.movie_edit,
+                        color: _pageController.page == 1
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey.shade500,
+                      ),
                       onPressed: () => _pageController.jumpToPage(1),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.coffee_maker),
+                      icon: Icon(
+                        Icons.coffee_maker,
+                        color: _pageController.page == 2
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey.shade500,
+                      ),
                       onPressed: () => _pageController.jumpToPage(2),
                     ),
                   ],

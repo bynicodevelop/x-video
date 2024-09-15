@@ -56,6 +56,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   Future<void> _convertTextToAudio() async {
     _updateProgress(
       1,
+      // TODO: Add translation
       "Conversion du texte en audio...",
     );
 
@@ -81,6 +82,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   Future<void> _extractSRT() async {
     _updateProgress(
       2,
+      // TODO: Add translation
       "Extraction des sous-titres (SRT)...",
     );
 
@@ -99,6 +101,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   Future<void> _generateSRT() async {
     _updateProgress(
       3,
+      // TODO: Add translation
       "Génération des sous-titres (SRT)...",
     );
 
@@ -116,6 +119,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   Future<void> _createSubtitles() async {
     _updateProgress(
       4,
+      // TODO: Add translation
       "Création des sous-titres...",
     );
 
@@ -136,6 +140,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   Future<void> _generateSections() async {
     _updateProgress(
       5,
+      // TODO: Add translation
       "Génération des sections...",
     );
 
@@ -161,6 +166,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   Future<void> _generateKeywords() async {
     _updateProgress(
       6,
+      // TODO: Add translation
       "Génération des mots-clés...",
     );
 
