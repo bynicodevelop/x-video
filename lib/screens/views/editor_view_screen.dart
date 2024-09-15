@@ -21,7 +21,7 @@ class EditorViewScreen extends ConsumerStatefulWidget {
 
 class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
   final PageController _pageController = PageController(
-    initialPage: 1,
+    initialPage: 0,
   );
 
   @override
@@ -73,7 +73,8 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
                             ? Theme.of(context).primaryColor
                             : Colors.grey.shade500,
                       ),
-                      onPressed: () => _pageController.jumpToPage(0),
+                      onPressed: () =>
+                          setState(() => _pageController.jumpToPage(0)),
                     ),
                     IconButton(
                       icon: Icon(
@@ -82,7 +83,7 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
                             ? Theme.of(context).primaryColor
                             : Colors.grey.shade500,
                       ),
-                      onPressed: () => _pageController.jumpToPage(1),
+                      onPressed: () => setState(() => _pageController.jumpToPage(1)),
                     ),
                     IconButton(
                       icon: Icon(
@@ -91,7 +92,7 @@ class _EditorViewScreenState extends ConsumerState<EditorViewScreen> {
                             ? Theme.of(context).primaryColor
                             : Colors.grey.shade500,
                       ),
-                      onPressed: () => _pageController.jumpToPage(2),
+                      onPressed: () => setState(() => _pageController.jumpToPage(2)),
                     ),
                   ],
                 )
