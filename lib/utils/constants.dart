@@ -32,3 +32,13 @@ Obligations :
 Interdictions :
 - Il est interdit d’accompagner ta réponse d’un commentaire ou de ponctuation.
 """;
+
+// Voice open ai
+const List<String> kVoices = [
+  'alloy',
+  'echo',
+  'fable',
+  'onyx',
+  'nova',
+  'shimmer',
+];

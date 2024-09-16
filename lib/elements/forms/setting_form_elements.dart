@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/components/form/heading_form_component.dart';
 import 'package:x_video_ai/components/form/scaffold_field_form_component.dart';
+import 'package:x_video_ai/components/form/select_field_form_component.dart';
 import 'package:x_video_ai/components/form/text_form_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/utils/constants.dart';
@@ -65,12 +66,13 @@ class SettingFormElement extends ConsumerWidget {
           ),
           ScaffoldFieldFormComponent(
             label: $(context).setting_field_voice_open_ai,
-            field: TextFormComponent(
-              initialValue: config?.model?.voiceOpenAi,
+            field: SelectFormComponent<String>(
+              initialValue: config?.model?.voiceOpenAi?.toLowerCase(),
+              items: kVoices.map((e) => e.toLowerCase()).toList(),
               onChanged: (value) => debounce(
                 () => ref.read(configControllerProvider)?.updateConfiguration(
                       'voiceOpenAi',
-                      value,
+                      value.toLowerCase(),
                     ),
               ),
             ),
