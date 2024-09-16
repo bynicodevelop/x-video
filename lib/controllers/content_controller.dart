@@ -112,21 +112,26 @@ class ContentController extends StateNotifier<ContentModel> {
   void updateSections(
     Map<String, dynamic> section,
   ) {
-    final List<Map<String, dynamic>> sections =
-        (state.sections?['content'] as List<dynamic>)
-            .map((e) => e as Map<String, dynamic>)
-            .toList();
+    final sections = state.sections?['content'];
 
-    final int index = sections
+    if (sections == null) {
+      throw Exception("Sections content is not defined.");
+    }
+
+    final List<Map<String, dynamic>> sectionList = (sections as List<dynamic>)
+        .map((e) => e as Map<String, dynamic>)
+        .toList();
+
+    final int index = sectionList
         .indexWhere((element) => element['sentence'] == section['sentence']);
 
     if (index != -1) {
-      sections[index] = section;
+      sectionList[index] = section;
     } else {
-      sections.add(section);
+      sectionList.add(section);
     }
 
-    setSections(sections);
+    setSections(sectionList);
   }
 
   void save() {

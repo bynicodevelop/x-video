@@ -6,6 +6,7 @@ import 'package:x_video_ai/controllers/category_list_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/models/category_model.dart';
 import 'package:x_video_ai/models/content_model.dart';
+import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/category_service.dart';
 
 import 'category_list_controller_test.mocks.dart';
@@ -121,5 +122,40 @@ void main() {
 
     // Vérifier que le service a été appelé avec le bon chemin de projet
     verify(mockCategoryService.getCategories('/testProjectPath')).called(1);
+  });
+
+  test('should find category by keyword', () async {
+    // Simuler les catégories à retourner par le service
+    final List<CategoryModel> mockCategories = [
+      CategoryModel(name: 'Fruits', keywords: ['apple', 'banana'], videos: []),
+      CategoryModel(name: 'Animals', keywords: ['zebra'], videos: []),
+    ];
+
+    when(mockCategoryService.getCategories(any))
+        .thenAnswer((_) async => mockCategories);
+
+    // Appeler la méthode loadCategories
+    await container
+        .read(categoryListControllerProvider.notifier)
+        .loadCategories();
+
+    // Créer une section de vidéo avec un mot-clé correspondant
+    final section = VideoSectionModel(
+      id: '1',
+      sentence: 'Test sentence',
+      duration: 120.0,
+      fileName: 'testVideo',
+      keyword: 'apple',
+      start: 0.0,
+      end: 120.0,
+    );
+
+    // Appeler la méthode keywordIsInCategory
+    final CategoryModel? category = container
+        .read(categoryListControllerProvider.notifier)
+        .keywordIsInCategory(section);
+
+    // Vérifier que la catégorie correspondant au mot-clé est retournée
+    expect(category!.name, equals('Fruits'));
   });
 }

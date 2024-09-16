@@ -2,12 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
+import 'package:x_video_ai/controllers/notification_controller.dart';
 import 'package:x_video_ai/gateway/file_getaway.dart';
 import 'package:x_video_ai/gateway/open_ai_gateway.dart';
 import 'package:x_video_ai/models/open_ai_config_model.dart';
 import 'package:x_video_ai/models/progress_state_model.dart';
 import 'package:x_video_ai/models/srt_sentence_model.dart';
 import 'package:x_video_ai/models/srt_word_model.dart';
+import 'package:x_video_ai/models/state_notification_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/audio_service.dart';
 import 'package:x_video_ai/services/section_service.dart';
@@ -20,6 +22,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
   final ContentController _contentController;
   final ConfigController _configController;
   final LoadingController _loadingController;
+  final NotificationControllerProvider _notificationController;
 
   VideoDataGeneratorController(
     OpenAIGateway<String> openAIGateway,
@@ -28,12 +31,14 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     ContentController contentController,
     ConfigController configController,
     LoadingController loadingController,
+    NotificationControllerProvider notificationController,
   )   : _openAIGateway = openAIGateway,
         _audioService = audioService,
         _sectionService = sectionService,
         _configController = configController,
         _contentController = contentController,
         _loadingController = loadingController,
+        _notificationController = notificationController,
         super(ProgressStateModel(
           currentStep: 0,
           totalSteps: 0,
@@ -47,12 +52,89 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
       progressState: state,
     );
 
-    await _convertTextToAudio();
-    await _extractSRT();
-    await _generateSRT();
-    await _createSubtitles();
-    await _generateSections();
-    await _generateKeywords();
+    try {
+      await _convertTextToAudio();
+    } catch (e) {
+      // TODO: Add translation
+      _notificationController.showNotification(
+        "Erreur lors de la conversion du texte en audio",
+        const Duration(seconds: 5),
+        NotificationType.error,
+      );
+
+      _loadingController.stopLoading(kLoadingMain);
+      return;
+    }
+
+    try {
+      await _extractSRT();
+    } catch (e) {
+      // TODO: Add translation
+      _notificationController.showNotification(
+        "Erreur lors de l'extraction des sous-titres",
+        const Duration(seconds: 5),
+        NotificationType.error,
+      );
+
+      _loadingController.stopLoading(kLoadingMain);
+      return;
+    }
+
+    try {
+      await _generateSRT();
+    } catch (e) {
+      // TODO: Add translation
+      _notificationController.showNotification(
+        "Erreur lors de la génération des sous-titres",
+        const Duration(seconds: 5),
+        NotificationType.error,
+      );
+
+      _loadingController.stopLoading(kLoadingMain);
+      return;
+    }
+
+    try {
+      await _createSubtitles();
+    } catch (e) {
+      // TODO: Add translation
+      _notificationController.showNotification(
+        "Erreur lors de la création des sous-titres",
+        const Duration(seconds: 5),
+        NotificationType.error,
+      );
+
+      _loadingController.stopLoading(kLoadingMain);
+      return;
+    }
+
+    try {
+      await _generateSections();
+    } catch (e) {
+      // TODO: Add translation
+      _notificationController.showNotification(
+        "Erreur lors de la génération des sections",
+        const Duration(seconds: 5),
+        NotificationType.error,
+      );
+
+      _loadingController.stopLoading(kLoadingMain);
+      return;
+    }
+
+    try {
+      await _generateKeywords();
+    } catch (e) {
+      // TODO: Add translation
+      _notificationController.showNotification(
+        "Erreur lors de la génération des mots-clés",
+        const Duration(seconds: 5),
+        NotificationType.error,
+      );
+
+      _loadingController.stopLoading(kLoadingMain);
+      return;
+    }
 
     _loadingController.stopLoading(kLoadingMain);
   }
@@ -252,6 +334,7 @@ final videoDataGeneratorControllerProvider =
       ref.read(contentControllerProvider.notifier),
       ref.read(configControllerProvider.notifier),
       ref.read(loadingControllerProvider.notifier),
+      ref.read(notificationControllerProvider.notifier),
     );
   },
 );

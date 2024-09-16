@@ -101,4 +101,28 @@ void main() {
     verify(mockLoadingController.startLoading(kLoadingReader)).called(1);
     verify(mockLoadingController.stopLoading(kLoadingReader)).called(1);
   });
+
+  test('should handle parse service failure and stop loading', () async {
+    // Arrange
+    final feedModel = FeedModel(
+        link: 'https://example.com',
+        title: 'Mock Title',
+        description: 'Mock Content',
+        domain: 'example.com',
+        date: DateTime.now());
+
+    // Mocking parseUrl to throw an exception
+    when(mockParseService.parseUrl(feedModel.link))
+        .thenThrow(Exception('Failed to parse'));
+
+    // Act
+    try {
+      await readerContentController.loadContent(feedModel);
+    } catch (e) {
+      // Handle the exception
+    }
+
+    // Assert
+    verify(mockLoadingController.stopLoading(kLoadingReader)).called(1);
+  });
 }

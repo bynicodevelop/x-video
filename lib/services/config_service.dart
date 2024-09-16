@@ -109,12 +109,11 @@ class ConfigService<T extends JsonDeserializable> {
     String? name,
     T? model,
     bool? isLoaded,
-  }) {
-    return ConfigService<T>(
-      path: path ?? _path,
-      name: name ?? _name,
-      model: model ?? _model,
-      fileGateway: _fileGateway,
-    );
-  }
+  }) =>
+      ConfigService<T>(
+        path: path ?? _path,
+        name: name ?? _name,
+        model: model ?? _model,
+        fileGateway: _fileGateway,
+      );
 }

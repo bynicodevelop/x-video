@@ -7,10 +7,12 @@ import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
 import 'package:x_video_ai/controllers/content_list_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
+import 'package:x_video_ai/controllers/notification_controller.dart';
 import 'package:x_video_ai/controllers/page_controller.dart';
 import 'package:x_video_ai/controllers/project_controller.dart';
 import 'package:x_video_ai/controllers/video_data_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
+import 'package:x_video_ai/elements/dialogs/notification_element.dart';
 import 'package:x_video_ai/elements/forms/create_project_form_element.dart';
 import 'package:x_video_ai/gateway/file_picker_gateway.dart';
 import 'package:x_video_ai/models/project_model.dart';
@@ -44,7 +46,7 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
       if (value != null) {
         final configController = ref.read(configControllerProvider.notifier);
         configController.loadConfiguration(path: value);
-        
+
         final configService = configController.configService!;
 
         ref.read(contentListControllerProvider.notifier).loadContents(
@@ -139,9 +141,19 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
     );
   }
 
+  late PageController _localPageController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialiser le PageController à partir du provider
+    _localPageController =
+        ref.read(pageControllerProvider.notifier).pageController;
+  }
+
   @override
   void dispose() {
-    ref.read(pageControllerProvider.notifier).dispose();
+    _localPageController.dispose();
     super.dispose();
   }
 
@@ -154,6 +166,16 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
     ref.watch(loadingControllerProvider);
 
     final loadingController = ref.read(loadingControllerProvider.notifier);
+
+    ref.listen(notificationControllerProvider, (previous, next) {
+      if (next.message.isNotEmpty) {
+        showNotification(
+          context,
+          next.message,
+          next.type,
+        );
+      }
+    });
 
     return Stack(
       children: [

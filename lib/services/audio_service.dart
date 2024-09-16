@@ -25,6 +25,7 @@ class AudioService {
   ) async {
     final String audioPath =
         "${config.path}/${config.audioFileName}.$kAudioExtension";
+        
     if (_fileGateway.exists(audioPath)) {
       return _fileGateway.getFile(audioPath);
     }
