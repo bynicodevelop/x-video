@@ -69,11 +69,11 @@ class OpenAIGateway<T> {
   Future<Map<String, dynamic>> transcribeAudioToText({
     required String pathFile,
   }) async {
-    final FileWrapper audioFile = _fileGateway.getFile(pathFile);
+    final File audioFile = File(pathFile);
 
     final OpenAIAudioModel transcription =
         await OpenAI.instance.audio.createTranscription(
-      file: audioFile as File,
+      file: audioFile,
       model: "whisper-1",
       responseFormat: OpenAIAudioResponseFormat.verbose_json,
       timestamp_granularities: [OpenAIAudioTimestampGranularity.word],

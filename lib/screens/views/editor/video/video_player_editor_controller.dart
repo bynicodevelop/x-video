@@ -86,7 +86,7 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
 
     state = {
       'videos': videoPlayerData,
-      'isPlaying': false, // Défini à false ici
+      'isPlaying': false,
       'index': _currentVideoIndex,
       'isPlayable': isPlayable,
     };
@@ -95,11 +95,11 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
 
     await _audioPlayer
         .setFilePath("$projectPath/contents/$projectId.$kAudioExtension");
-    await _audioPlayer.seek(Duration.zero); // Positionner l'audio à zéro
+    await _audioPlayer.seek(Duration.zero);
 
     if (videoPlayerData.isNotEmpty) {
       await _initializeAndPlayVideo(videoPlayerData.first);
-      _updateIsPlayingState(false, videoPlayerData.first); // isPlaying à false
+      _updateIsPlayingState(false, videoPlayerData.first);
     }
   }
 
@@ -140,8 +140,7 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
           VideoPlayerController.file(File(videoPlayerData.path!));
 
       await _videoPlayerController!.initialize();
-      await _videoPlayerController!
-          .seekTo(Duration.zero); // Positionner la vidéo à zéro
+      await _videoPlayerController!.seekTo(Duration.zero);
     }
 
     _videoPlayerController!.addListener(() {
@@ -167,13 +166,16 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
     VideoPlayerController controller,
     VideoPlayerData videoPlayerData,
   ) async {
-    final isEndOfVideo = controller.value.position == controller.value.duration;
-
     final isMaxDurationReached = controller.value.position >=
         Duration(milliseconds: (videoPlayerData.duration * 1000).round());
 
-    if ((isEndOfVideo || isMaxDurationReached) && !_isTransitioning) {
-      await nextVideo();
+    if (isMaxDurationReached && !_isTransitioning) {
+      if (_currentVideoIndex < state['videos'].length - 1) {
+        await nextVideo();
+      } else {
+        // Si c'est la dernière vidéo, on arrête la lecture
+        pauseVideo();
+      }
     }
   }
 
@@ -183,13 +185,14 @@ class VideoPlayerEditorController extends StateNotifier<Map<String, dynamic>> {
 
       await _initializeAndPlayVideo(state['videos'][_currentVideoIndex]);
 
-      // Démarrer la lecture si elle est en cours
       if (isPlayingState) {
         playVideo();
       }
 
       _updateIsPlayingState(
-          isPlayingState, state['videos'][_currentVideoIndex]);
+        isPlayingState,
+        state['videos'][_currentVideoIndex],
+      );
     }
   }
 

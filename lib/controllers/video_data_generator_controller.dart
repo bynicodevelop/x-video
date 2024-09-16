@@ -52,7 +52,7 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     await _generateSRT();
     await _createSubtitles();
     await _generateSections();
-    // await _generateKeywords();
+    await _generateKeywords();
 
     _loadingController.stopLoading(kLoadingMain);
   }
@@ -184,8 +184,13 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
       "Génération des mots-clés...",
     );
 
-    // TODO: Controller plutôt qu'il y a des mots-clés
-    if (_contentController.content.sections != null) {
+    bool hasKeywords = _contentController.content.sections?['content']
+        .map((e) => VideoSectionModel.fromJson(e))
+        .whereType<VideoSectionModel>()
+        .every((element) => element.keyword != null);
+
+    if (hasKeywords) {
+      print("full mots clés");
       return;
     }
 

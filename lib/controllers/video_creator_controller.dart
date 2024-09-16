@@ -34,7 +34,7 @@ class VideoCreatorController extends StateNotifier<VideoCreatorState> {
     final String projectPath = _contentController.state.path;
     final String projectId = _contentController.state.id;
     final String assContent = _contentController.content.assContent!['content'];
-    // sections
+
     final List<VideoSectionModel> sections = _contentController
         .content.sections?['content']
         .map((e) => VideoSectionModel.fromJson(e))

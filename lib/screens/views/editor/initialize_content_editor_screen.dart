@@ -161,7 +161,7 @@ class _InitializeContentEditorScreenState
                 itemCount: contentModels.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text('Content ${contentModels[index].id}'),
+                    title: Text('Content ${contentModels[index].name}'),
                     onTap: () {
                       ref
                           .read(contentControllerProvider.notifier)
