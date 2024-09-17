@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:popover/popover.dart';
 import 'package:x_video_ai/screens/views/editor/video/vignette_reader_controller.dart';
 
 class IconUploadEditorElement extends ConsumerStatefulWidget {
@@ -39,10 +40,26 @@ class _IconUploadEditorElementState
     return Icons.file_upload_outlined;
   }
 
+  Widget _item(
+    IconData icon,
+    String title,
+    void Function() onTap,
+  ) {
+    return ListTile(
+      dense: true,
+      title: Text(title),
+      leading: Icon(
+        icon,
+        size: 16,
+      ),
+      onTap: onTap,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
+    return GestureDetector(
+      child: Icon(
         _getIconBasedOnState(widget.status),
         color: widget.isDragging
             ? Colors.blue.shade400
@@ -50,7 +67,41 @@ class _IconUploadEditorElementState
                 ? Colors.white
                 : Colors.grey.shade400,
       ),
-      onPressed: widget.onCompleted,
+      onTap: () {
+        showPopover(
+          context: context,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          barrierColor: Colors.transparent,
+          bodyBuilder: (context) => Container(
+            child: Column(
+              children: [
+                _item(
+                  Icons.upload_file,
+                  // TODO: Add translation
+                  'Upload',
+                  () {
+                    widget.onCompleted?.call();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                _item(
+                  Icons.video_library_outlined,
+                  // TODO: Add translation
+                  'Media Library',
+                  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+          direction: PopoverDirection.top,
+          width: 180,
+          height: 80,
+          arrowHeight: 15,
+          arrowWidth: 15,
+        );
+      },
     );
   }
 }
