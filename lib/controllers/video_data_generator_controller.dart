@@ -269,7 +269,8 @@ class VideoDataGeneratorController extends StateNotifier<ProgressStateModel> {
     bool hasKeywords = _contentController.content.sections?['content']
         .map((e) => VideoSectionModel.fromJson(e))
         .whereType<VideoSectionModel>()
-        .every((element) => element.keyword != null);
+        .every((element) =>
+            element.keyword != null && element.keyword!.isNotEmpty);
 
     if (hasKeywords) {
       print("full mots clés");
