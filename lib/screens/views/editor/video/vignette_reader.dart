@@ -201,30 +201,32 @@ class _VignetteReaderVideoState
                 return Stack(
                   fit: StackFit.expand,
                   children: [
-                    IconUploadEditorElement(
-                      status: dropzoneParams.errorType == ErrorType.idle
-                          ? vignetteReaderState?.status
-                          : VignetteReaderStatus.error,
-                      isDragging: dropzoneParams.dragging,
-                      hasThumbnail: thumbnail != null,
-                      onCompleted: () async {
-                        FilePickerResult? result =
-                            await FilePicker.platform.pickFiles(
-                          allowMultiple: false,
-                          type: FileType.video,
-                        );
+                    Center(
+                      child: IconUploadEditorElement(
+                        status: dropzoneParams.errorType == ErrorType.idle
+                            ? vignetteReaderState?.status
+                            : VignetteReaderStatus.error,
+                        isDragging: dropzoneParams.dragging,
+                        hasThumbnail: thumbnail != null,
+                        onCompleted: () async {
+                          FilePickerResult? result =
+                              await FilePicker.platform.pickFiles(
+                            allowMultiple: false,
+                            type: FileType.video,
+                          );
 
-                        if (result == null) {
-                          return;
-                        }
+                          if (result == null) {
+                            return;
+                          }
 
-                        ref
-                            .read(vignetteReaderControllerProvider.notifier)
-                            .addVideoDataModel(
-                              widget.section,
-                              XFile(result.files.first.path!),
-                            );
-                      },
+                          ref
+                              .read(vignetteReaderControllerProvider.notifier)
+                              .addVideoDataModel(
+                                widget.section,
+                                XFile(result.files.first.path!),
+                              );
+                        },
+                      ),
                     ),
                     Positioned(
                       bottom: 8,
@@ -232,14 +234,17 @@ class _VignetteReaderVideoState
                       child: Text(
                         vignetteReaderState?.section.keyword ?? '',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Colors.white,
+                          color: thumbnail == null
+                              ? Colors.grey.shade600
+                              : Colors.white,
                           fontStyle: FontStyle.italic,
                           shadows: [
-                            Shadow(
-                              color: Colors.grey.shade800,
-                              offset: const Offset(.5, .5),
-                              blurRadius: 6,
-                            ),
+                            if (thumbnail != null)
+                              Shadow(
+                                color: Colors.grey.shade800,
+                                offset: const Offset(.5, .5),
+                                blurRadius: 6,
+                              ),
                           ],
                         ),
                       ),
