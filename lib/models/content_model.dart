@@ -72,4 +72,6 @@ class ContentModel implements JsonDeserializable {
   factory ContentModel.factory(Map<String, dynamic> json) => ContentModel(
         path: '',
       ).mergeWith(json);
+
+  factory ContentModel.empty() => ContentModel(path: '');
 }

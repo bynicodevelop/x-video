@@ -16,7 +16,8 @@ void main() {
     container = ProviderContainer();
     contentService = ContentService(FileGateway());
     loadingController = LoadingController();
-    contentController = ContentController(contentService, loadingController, 'test/path');
+    contentController =
+        ContentController(contentService, loadingController, 'test/path');
   });
 
   tearDown(() {
@@ -44,7 +45,8 @@ void main() {
 
   test('setChronical updates the chronical', () {
     contentController.setChronical('New Chronical Content');
-    expect(contentController.content.chronical?['content'], 'New Chronical Content');
+    expect(contentController.content.chronical?['content'],
+        'New Chronical Content');
   });
 
   test('setAudio updates the audio', () {
@@ -59,7 +61,9 @@ void main() {
   });
 
   test('setSrtWithGroup updates the srtWithGroup', () {
-    final srtWithGroup = [{'key': 'value'}];
+    final srtWithGroup = [
+      {'key': 'value'}
+    ];
     contentController.setSrtWithGroup(srtWithGroup);
     expect(contentController.content.srtWithGroup?['content'], srtWithGroup);
   });
@@ -70,7 +74,9 @@ void main() {
   });
 
   test('setSections updates the sections', () {
-    final sections = [{'key': 'value'}];
+    final sections = [
+      {'key': 'value'}
+    ];
     contentController.setSections(sections);
     expect(contentController.content.sections?['content'], sections);
   });
@@ -80,21 +86,26 @@ void main() {
     contentController.setSections([section]);
     final updatedSection = {'sentence': 'test', 'key': 'new value'};
     contentController.updateSections(updatedSection);
-    expect(contentController.content.sections?['content'][0]['key'], 'new value');
+    expect(
+        contentController.content.sections?['content'][0]['key'], 'new value');
   });
 
   test('updateSections exepect throw if it does not exist', () {
     final section = {'sentence': 'test', 'key': 'value'};
-    
+
     // expect throw form updateSections
     expect(
-      () => container.read(contentControllerProvider.notifier).updateSections(section),
-      throwsA(isA<Exception>().having((e) => e.toString(), 'message', contains('Sections content is not defined'))),
+      () => container
+          .read(contentControllerProvider.notifier)
+          .updateSections(section),
+      throwsA(isA<Exception>().having((e) => e.toString(), 'message',
+          contains('Sections content is not defined'))),
     );
   });
 
-  test('save calls startLoading and saveContent', () {
-    contentController.save();
-    // Assuming you have a way to verify that startLoading and saveContent were called
+  test('reset calls resetContent', () {
+    contentController.reset();
+
+    expect(contentController.content.path, '');
   });
 }

@@ -5,6 +5,7 @@ import 'package:x_video_ai/components/buttons/popover_button_component.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_component.dart';
 import 'package:x_video_ai/components/scaffold/nav_bar_item_component.dart';
 import 'package:x_video_ai/controllers/config_controller.dart';
+import 'package:x_video_ai/controllers/content_controller.dart';
 import 'package:x_video_ai/controllers/content_list_controller.dart';
 import 'package:x_video_ai/controllers/loading_controller.dart';
 import 'package:x_video_ai/controllers/notification_controller.dart';
@@ -163,6 +164,7 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
   ) {
     final ConfigService<ProjectModel>? configService =
         ref.watch(configControllerProvider);
+    ref.watch(contentControllerProvider);
     ref.watch(loadingControllerProvider);
 
     final loadingController = ref.read(loadingControllerProvider.notifier);
@@ -181,11 +183,29 @@ class _ScafflodScreenState extends ConsumerState<ScafflodScreen> {
       children: [
         Scaffold(
           appBar: AppBar(
-            title: Text(
-              configService != null && configService.model != null
-                  ? configService.model!.name
-                  : $(context).untitled_project_name,
-              style: Theme.of(context).textTheme.titleSmall,
+            title: Row(
+              children: [
+                Text(
+                  configService != null && configService.model != null
+                      ? configService.model!.name
+                      : $(context).untitled_project_name,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                TextButton(
+                  onPressed: ref
+                          .read(contentControllerProvider.notifier)
+                          .isInitialized
+                      ? () {
+                          ref.read(contentControllerProvider.notifier).reset();
+                        }
+                      : null,
+                  // TODO: Add translation
+                  child: const Text("New content"),
+                ),
+              ],
             ),
             actions: [
               PopoverButtonComponent(

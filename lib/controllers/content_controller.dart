@@ -37,6 +37,10 @@ class ContentController extends StateNotifier<ContentModel> {
     state = contentModel;
   }
 
+  void reset() {
+    state = ContentModel.empty();
+  }
+
   void setContent(
     String title,
     String content,
