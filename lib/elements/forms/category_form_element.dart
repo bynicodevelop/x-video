@@ -28,6 +28,7 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
   List<CategoryModel> filteredCategories = [];
 
   final TextEditingController _textEditingController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -40,6 +41,8 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
 
         await categoryListController.loadCategories();
         filteredCategories = categoryListController.categories;
+
+        _focusNode.requestFocus();
       },
     );
 
@@ -50,6 +53,7 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
   @override
   void dispose() {
     _textEditingController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -183,6 +187,7 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
                       .categories
                       .isNotEmpty
                   ? TextField(
+                      focusNode: _focusNode,
                       controller: _textEditingController,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
