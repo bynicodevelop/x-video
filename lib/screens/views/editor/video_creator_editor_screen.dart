@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:x_video_ai/controllers/video_creator_controller.dart';
 
 class VideoCreatorEditorScreen extends ConsumerStatefulWidget {
@@ -96,7 +97,24 @@ class _VideoCreatorEditorScreenState
               ),
             ],
           ),
-        )
+        ),
+        const SizedBox(height: 20),
+        TextButton(
+          onPressed: videoCreatorController.isFinished
+              ? () async {
+                  final String folderPath =
+                      videoCreatorController.getFinalVideoPath();
+                  final Uri folderUri = Uri.file(folderPath, windows: true);
+
+                  if (await canLaunchUrl(folderUri)) {
+                    await launchUrl(folderUri);
+                  } else {
+                    throw 'Could not open the folder: $folderPath';
+                  }
+                }
+              : null,
+          child: const Text('Open Final Video Folder'),
+        ),
       ],
     );
   }

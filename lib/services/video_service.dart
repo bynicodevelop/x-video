@@ -208,4 +208,11 @@ class VideoService {
 
     return _fileGateway.exists(finalVideoPath);
   }
+
+  String getFinalVideoPath(
+    String projectPath,
+    String projectId,
+  ) {
+    return '$projectPath/$_tmpFolder/$projectId';
+  }
 }

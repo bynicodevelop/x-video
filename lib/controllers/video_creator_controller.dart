@@ -107,6 +107,16 @@ class VideoCreatorController extends StateNotifier<VideoCreatorState> {
     );
   }
 
+  String getFinalVideoPath() {
+    final String projectPath = _contentController.state.path;
+    final String projectId = _contentController.state.id;
+
+    return _videoService.getFinalVideoPath(
+      projectPath,
+      projectId,
+    );
+  }
+
   Future<void> _cutVideos(
     List<VideoSectionModel> sections,
     String projectPath,
