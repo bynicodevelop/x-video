@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 // ignore: depend_on_referenced_packages
 import 'package:cross_file/cross_file.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x_video_ai/controllers/category_controller.dart';
 import 'package:x_video_ai/controllers/category_list_controller.dart';
 import 'package:x_video_ai/controllers/video_data_controller.dart';
 import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
+import 'package:x_video_ai/elements/editor/icon_upload_element.dart';
 import 'package:x_video_ai/elements/files/dropzone_element.dart';
 import 'package:x_video_ai/elements/images/box_image.dart';
 import 'package:x_video_ai/models/category_model.dart';
@@ -191,42 +192,59 @@ class _VignetteReaderVideoState
                   debugPrint('Error: ${dropzoneParams.errorType}');
                 }
 
-                VignetteReaderStatus? status = vignetteReaderController
-                    .firstWhere(
-                      (element) => element?.section == widget.section,
-                      orElse: () => null,
-                    )
-                    ?.status;
+                VignetteReaderState? vignetteReaderState =
+                    vignetteReaderController.firstWhere(
+                  (element) => element?.section == widget.section,
+                  orElse: () => null,
+                );
 
-                return Center(
-                  child: IconButton(
-                    icon: Icon(
-                      dropzoneParams.errorType == ErrorType.idle
-                          ? _getIconBasedOnState(status)
-                          : Icons.error,
-                      color: dropzoneParams.dragging
-                          ? Colors.blue.shade400
-                          : thumbnail != null
-                              ? Colors.white
-                              : Colors.grey.shade400,
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    IconUploadEditorElement(
+                      status: dropzoneParams.errorType == ErrorType.idle
+                          ? vignetteReaderState?.status
+                          : VignetteReaderStatus.error,
+                      isDragging: dropzoneParams.dragging,
+                      hasThumbnail: thumbnail != null,
+                      onCompleted: () async {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles(
+                          allowMultiple: false,
+                          type: FileType.video,
+                        );
+
+                        if (result == null) {
+                          return;
+                        }
+
+                        ref
+                            .read(vignetteReaderControllerProvider.notifier)
+                            .addVideoDataModel(
+                              widget.section,
+                              XFile(result.files.first.path!),
+                            );
+                      },
                     ),
-                    onPressed: () async {
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        allowMultiple: false,
-                        type: FileType.video,
-                      );
-
-                      if (result == null) {
-                        return;
-                      }
-
-                      ref.read(vignetteReaderControllerProvider.notifier).addVideoDataModel(
-                            widget.section,
-                            XFile(result.files.first.path!),
-                          );
-                    },
-                  ),
+                    Positioned(
+                      bottom: 8,
+                      left: 10,
+                      child: Text(
+                        vignetteReaderState?.section.keyword ?? '',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                          shadows: [
+                            Shadow(
+                              color: Colors.grey.shade800,
+                              offset: const Offset(.5, .5),
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             );
