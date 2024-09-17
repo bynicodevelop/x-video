@@ -18,6 +18,7 @@ enum VignetteReaderStatus {
   idle,
   uploading,
   uploaded,
+  error,
 }
 
 class VignetteReaderState {
