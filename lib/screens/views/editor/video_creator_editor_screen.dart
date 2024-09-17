@@ -113,6 +113,7 @@ class _VideoCreatorEditorScreenState
                   }
                 }
               : null,
+          // TODO : Add Translation
           child: const Text('Open Final Video Folder'),
         ),
       ],
