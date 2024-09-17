@@ -130,7 +130,7 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
     ref.listen(
       videoPlayerEditorControllerProvider,
       (previous, next) {
-        _scrollToCurrentIndex();
+        if (next['isPlayable']) _scrollToCurrentIndex();
       },
     );
 
