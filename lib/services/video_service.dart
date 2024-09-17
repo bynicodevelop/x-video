@@ -198,4 +198,14 @@ class VideoService {
       onProgress,
     );
   }
+
+  bool finalVideoIsReady(
+    String projectPath,
+    String projectId,
+  ) {
+    final String finalVideoPath =
+        '$projectPath/$_tmpFolder/$projectId/final.$kVideoExtension';
+
+    return _fileGateway.exists(finalVideoPath);
+  }
 }

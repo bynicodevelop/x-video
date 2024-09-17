@@ -67,10 +67,18 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
       if (query.isEmpty) {
         filteredCategories = categoryListController.categories;
       } else {
-        filteredCategories = categoryListController.categories
-            .where((category) =>
-                _matchesPattern(removeDiacritics(category.name), query))
-            .toList();
+        filteredCategories =
+            categoryListController.categories.where((category) {
+          final name = removeDiacritics(category.name.toLowerCase());
+
+          // Recherche simple par sous-chaîne
+          if (name.contains(query)) {
+            return true;
+          }
+
+          // Recherche flexible par motif (expression régulière)
+          return _matchesPattern(name, query);
+        }).toList();
       }
     });
   }
@@ -98,6 +106,7 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
     setState(() {
       _textEditingController.clear();
       filteredCategories = categoryListController.categories;
+      _focusNode.requestFocus();
     });
   }
 

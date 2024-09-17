@@ -8,7 +8,6 @@ import 'package:x_video_ai/models/video_creator_state.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/services/video_service.dart';
 
-
 class VideoCreatorController extends StateNotifier<VideoCreatorState> {
   final VideoService _videoService;
   final ContentController _contentController;
@@ -40,6 +39,25 @@ class VideoCreatorController extends StateNotifier<VideoCreatorState> {
         .map((e) => VideoSectionModel.fromJson(e))
         .whereType<VideoSectionModel>()
         .toList();
+
+    final bool isReady =
+        _videoService.finalVideoIsReady(projectPath, projectId);
+
+    if (isReady) {
+      state = state.mergeWith(
+        hasPrepared: true,
+        prepareProgress: 100.0,
+        hasConcatenated: true,
+        concatenateProgress: 100.0,
+        hasAddedAudios: true,
+        addAudiosProgress: 100.0,
+        hasAddedSubtitles: true,
+        addSubtitlesProgress: 100.0,
+        isFinished: true,
+      );
+
+      return;
+    }
 
     await _cutVideos(
       sections,

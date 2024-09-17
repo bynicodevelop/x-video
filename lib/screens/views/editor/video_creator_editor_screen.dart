@@ -16,9 +16,9 @@ class _VideoCreatorEditorScreenState
   void initState() {
     super.initState();
 
-    Future.microtask(() {
-      ref.read(videoCreatorControllerProvider.notifier).startWorkflow();
-    });
+    Future.microtask(
+      () => ref.read(videoCreatorControllerProvider.notifier).startWorkflow(),
+    );
   }
 
   ListTile _item(
@@ -93,11 +93,6 @@ class _VideoCreatorEditorScreenState
                 Icons.subtitles,
                 videoCreatorController.hasAddedSubtitles,
                 progress: videoCreatorController.addSubtitlesProgress,
-              ),
-              _item(
-                'Option Screen',
-                Icons.high_quality_outlined,
-                videoCreatorController.isFinished,
               ),
             ],
           ),

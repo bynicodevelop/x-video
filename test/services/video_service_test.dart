@@ -119,5 +119,25 @@ void main() {
 
       expect(result, equals(thumbnailData));
     });
+
+    test('finalVideoIsReady returns true', () async {
+      const projectPath = '/test/project';
+      const projectId = 'testProject';
+      const tmpFolder = 'tmp'; // Assurez-vous que cela correspond à $_tmpFolder
+      const videoExtension =
+          'mp4'; // Assurez-vous que cela correspond à kVideoExtension
+
+      // Stub file gateway to return true
+      when(mockFileGateway.exists(any)).thenAnswer((_) => true);
+
+      final result = videoService.finalVideoIsReady(projectPath, projectId);
+
+      // Vérifiez que le chemin complet du fichier est utilisé
+      const expectedPath =
+          '$projectPath/$tmpFolder/$projectId/final.$videoExtension';
+      verify(mockFileGateway.exists(expectedPath)).called(1);
+
+      expect(result, isTrue);
+    });
   });
 }
