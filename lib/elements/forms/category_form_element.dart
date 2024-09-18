@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unorm_dart/unorm_dart.dart' as unorm;
 import 'package:x_video_ai/controllers/category_controller.dart';
 import 'package:x_video_ai/controllers/category_list_controller.dart';
+import 'package:x_video_ai/elements/lists/list_element.dart';
 import 'package:x_video_ai/models/category_model.dart';
 
 class CategoryFormElement extends ConsumerStatefulWidget {
@@ -130,20 +131,12 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
                   height: filteredCategories.isNotEmpty ? 10 : 40,
                 ),
                 filteredCategories.isNotEmpty
-                    ? ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: filteredCategories.length,
-                        itemBuilder: (context, index) {
-                          final category = filteredCategories[index];
-
-                          return ListTile(
-                            title: Text(
-                              "${category.name} (${category.videos.length})",
-                            ),
-                            onTap: () => widget.onCategorySelected(category),
-                          );
-                        },
+                    ? ListElement<CategoryModel>(
+                        elements: filteredCategories,
+                        onTap: (category) =>
+                            widget.onCategorySelected(category),
+                        formatter: (category) =>
+                            "${category.name} (${category.videos.length})",
                       )
                     : SizedBox(
                         width: double.infinity,

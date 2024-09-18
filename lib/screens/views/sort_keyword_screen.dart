@@ -33,8 +33,9 @@ class _SortKeywordSreenState extends ConsumerState<SortKeywordSreen> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.5,
             child: BoxImage(
-              thumbnail: widget.vignetteReaderState.thumbnail,
-              builder: (context) => const SizedBox.shrink(),
+              key: UniqueKey(),
+              videoId: widget.vignetteReaderState.section.fileName,
+              builder: (context, image) => const SizedBox.shrink(),
             ),
           ),
         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:popover/popover.dart';
+import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
+import 'package:x_video_ai/screens/views/editor/media_video.dart';
 import 'package:x_video_ai/screens/views/editor/video/vignette_reader_controller.dart';
 
 class IconUploadEditorElement extends ConsumerStatefulWidget {
@@ -56,6 +58,20 @@ class _IconUploadEditorElementState
     );
   }
 
+  void _openMediaLibrary(
+    BuildContext context,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => MainDialogElement(
+        width: MediaQuery.of(context).size.width,
+        height: double.infinity,
+        onClose: () {},
+        child: const MediaVideo(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -80,8 +96,8 @@ class _IconUploadEditorElementState
                   // TODO: Add translation
                   'Upload',
                   () {
-                    widget.onCompleted?.call();
                     Navigator.of(context).pop();
+                    widget.onCompleted?.call();
                   },
                 ),
                 _item(
@@ -90,6 +106,7 @@ class _IconUploadEditorElementState
                   'Media Library',
                   () {
                     Navigator.of(context).pop();
+                    _openMediaLibrary(context);
                   },
                 ),
               ],
