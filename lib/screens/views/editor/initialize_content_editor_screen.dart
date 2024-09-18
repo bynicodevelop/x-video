@@ -69,7 +69,7 @@ class _InitializeContentEditorScreenState
                 onPressed: ref
                         .read(urlExtractorControllerProvider.notifier)
                         .isValideUrl()
-                    ? () {
+                    ? () async {
                         Navigator.of(context).pop();
 
                         ref
@@ -80,7 +80,7 @@ class _InitializeContentEditorScreenState
                             .read(urlExtractorControllerProvider.notifier)
                             .url;
 
-                        ref
+                        await ref
                             .read(readerContentControllerProvider.notifier)
                             .loadContent(
                               LinkModel(
