@@ -35,6 +35,7 @@ class _SortKeywordSreenState extends ConsumerState<SortKeywordSreen> {
             child: BoxImage(
               key: UniqueKey(),
               videoId: widget.vignetteReaderState.section.fileName,
+              file: widget.vignetteReaderState.videoDataModel?.file,
               builder: (context, image) => const SizedBox.shrink(),
             ),
           ),

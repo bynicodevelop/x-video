@@ -9,12 +9,12 @@ import 'package:x_video_ai/elements/lists/list_element.dart';
 import 'package:x_video_ai/models/category_model.dart';
 
 class CategoryFormElement extends ConsumerStatefulWidget {
-  final String keyword;
+  final String? keyword;
   final Function(CategoryModel) onCategorySelected;
 
   const CategoryFormElement({
-    required this.keyword,
     required this.onCategorySelected,
+    this.keyword,
     super.key,
   });
 
@@ -113,7 +113,8 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
 
   @override
   Widget build(BuildContext context) {
-    const heigthSize = 90.0;
+    final double heigthSize =
+        widget.keyword != null && widget.keyword!.isNotEmpty ? 90.0 : 60.0;
     final categoryListController =
         ref.read(categoryListControllerProvider.notifier);
     ref.watch(categoryListControllerProvider);
@@ -122,63 +123,67 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
       children: [
         if (categoryListController.categories.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               top: heigthSize,
             ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: filteredCategories.isNotEmpty ? 10 : 40,
-                ),
-                filteredCategories.isNotEmpty
-                    ? ListElement<CategoryModel>(
-                        elements: filteredCategories,
-                        onTap: (category) =>
-                            widget.onCategorySelected(category),
-                        formatter: (category) =>
-                            "${category.name} (${category.videos.length})",
-                      )
-                    : SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                // TODO: Add to translation
-                                text: 'Aucune catégorie trouvée ',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium, // Style normal
-                                children: [
-                                  TextSpan(
-                                    text: '"${_textEditingController.text}"',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            TextButton(
-                              onPressed: () => _createNewCategory(
-                                _textEditingController.text,
-                              ),
-                              child:
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: filteredCategories.isNotEmpty ? 10 : 40,
+                  ),
+                  filteredCategories.isNotEmpty
+                      ? ListElement<CategoryModel>(
+                          elements: filteredCategories,
+                          selectedIndex: 0,
+                          onTap: (category) =>
+                              widget.onCategorySelected(category),
+                          formatter: (category) =>
+                              "${category.name} (${category.videos.length})",
+                        )
+                      : SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            children: [
+                              RichText(
+                                text: TextSpan(
                                   // TODO: Add to translation
-                                  const Text('Créer cette nouvelle catégorie'),
-                            ),
-                          ],
+                                  text: 'Aucune catégorie trouvée ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium, // Style normal
+                                  children: [
+                                    TextSpan(
+                                      text: '"${_textEditingController.text}"',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextButton(
+                                onPressed: () => _createNewCategory(
+                                  _textEditingController.text,
+                                ),
+                                child:
+                                    // TODO: Add to translation
+                                    const Text(
+                                        'Créer cette nouvelle catégorie'),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-              ],
+                ],
+              ),
             ),
           ),
         // Champ de texte pour la recherche (sticky)
         Container(
-          constraints: const BoxConstraints(
+          constraints: BoxConstraints(
             minHeight: heigthSize,
           ),
           child: Column(
@@ -220,23 +225,28 @@ class _CategoryFormElementState extends ConsumerState<CategoryFormElement> {
                         ),
                       ),
                     ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text.rich(
-                TextSpan(
-                    // TODO: Add keyword to the text
-                    text: "Cette partie est associée au mot-clé : ",
-                    style: Theme.of(context).textTheme.bodySmall!,
-                    children: [
+              if (widget.keyword != null && widget.keyword!.isNotEmpty)
+                Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10.0,
+                    ),
+                    child: Text.rich(
                       TextSpan(
-                        text: widget.keyword,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              fontWeight: FontWeight.bold,
+                          // TODO: Add keyword to the text
+                          text: "Cette partie est associée au mot-clé : ",
+                          style: Theme.of(context).textTheme.bodySmall!,
+                          children: [
+                            TextSpan(
+                              text: widget.keyword,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
-                      ),
-                    ]),
-              )
+                          ]),
+                    )),
             ],
           ),
         ),

@@ -32,6 +32,8 @@ class MainDialogElement extends ConsumerWidget {
           appBar: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: Colors.transparent,
+            elevation: 0,
+            forceMaterialTransparency: true,
             title: title != null ? Text(title!) : null,
             centerTitle: false,
             actions: [
@@ -44,9 +46,7 @@ class MainDialogElement extends ConsumerWidget {
               ),
             ],
           ),
-          body: SingleChildScrollView(
-            child: child,
-          ),
+          body: child,
         ),
       ),
       actions: [

@@ -100,6 +100,60 @@ class BoxImageController extends StateNotifier<List<ImageModel>> {
     return thumbnailModel.thumbnail;
   }
 
+  Future<void> generateThumbnailFromFile(
+    XFile? file,
+    Key key,
+  ) async {
+    ImageModel imageModel = getThumbnailModel(key);
+
+    if (imageModel.isEmpty()) {
+      imageModel = imageModel.mergeWith(
+        key: key,
+        state: file != null ? ImageState.loading : ImageState.loaded,
+      );
+    }
+
+    state = [
+      ...state,
+      imageModel,
+    ];
+
+    Uint8List? thumbnail;
+
+    try {
+      thumbnail = await _videoService.generateThumbnail(
+        file: file!,
+        outputPath: _contentController.state.path,
+        fileName: file.name,
+      );
+
+      imageModel = imageModel.mergeWith(
+        thumbnail: thumbnail,
+        state: ImageState.loaded,
+      );
+
+      state = state.map((element) {
+        if (element.key == key) {
+          return imageModel;
+        }
+
+        return element;
+      }).toList();
+    } catch (e) {
+      imageModel = imageModel.mergeWith(
+        state: ImageState.error,
+      );
+
+      state = state.map((element) {
+        if (element.key == key) {
+          return imageModel;
+        }
+
+        return element;
+      }).toList();
+    }
+  }
+
   Future<void> generateThumbnailFromVideoId(
     String? videoId,
     Key key,
@@ -118,6 +172,10 @@ class BoxImageController extends StateNotifier<List<ImageModel>> {
       ...state,
       imageModel,
     ];
+
+    if (videoId == null) {
+      return;
+    }
 
     final String projectPath = _contentController.state.path;
     final XFile file = XFile('$projectPath/videos/$videoId.$kVideoExtension');
@@ -143,6 +201,7 @@ class BoxImageController extends StateNotifier<List<ImageModel>> {
         return element;
       }).toList();
     } catch (e) {
+      print(e);
       imageModel = imageModel.mergeWith(
         state: ImageState.error,
       );

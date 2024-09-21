@@ -12,6 +12,7 @@ import 'package:x_video_ai/elements/files/dropzone_element.dart';
 import 'package:x_video_ai/elements/images/box_image.dart';
 import 'package:x_video_ai/elements/images/box_image_controller.dart';
 import 'package:x_video_ai/models/category_model.dart';
+import 'package:x_video_ai/models/video_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/screens/views/editor/video/vignette_reader_controller.dart';
 import 'package:x_video_ai/screens/views/sort_keyword_screen.dart';
@@ -117,12 +118,6 @@ class _VignetteReaderVideoState
     final vignetteReaderController =
         ref.watch(vignetteReaderControllerProvider);
 
-    final VignetteReaderState? vignetteReaderState =
-        vignetteReaderController.firstWhere(
-      (element) => element?.section == widget.section,
-      orElse: () => null,
-    );
-
     ref.listen(
       vignetteReaderControllerProvider,
       (previous, next) {
@@ -169,10 +164,16 @@ class _VignetteReaderVideoState
       ) {
         return Consumer(
           builder: (context, ref, child) {
+            VignetteReaderState? vignetteReaderState =
+                vignetteReaderController.firstWhere(
+              (element) => element?.section == widget.section,
+              orElse: () => null,
+            );
+
             final String? videoId = vignetteReaderState?.section.fileName;
 
             return BoxImage(
-              key: UniqueKey(),
+              key: widget.key,
               videoId: videoId,
               builder: (
                 BuildContext context,
@@ -182,13 +183,8 @@ class _VignetteReaderVideoState
                   debugPrint('Error: ${dropzoneParams.errorType}');
                 }
 
-                VignetteReaderState? vignetteReaderState =
-                    vignetteReaderController.firstWhere(
-                  (element) => element?.section == widget.section,
-                  orElse: () => null,
-                );
-
-                if (imageModel.state != ImageState.loaded) {
+                if (imageModel.state != ImageState.loaded &&
+                    imageModel.state != ImageState.idle) {
                   return Center(
                     child: Icon(
                       Icons.hourglass_top_outlined,
@@ -207,7 +203,19 @@ class _VignetteReaderVideoState
                             : VignetteReaderStatus.error,
                         isDragging: dropzoneParams.dragging,
                         hasThumbnail: videoId != null,
-                        onCompleted: () async {
+                        onCompleted: (value) async {
+                          if (value != null) {
+                            VignetteReaderState? vignette =
+                                vignetteReaderState?.mergeWith(
+                                    videoDataModel: VideoDataModel.factory({
+                              'name': value,
+                            }));
+
+                            widget.onCompleted(vignette);
+
+                            return;
+                          }
+
                           FilePickerResult? result =
                               await FilePicker.platform.pickFiles(
                             allowMultiple: false,

@@ -165,6 +165,20 @@ class VignetteReaderControllerProvider
     }).toList();
   }
 
+  void updateVideoSectionModel(
+    VideoSectionModel section,
+  ) {
+    state = state.map((e) {
+      if (e?.section.id == section.id) {
+        return e?.mergeWith(
+          section: section,
+        );
+      }
+
+      return e;
+    }).toList();
+  }
+
   void resetVignetteReaderState(
     VignetteReaderState vignetteReaderState,
   ) {
@@ -176,8 +190,6 @@ class VignetteReaderControllerProvider
       return e;
     }).toList();
   }
-
-  void save() {}
 }
 
 final vignetteReaderControllerProvider = StateNotifierProvider<

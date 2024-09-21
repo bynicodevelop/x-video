@@ -9,7 +9,7 @@ class IconUploadEditorElement extends ConsumerStatefulWidget {
   final VignetteReaderStatus? status;
   final bool isDragging;
   final bool hasThumbnail;
-  final void Function()? onCompleted;
+  final void Function(String? videoId)? onCompleted;
 
   const IconUploadEditorElement({
     this.status,
@@ -67,7 +67,12 @@ class _IconUploadEditorElementState
         width: MediaQuery.of(context).size.width,
         height: double.infinity,
         onClose: () {},
-        child: const MediaVideo(),
+        child: MediaVideo(
+          onVideoSelected: (videoId) {
+            Navigator.of(context).pop();
+            widget.onCompleted?.call(videoId);
+          },
+        ),
       ),
     );
   }
@@ -97,7 +102,7 @@ class _IconUploadEditorElementState
                   'Upload',
                   () {
                     Navigator.of(context).pop();
-                    widget.onCompleted?.call();
+                    widget.onCompleted?.call(null);
                   },
                 ),
                 _item(

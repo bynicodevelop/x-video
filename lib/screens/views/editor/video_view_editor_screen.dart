@@ -106,9 +106,8 @@ class _VideoViewEditorScreenState extends ConsumerState<VideoViewEditorScreen> {
         child: VignetteReaderVideoEditor(
           key: ValueKey(section.id),
           section: section,
-          onCompleted: (VignetteReaderState? vignetteReaderState) {
-            _updateSectionPlayer(section, vignetteReaderState);
-          },
+          onCompleted: (VignetteReaderState? vignetteReaderState) =>
+              _updateSectionPlayer(section, vignetteReaderState),
         ),
       ),
     );
