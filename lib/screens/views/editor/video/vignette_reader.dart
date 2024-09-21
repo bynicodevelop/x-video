@@ -10,7 +10,9 @@ import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
 import 'package:x_video_ai/elements/editor/icon_upload_element.dart';
 import 'package:x_video_ai/elements/files/dropzone_element.dart';
 import 'package:x_video_ai/elements/images/box_image.dart';
+import 'package:x_video_ai/elements/images/box_image_controller.dart';
 import 'package:x_video_ai/models/category_model.dart';
+import 'package:x_video_ai/models/video_model.dart';
 import 'package:x_video_ai/models/video_section_model.dart';
 import 'package:x_video_ai/screens/views/editor/video/vignette_reader_controller.dart';
 import 'package:x_video_ai/screens/views/sort_keyword_screen.dart';
@@ -49,22 +51,9 @@ class _VignetteReaderVideoState
 
   Future<void> _initiateVignetteReaderController() async {
     await ref.read(categoryListControllerProvider.notifier).loadCategories();
-
     await ref.read(vignetteReaderControllerProvider.notifier).initState(
           widget.section,
         );
-  }
-
-  IconData _getIconBasedOnState(VignetteReaderStatus? status) {
-    if (status == null) {
-      return Icons.hourglass_top_outlined;
-    }
-
-    if (status == VignetteReaderStatus.uploading) {
-      return Icons.upload_file;
-    }
-
-    return Icons.file_upload_outlined; // Add a return statement at the end
   }
 
   void _createKeywordModal(
@@ -129,13 +118,6 @@ class _VignetteReaderVideoState
     final vignetteReaderController =
         ref.watch(vignetteReaderControllerProvider);
 
-    final thumbnail = vignetteReaderController
-        .firstWhere(
-          (element) => element?.section == widget.section,
-          orElse: () => null,
-        )
-        ?.thumbnail;
-
     ref.listen(
       vignetteReaderControllerProvider,
       (previous, next) {
@@ -171,32 +153,45 @@ class _VignetteReaderVideoState
     );
 
     return DropzoneElement(
-      onFile: (files) {
-        ref.read(vignetteReaderControllerProvider.notifier).addVideoDataModel(
-              widget.section,
-              files.first,
-            );
-      },
+      onFile: (files) =>
+          ref.read(vignetteReaderControllerProvider.notifier).addVideoDataModel(
+                widget.section,
+                files.first,
+              ),
       builder: (
         context,
         dropzoneParams,
       ) {
         return Consumer(
           builder: (context, ref, child) {
+            VignetteReaderState? vignetteReaderState =
+                vignetteReaderController.firstWhere(
+              (element) => element?.section == widget.section,
+              orElse: () => null,
+            );
+
+            final String? videoId = vignetteReaderState?.section.fileName;
+
             return BoxImage(
-              thumbnail: thumbnail,
+              key: widget.key,
+              videoId: videoId,
               builder: (
                 BuildContext context,
+                ImageModel imageModel,
               ) {
                 if (dropzoneParams.errorType != ErrorType.idle) {
                   debugPrint('Error: ${dropzoneParams.errorType}');
                 }
 
-                VignetteReaderState? vignetteReaderState =
-                    vignetteReaderController.firstWhere(
-                  (element) => element?.section == widget.section,
-                  orElse: () => null,
-                );
+                if (imageModel.state != ImageState.loaded &&
+                    imageModel.state != ImageState.idle) {
+                  return Center(
+                    child: Icon(
+                      Icons.hourglass_top_outlined,
+                      color: Colors.grey.shade400,
+                    ),
+                  );
+                }
 
                 return Stack(
                   fit: StackFit.expand,
@@ -207,8 +202,20 @@ class _VignetteReaderVideoState
                             ? vignetteReaderState?.status
                             : VignetteReaderStatus.error,
                         isDragging: dropzoneParams.dragging,
-                        hasThumbnail: thumbnail != null,
-                        onCompleted: () async {
+                        hasThumbnail: videoId != null,
+                        onCompleted: (value) async {
+                          if (value != null) {
+                            VignetteReaderState? vignette =
+                                vignetteReaderState?.mergeWith(
+                                    videoDataModel: VideoDataModel.factory({
+                              'name': value,
+                            }));
+
+                            widget.onCompleted(vignette);
+
+                            return;
+                          }
+
                           FilePickerResult? result =
                               await FilePicker.platform.pickFiles(
                             allowMultiple: false,
@@ -234,12 +241,12 @@ class _VignetteReaderVideoState
                       child: Text(
                         vignetteReaderState?.section.keyword ?? '',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: thumbnail == null
+                          color: videoId == null
                               ? Colors.grey.shade600
                               : Colors.white,
                           fontStyle: FontStyle.italic,
                           shadows: [
-                            if (thumbnail != null)
+                            if (videoId != null)
                               Shadow(
                                 color: Colors.grey.shade800,
                                 offset: const Offset(.5, .5),

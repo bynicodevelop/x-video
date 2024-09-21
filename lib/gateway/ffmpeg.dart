@@ -113,7 +113,7 @@ class FFMpeg {
     String filename = 'thumbnail',
   }) async {
     const String prefix = 'thumbnail_';
-    final String uniqueId = '${DateTime.now().millisecondsSinceEpoch}_';
+    final String uniqueId = '${DateTime.now().microsecondsSinceEpoch}_';
 
     try {
       // Chemin complet pour stocker la miniature

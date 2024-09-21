@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:popover/popover.dart';
+import 'package:x_video_ai/elements/dialogs/main_dialog_element.dart';
+import 'package:x_video_ai/screens/views/editor/media_video.dart';
 import 'package:x_video_ai/screens/views/editor/video/vignette_reader_controller.dart';
 
 class IconUploadEditorElement extends ConsumerStatefulWidget {
   final VignetteReaderStatus? status;
   final bool isDragging;
   final bool hasThumbnail;
-  final void Function()? onCompleted;
+  final void Function(String? videoId)? onCompleted;
 
   const IconUploadEditorElement({
     this.status,
@@ -39,10 +42,45 @@ class _IconUploadEditorElementState
     return Icons.file_upload_outlined;
   }
 
+  Widget _item(
+    IconData icon,
+    String title,
+    void Function() onTap,
+  ) {
+    return ListTile(
+      dense: true,
+      title: Text(title),
+      leading: Icon(
+        icon,
+        size: 16,
+      ),
+      onTap: onTap,
+    );
+  }
+
+  void _openMediaLibrary(
+    BuildContext context,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => MainDialogElement(
+        width: MediaQuery.of(context).size.width,
+        height: double.infinity,
+        onClose: () {},
+        child: MediaVideo(
+          onVideoSelected: (videoId) {
+            Navigator.of(context).pop();
+            widget.onCompleted?.call(videoId);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
+    return GestureDetector(
+      child: Icon(
         _getIconBasedOnState(widget.status),
         color: widget.isDragging
             ? Colors.blue.shade400
@@ -50,7 +88,42 @@ class _IconUploadEditorElementState
                 ? Colors.white
                 : Colors.grey.shade400,
       ),
-      onPressed: widget.onCompleted,
+      onTap: () {
+        showPopover(
+          context: context,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          barrierColor: Colors.transparent,
+          bodyBuilder: (context) => Container(
+            child: Column(
+              children: [
+                _item(
+                  Icons.upload_file,
+                  // TODO: Add translation
+                  'Upload',
+                  () {
+                    Navigator.of(context).pop();
+                    widget.onCompleted?.call(null);
+                  },
+                ),
+                _item(
+                  Icons.video_library_outlined,
+                  // TODO: Add translation
+                  'Media Library',
+                  () {
+                    Navigator.of(context).pop();
+                    _openMediaLibrary(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+          direction: PopoverDirection.top,
+          width: 180,
+          height: 80,
+          arrowHeight: 15,
+          arrowWidth: 15,
+        );
+      },
     );
   }
 }

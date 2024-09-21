@@ -120,7 +120,7 @@ class _InitializeContentEditorScreenState
             final formState = ref.watch(createContentFormControllerProvider);
 
             return MainDialogElement(
-              height: 120,
+              height: 150,
               title: $(context).create_content_title_modal,
               confirm: TextButton(
                 onPressed: formState.isValidForm

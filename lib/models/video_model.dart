@@ -52,15 +52,17 @@ class VideoDataModel extends TimmingModel implements JsonDeserializable {
 
   static VideoDataModel factory(Map<String, dynamic> json) => VideoDataModel(
         name: json['name'],
-        start: json['start'],
-        end: json['end'],
-        duration: json['duration'],
+        start: json['start'] ?? 0,
+        end: json['end'] ?? 0,
+        duration: json['duration'] ?? 0,
       );
 
-  static VideoDataModel getDefault() => VideoDataModel(
+  static VideoDataModel empty() => VideoDataModel(
         name: '',
         start: 0,
         end: 0,
         duration: 0,
       );
+
+  bool isEmpty() => name.isEmpty;
 }
