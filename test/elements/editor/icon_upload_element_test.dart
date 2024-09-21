@@ -73,7 +73,7 @@ void main() {
         ProviderScope(
           child: MaterialApp(
             home: IconUploadEditorElement(
-              onCompleted: () {
+              onCompleted: (String? result) {
                 completed = true;
               },
             ),

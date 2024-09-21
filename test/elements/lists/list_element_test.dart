@@ -14,6 +14,7 @@ void main() {
           child: MaterialApp(
             home: Scaffold(
               body: ListElement<String>(
+                selectedIndex: 0,
                 elements: elements,
                 onTap: (_) {},
                 formatter: formatter,
@@ -39,6 +40,7 @@ void main() {
           child: MaterialApp(
             home: Scaffold(
               body: ListElement<String>(
+                selectedIndex: 0,
                 elements: elements,
                 onTap: (element) {
                   tappedElement = element;
